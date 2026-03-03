@@ -37,7 +37,7 @@ export class NotificationsProcessor extends WorkerHost {
 
   private async handleSendTicketEmail(data: { orderId: string }): Promise<void> {
     const order = await this.orderModel.findById(data.orderId).lean();
-    if (!order || order.status !== 'paid') {
+    if (order?.status !== 'paid') {
       this.logger.warn(`Order ${data.orderId} not found or not paid for email send`);
       return;
     }

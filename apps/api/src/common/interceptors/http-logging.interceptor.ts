@@ -34,13 +34,10 @@ export class HttpLoggingInterceptor implements NestInterceptor {
           );
         },
         error: (error: unknown) => {
+          const errorWithStatus =
+            typeof error === 'object' && error !== null && 'status' in error ? error : null;
           const statusCode =
-            typeof error === 'object' &&
-            error !== null &&
-            'status' in error &&
-            typeof (error as { status?: unknown }).status === 'number'
-              ? ((error as { status: number }).status as number)
-              : 500;
+            typeof errorWithStatus?.status === 'number' ? errorWithStatus.status : 500;
 
           this.logger.error(
             JSON.stringify({

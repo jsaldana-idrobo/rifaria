@@ -74,7 +74,7 @@ export class AuthService {
     user: { id: string; fullName: string; email: string; role: string };
   }> {
     const user = await this.userModel.findOne({ email: dto.email.toLowerCase() });
-    if (!user || !user.isActive) {
+    if (!user?.isActive) {
       throw new UnauthorizedException('Invalid credentials');
     }
 

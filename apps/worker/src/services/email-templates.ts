@@ -9,7 +9,7 @@ export function ticketEmailTemplate(payload: {
   const ticketsHtml = payload.ticketNumbers
     .map(
       (ticket) =>
-        `<span style=\"display:inline-block;margin:6px;padding:10px 14px;border-radius:999px;background:#111;color:#f6f3ee;font-weight:700;letter-spacing:0.08em;\">${ticket}</span>`
+        `<span style="display:inline-block;margin:6px;padding:10px 14px;border-radius:999px;background:#111;color:#f6f3ee;font-weight:700;letter-spacing:0.08em;">${ticket}</span>`
     )
     .join('');
 

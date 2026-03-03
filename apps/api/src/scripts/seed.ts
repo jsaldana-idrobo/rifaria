@@ -4,15 +4,16 @@ import { loadEnv } from '../config/env';
 import { RaffleSchema } from '../modules/raffles/schemas/raffle.schema';
 import { UserSchema } from '../modules/auth/schemas/user.schema';
 
-async function seed(): Promise<void> {
-  const env = loadEnv();
-  await mongoose.connect(env.MONGODB_URI);
+const env = loadEnv();
 
+async function seedData(): Promise<void> {
   const RaffleModel = mongoose.model('Raffle', RaffleSchema);
   const UserModel = mongoose.model('User', UserSchema);
 
   const raffleExists = await RaffleModel.exists({});
-  if (!raffleExists) {
+  if (raffleExists) {
+    console.log('Seed: raffle already exists');
+  } else {
     await RaffleModel.create({
       title: 'Rifa de lanzamiento Rifaria',
       slug: 'rifa-lanzamiento-rifaria',
@@ -32,15 +33,15 @@ async function seed(): Promise<void> {
     });
 
     console.log('Seed: raffle created');
-  } else {
-    console.log('Seed: raffle already exists');
   }
 
   const adminEmail = process.env.SEED_ADMIN_EMAIL || 'admin@rifaria.local';
   const adminPassword = process.env.SEED_ADMIN_PASSWORD || 'ChangeThis123!';
   const adminExists = await UserModel.exists({ email: adminEmail.toLowerCase() });
 
-  if (!adminExists) {
+  if (adminExists) {
+    console.log('Seed: admin already exists');
+  } else {
     const passwordHash = await hash(adminPassword, 12);
 
     await UserModel.create({
@@ -53,11 +54,17 @@ async function seed(): Promise<void> {
     });
 
     console.log(`Seed: admin created (${adminEmail})`);
-  } else {
-    console.log('Seed: admin already exists');
   }
-
-  await mongoose.disconnect();
 }
 
-void seed();
+mongoose
+  .connect(env.MONGODB_URI)
+  .then(seedData)
+  .catch((error: unknown) => {
+    const message = error instanceof Error ? (error.stack ?? error.message) : String(error);
+    console.error(message);
+    process.exitCode = 1;
+  })
+  .finally(async () => {
+    await mongoose.disconnect();
+  });

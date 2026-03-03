@@ -1,5 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { Types } from 'mongoose';
+import { Injectable } from '@nestjs/common';
 import { AuditService } from '../audit/audit.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { OrdersService } from '../orders/orders.service';
@@ -47,7 +46,7 @@ export class DrawsService {
   async settleDraw(raffleId: string, dto: SettleDrawDto) {
     const updatedRaffle = await this.rafflesService.settleDraw(raffleId, dto);
     const winnerTicket = await this.ticketsService.findWinnerTicket(
-      updatedRaffle._id as Types.ObjectId,
+      updatedRaffle._id,
       dto.winningNumber
     );
 

@@ -12,6 +12,10 @@ interface ReserveTicketsInput {
   session?: ClientSession;
 }
 
+function sortTicketNumbers(ticketNumbers: string[]): string[] {
+  return ticketNumbers.sort((left, right) => left.localeCompare(right, 'es-CO'));
+}
+
 @Injectable()
 export class TicketsService {
   constructor(@InjectModel(Ticket.name) private readonly ticketModel: Model<Ticket>) {}
@@ -60,7 +64,7 @@ export class TicketsService {
       );
     }
 
-    return reserved.sort();
+    return sortTicketNumbers(reserved);
   }
 
   async assignTicketsForOrder(orderId: Types.ObjectId, session?: ClientSession): Promise<string[]> {
@@ -90,7 +94,7 @@ export class TicketsService {
       session ? { session } : undefined
     );
 
-    return tickets.map((ticket) => ticket.number4d).sort();
+    return sortTicketNumbers(tickets.map((ticket) => ticket.number4d));
   }
 
   async releaseTicketsForOrder(orderId: Types.ObjectId, session?: ClientSession): Promise<number> {
@@ -133,7 +137,7 @@ export class TicketsService {
       )
       .lean();
 
-    return assignedTickets.map((ticket) => ticket.number4d).sort();
+    return sortTicketNumbers(assignedTickets.map((ticket) => ticket.number4d));
   }
 
   async countReservedByRaffle(raffleId: Types.ObjectId): Promise<number> {

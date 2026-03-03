@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { fetchOrderStatus, type PublicOrderStatus } from "@/lib/api";
 
 interface OrderStatusCardProps {
-  orderId: string | null;
+  readonly orderId: string | null;
 }
 
 const FINAL_STATUSES = new Set<PublicOrderStatus["status"]>([
@@ -41,7 +41,7 @@ export function OrderStatusCard({ orderId }: OrderStatusCardProps) {
     }
 
     let isMounted = true;
-    let timer: number | null = null;
+    let timer: ReturnType<typeof globalThis.setTimeout> | null = null;
 
     const poll = async () => {
       try {
@@ -55,7 +55,7 @@ export function OrderStatusCard({ orderId }: OrderStatusCardProps) {
         setLoading(false);
 
         if (!FINAL_STATUSES.has(result.status)) {
-          timer = window.setTimeout(() => {
+          timer = globalThis.setTimeout(() => {
             void poll();
           }, 8000);
         }
@@ -76,7 +76,7 @@ export function OrderStatusCard({ orderId }: OrderStatusCardProps) {
     return () => {
       isMounted = false;
       if (timer) {
-        window.clearTimeout(timer);
+        globalThis.clearTimeout(timer);
       }
     };
   }, [orderId]);

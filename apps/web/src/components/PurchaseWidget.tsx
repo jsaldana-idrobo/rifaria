@@ -3,7 +3,7 @@ import type { SyntheticEvent } from "react";
 import { createCheckout, createOrder } from "@/lib/api";
 
 interface PurchaseWidgetProps {
-  raffleTitle: string;
+  readonly raffleTitle: string;
 }
 
 const TICKET_PRICE = 2000;
@@ -32,6 +32,11 @@ export function PurchaseWidget({ raffleTitle }: PurchaseWidgetProps) {
     setIsSubmitting(true);
 
     try {
+      const browserWindow = globalThis.window;
+      if (!browserWindow) {
+        throw new Error("No fue posible abrir el checkout en este entorno");
+      }
+
       const order = await createOrder({
         fullName,
         email,
@@ -43,10 +48,10 @@ export function PurchaseWidget({ raffleTitle }: PurchaseWidgetProps) {
 
       const checkout = await createCheckout(
         order._id,
-        `${window.location.origin}/gracias?order=${encodeURIComponent(order._id)}`,
+        `${browserWindow.location.origin}/gracias?order=${encodeURIComponent(order._id)}`,
       );
 
-      window.location.assign(checkout.checkoutUrl);
+      browserWindow.location.assign(checkout.checkoutUrl);
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "No fue posible iniciar la compra";
@@ -95,7 +100,7 @@ export function PurchaseWidget({ raffleTitle }: PurchaseWidgetProps) {
       >
         <div className="buy-form-grid">
           <label>
-            Nombre completo
+            <span>Nombre completo</span>
             <input
               type="text"
               required
@@ -108,7 +113,7 @@ export function PurchaseWidget({ raffleTitle }: PurchaseWidgetProps) {
           </label>
 
           <label>
-            Correo
+            <span>Correo</span>
             <input
               type="email"
               required
@@ -120,7 +125,7 @@ export function PurchaseWidget({ raffleTitle }: PurchaseWidgetProps) {
           </label>
 
           <label className="full-span">
-            Celular
+            <span>Celular</span>
             <input
               type="tel"
               required

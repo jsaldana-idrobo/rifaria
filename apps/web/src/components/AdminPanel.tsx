@@ -81,10 +81,10 @@ export function AdminPanel() {
         </p>
       </div>
 
-      {!token ? (
+      {token === null ? (
         <form className="buy-form" onSubmit={login}>
           <label>
-            Correo admin
+            <span>Correo admin</span>
             <input
               type="email"
               required
@@ -95,7 +95,7 @@ export function AdminPanel() {
           </label>
 
           <label>
-            Password
+            <span>Password</span>
             <input
               type="password"
               required

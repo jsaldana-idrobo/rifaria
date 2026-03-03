@@ -53,31 +53,32 @@ const fallbackRaffle: PublicRaffle = {
 
 export function getApiBaseUrl(): string {
   const configuredBaseUrl = (import.meta.env.PUBLIC_API_BASE_URL ?? "").trim();
+  const browserWindow = globalThis.window;
 
   if (configuredBaseUrl.length > 0) {
-    if (typeof window !== "undefined") {
+    if (browserWindow) {
       try {
         const parsed = new URL(configuredBaseUrl);
         const configuredIsLocal = ["localhost", "127.0.0.1"].includes(
           parsed.hostname,
         );
         const runningIsLocal = ["localhost", "127.0.0.1"].includes(
-          window.location.hostname,
+          browserWindow.location.hostname,
         );
 
         if (configuredIsLocal && !runningIsLocal) {
-          return `${window.location.origin}/v1`;
+          return `${browserWindow.location.origin}/v1`;
         }
       } catch {
-        return `${window.location.origin}/v1`;
+        return `${browserWindow.location.origin}/v1`;
       }
     }
 
     return configuredBaseUrl;
   }
 
-  if (typeof window !== "undefined") {
-    return `${window.location.origin}/v1`;
+  if (browserWindow) {
+    return `${browserWindow.location.origin}/v1`;
   }
 
   return "http://localhost:4000/v1";

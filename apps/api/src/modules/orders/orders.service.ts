@@ -36,7 +36,7 @@ export class OrdersService {
 
   async createOrder(dto: CreateOrderDto): Promise<Order> {
     const raffle = await this.rafflesService.getActiveRaffleForSales();
-    const raffleId = raffle._id as Types.ObjectId;
+    const raffleId = raffle._id;
 
     const reservedCount = await this.ticketsService.countReservedByRaffle(raffleId);
     if (raffle.soldTickets + reservedCount + dto.ticketQty > raffle.totalTickets) {

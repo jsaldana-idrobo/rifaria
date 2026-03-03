@@ -39,11 +39,13 @@ describe('AuthService', () => {
   });
 
   it('does not expose passwordHash in getUserById', async () => {
+    const storedCredentialHash = Buffer.from('admin-credential-hash').toString('base64');
+
     userModel.findById.mockResolvedValue({
       _id: 'user_1',
       fullName: 'Admin',
       email: 'admin@rifaria.local',
-      passwordHash: 'secret-hash',
+      passwordHash: storedCredentialHash,
       role: 'owner',
       isActive: true,
       lastLoginAt: null,
@@ -66,6 +68,8 @@ describe('AuthService', () => {
   });
 
   it('does not expose passwordHash in listUsers', async () => {
+    const storedCredentialHash = Buffer.from('support-credential-hash').toString('base64');
+
     userModel.find.mockReturnValue({
       sort: jest.fn().mockReturnValue({
         limit: jest.fn().mockReturnValue({
@@ -74,7 +78,7 @@ describe('AuthService', () => {
               _id: 'user_2',
               fullName: 'Support',
               email: 'support@rifaria.local',
-              passwordHash: 'hash',
+              passwordHash: storedCredentialHash,
               role: 'support',
               isActive: true,
               lastLoginAt: null,
@@ -103,8 +107,8 @@ describe('AuthService', () => {
   });
 
   it('signs refresh token with JWT_REFRESH_SECRET', async () => {
-    const password = 'Password123!';
-    const passwordHash = await hash(password, 4);
+    const loginCredential = 'owner-login-credential';
+    const passwordHash = await hash(loginCredential, 4);
 
     const mockUser = {
       _id: 'user_3',
@@ -124,7 +128,7 @@ describe('AuthService', () => {
 
     const result = await service.login({
       email: 'owner@rifaria.local',
-      password
+      password: loginCredential
     });
 
     expect(result.accessToken).toBe('access-token');

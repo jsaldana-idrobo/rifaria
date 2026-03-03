@@ -58,18 +58,20 @@ export class HealthService implements OnModuleDestroy {
 
   private async pingMongo(): Promise<boolean> {
     try {
-      const connectionPromise =
-        this.mongoConnection.readyState === 1
-          ? Promise.resolve(this.mongoConnection)
-          : this.mongoConnection.readyState === 2
-            ? this.mongoConnection.asPromise()
-            : this.mongoConnection.openUri(
-                this.configService.get<string>('MONGODB_URI', 'mongodb://localhost:27017/rifaria'),
-                {
-                  serverSelectionTimeoutMS: 5000,
-                  connectTimeoutMS: 5000
-                }
-              );
+      let connectionPromise: Promise<Connection>;
+      if (this.mongoConnection.readyState === 1) {
+        connectionPromise = Promise.resolve(this.mongoConnection);
+      } else if (this.mongoConnection.readyState === 2) {
+        connectionPromise = this.mongoConnection.asPromise();
+      } else {
+        connectionPromise = this.mongoConnection.openUri(
+          this.configService.get<string>('MONGODB_URI', 'mongodb://localhost:27017/rifaria'),
+          {
+            serverSelectionTimeoutMS: 5000,
+            connectTimeoutMS: 5000
+          }
+        );
+      }
 
       const connection = await Promise.race([
         connectionPromise,

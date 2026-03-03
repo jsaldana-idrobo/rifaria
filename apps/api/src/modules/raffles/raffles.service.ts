@@ -44,7 +44,7 @@ export class RafflesService {
     const current = await this.getRaffleByIdOrThrow(raffleId);
 
     if (dto.status === 'selling' && current.status !== 'selling') {
-      await this.assertSingleSellingRaffle(current._id as Types.ObjectId);
+      await this.assertSingleSellingRaffle(current._id);
     }
 
     const updated = await this.raffleModel.findByIdAndUpdate(raffleId, dto, {

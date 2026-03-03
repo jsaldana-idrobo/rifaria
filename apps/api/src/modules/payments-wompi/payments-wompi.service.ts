@@ -122,7 +122,7 @@ export class PaymentsWompiService {
       await payment.save();
     }
 
-    const orderId = payment.orderId as Types.ObjectId;
+    const orderId = payment.orderId;
 
     if (mappedStatus === 'approved') {
       return this.handleApprovedStatus(payment, orderId, isDuplicateEvent);
@@ -174,10 +174,8 @@ export class PaymentsWompiService {
     const wasAlreadyPaid = order.status === 'paid';
 
     if (wasAlreadyPaid) {
-      const assignedCount = await this.ticketsService.countAssignedByRaffle(
-        order.raffleId as Types.ObjectId
-      );
-      await this.rafflesService.setSoldTickets(order.raffleId as Types.ObjectId, assignedCount);
+      const assignedCount = await this.ticketsService.countAssignedByRaffle(order.raffleId);
+      await this.rafflesService.setSoldTickets(order.raffleId, assignedCount);
 
       return {
         ok: true,
@@ -199,14 +197,12 @@ export class PaymentsWompiService {
     }
 
     const paidOrder = await this.ordersService.markPaid(orderId, {
-      paymentId: payment._id as Types.ObjectId,
+      paymentId: payment._id,
       ticketNumbers
     });
 
-    const assignedCount = await this.ticketsService.countAssignedByRaffle(
-      paidOrder.raffleId as Types.ObjectId
-    );
-    await this.rafflesService.setSoldTickets(paidOrder.raffleId as Types.ObjectId, assignedCount);
+    const assignedCount = await this.ticketsService.countAssignedByRaffle(paidOrder.raffleId);
+    await this.rafflesService.setSoldTickets(paidOrder.raffleId, assignedCount);
     await this.notificationsService.enqueueTicketEmail(String(paidOrder._id));
 
     await this.auditService.log({
