@@ -66,5 +66,6 @@ mongoose
     process.exitCode = 1;
   })
   .finally(async () => {
+    // NOSONAR - Seed script stays CommonJS-compatible, so top-level await is intentionally avoided.
     await mongoose.disconnect();
-  }); // NOSONAR - Seed script stays CommonJS-compatible, so top-level await is intentionally avoided.
+  });

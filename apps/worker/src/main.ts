@@ -32,7 +32,8 @@ NestFactory.createApplicationContext(AppModule, {
     });
   })
   .catch((error: unknown) => {
+    // NOSONAR - Worker entrypoint remains CommonJS-compatible; top-level await would change the runtime contract.
     const logger = new Logger('WorkerMain');
     logger.error(error instanceof Error ? (error.stack ?? error.message) : String(error));
     process.exit(1);
-  }); // NOSONAR - Worker entrypoint remains CommonJS-compatible; top-level await would change the runtime contract.
+  });
