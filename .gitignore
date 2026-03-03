@@ -21,4 +21,5 @@ coverage/
 package-lock.json
 yarn.lock
 .vercel
+**/.vercel
 .env*.local
