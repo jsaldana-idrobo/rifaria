@@ -62,19 +62,15 @@ Si la carpeta no es un repo git, el setup de hooks se omite de forma segura.
 
 ## GitHub Actions, Vercel y Sonar
 
-El repo incluye automatizacion para calidad, deploy web y analisis Sonar.
+El repo incluye automatizacion para calidad y analisis Sonar.
 
 - `CI`: corre `format:check`, `lint`, `test` y `build`
-- `deploy-web-preview`: despliega `apps/web` en PRs
-- `deploy-web-production`: despliega `apps/web` en `main` o `master`
 - `Sonar`: ejecuta analisis en pushes y PRs
+- `Vercel`: `apps/web` esta conectado al repo GitHub y despliega de forma nativa por cada push/PR
 
-Secrets/vars necesarios en GitHub:
+Secrets/vars necesarios en GitHub para Sonar:
 
 ```text
-VERCEL_TOKEN            # secret
-VERCEL_ORG_ID           # secret
-VERCEL_WEB_PROJECT_ID   # secret
 SONAR_TOKEN             # secret
 SONAR_ORGANIZATION      # variable del repo
 SONAR_PROJECT_KEY       # variable del repo
