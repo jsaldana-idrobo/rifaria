@@ -12,6 +12,7 @@
     "dev:worker": "pnpm --filter @rifaria/worker dev",
     "build": "pnpm -r --filter @rifaria/shared --filter './apps/*' build",
     "test": "pnpm -r --if-present test",
+    "test:ci": "pnpm --filter @rifaria/shared test && pnpm --filter @rifaria/api test:ci",
     "lint": "pnpm -r --if-present lint",
     "format": "pnpm -r --if-present format",
     "format:check": "pnpm -r --if-present format:check",

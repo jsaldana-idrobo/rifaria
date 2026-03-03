@@ -9,6 +9,7 @@
     "start:dev": "nest start --watch",
     "build": "nest build",
     "test": "jest",
+    "test:ci": "jest --runInBand --ci",
     "test:watch": "jest --watch",
     "lint": "tsc --noEmit",
     "format": "prettier --write \"src/**/*.ts\"",
