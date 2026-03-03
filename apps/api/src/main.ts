@@ -48,4 +48,4 @@ async function bootstrap(): Promise<void> {
   }
 }
 
-void bootstrap();
+void bootstrap(); // NOSONAR - NestJS runs in CommonJS here; top-level await would require a module-system change.

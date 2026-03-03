@@ -72,4 +72,4 @@ async function runSeed(): Promise<void> {
   }
 }
 
-void runSeed();
+void runSeed(); // NOSONAR - The seed entrypoint stays CommonJS-compatible, so top-level await is intentionally avoided.

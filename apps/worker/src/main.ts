@@ -38,4 +38,4 @@ async function bootstrap(): Promise<void> {
   }
 }
 
-void bootstrap();
+void bootstrap(); // NOSONAR - The worker entrypoint remains CommonJS-compatible; top-level await would change runtime setup.
