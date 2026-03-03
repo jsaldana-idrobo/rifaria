@@ -1,0 +1,14 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { OrderStatusCard } from "@/components/OrderStatusCard";
+const orderId = Astro.url.searchParams.get("order");
+---
+
+<BaseLayout
+  title="Gracias por tu compra | Rifaria"
+  description="Tu orden fue creada. Estamos validando el pago para enviar tus boletas al correo."
+>
+  <main class="container" style="padding:60px 0 80px;">
+    <OrderStatusCard orderId={orderId} client:load />
+  </main>
+</BaseLayout>

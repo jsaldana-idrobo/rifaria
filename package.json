@@ -1,0 +1,25 @@
+{
+  "name": "rifaria",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Rifaria monorepo - Astro + NestJS + MongoDB",
+  "packageManager": "pnpm@10.28.2",
+  "scripts": {
+    "prepare": "bash scripts/setup-git-hooks.sh",
+    "dev": "pnpm -r --parallel --filter @rifaria/shared --filter './apps/*' dev",
+    "dev:web": "pnpm --filter @rifaria/web dev",
+    "dev:api": "pnpm --filter @rifaria/api dev",
+    "dev:worker": "pnpm --filter @rifaria/worker dev",
+    "build": "pnpm -r --filter @rifaria/shared --filter './apps/*' build",
+    "test": "pnpm -r --if-present test",
+    "lint": "pnpm -r --if-present lint",
+    "format": "pnpm -r --if-present format",
+    "format:check": "pnpm -r --if-present format:check",
+    "setup:hooks": "bash scripts/setup-git-hooks.sh",
+    "precommit:run": "bash scripts/git-pre-commit.sh",
+    "prepush:run": "bash scripts/git-pre-push.sh",
+    "infra:up": "docker compose up -d",
+    "infra:down": "docker compose down",
+    "infra:logs": "docker compose logs -f"
+  }
+}

@@ -1,0 +1,514 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  prizeName: string;
+  prizeImageUrl: string;
+  soldTickets: number;
+  totalTickets: number;
+  drawAt: string;
+  drawSource: string;
+}
+
+const {
+  title,
+  description,
+  prizeName,
+  prizeImageUrl,
+  soldTickets,
+  totalTickets,
+  drawAt,
+  drawSource,
+} = Astro.props;
+const progress =
+  totalTickets > 0
+    ? Math.min(100, Math.round((soldTickets / totalTickets) * 100))
+    : 0;
+const remainingTickets = Math.max(totalTickets - soldTickets, 0);
+const drawDate = new Intl.DateTimeFormat("es-CO", {
+  dateStyle: "medium",
+  timeStyle: "short",
+}).format(new Date(drawAt));
+---
+
+<section class="hero container">
+  <div class="hero-copy glass-card">
+    <div class="hero-copy-inner">
+      <div class="hero-eyebrow">
+        <span class="pill pill-hot">Rifa Oficial 2026</span>
+        <span class="hero-live">Pagos locales activos</span>
+      </div>
+
+      <p class="hero-kicker">{title}</p>
+      <h1 class="brand-title">{prizeName}</h1>
+      <p class="hero-lead">{description}</p>
+
+      <div class="hero-metrics">
+        <article>
+          <span class="hero-metric-label">Boletas disponibles</span>
+          <strong>{remainingTickets.toLocaleString("es-CO")}</strong>
+        </article>
+        <article>
+          <span class="hero-metric-label">Ritmo de venta</span>
+          <strong>{progress}%</strong>
+        </article>
+      </div>
+
+      <div class="meta-grid">
+        <article>
+          <h3 class="brand-title">Premio</h3>
+          <p>{prizeName}</p>
+        </article>
+        <article>
+          <h3 class="brand-title">Fecha de Juego</h3>
+          <p>{drawDate}</p>
+        </article>
+        <article>
+          <h3 class="brand-title">Referencia Oficial</h3>
+          <p>{drawSource}</p>
+        </article>
+      </div>
+
+      <div class="progress-wrap">
+        <div
+          class="progress-track"
+          role="progressbar"
+          aria-label="Progreso de boletas vendidas"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow={progress}
+        >
+          <div class="progress-fill" style={`width:${progress}%`}></div>
+        </div>
+        <p>
+          {soldTickets.toLocaleString("es-CO")} / {
+            totalTickets.toLocaleString("es-CO")
+          } boletas vendidas ({progress}%)
+        </p>
+      </div>
+
+      <div class="hero-actions">
+        <a class="cta-btn" href="#comprar">Comprar boletas</a>
+        <p class="hero-assurance">
+          Tarjeta, PSE y Nequi con confirmacion automatica apenas se valida el
+          pago.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-image glass-card">
+    <div class="hero-image-aura"></div>
+    <span class="hero-image-chip">Premio destacado</span>
+    <img
+      src={prizeImageUrl}
+      alt={`Premio: ${prizeName}`}
+      loading="eager"
+      decoding="async"
+      fetchpriority="high"
+      width="1200"
+      height="900"
+      sizes="(max-width: 980px) 92vw, 48vw"
+    />
+    <div class="hero-image-copy">
+      <span class="brand-title">Entrega digital inmediata</span>
+      <strong>{prizeName}</strong>
+    </div>
+    <div class="image-stamp">
+      <span class="brand-title">Compra Min.</span>
+      <strong>10 Boletas</strong>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(320px, 0.84fr) minmax(440px, 1.16fr);
+    align-items: stretch;
+    gap: 26px;
+    padding: 36px 0 20px;
+  }
+
+  .hero-copy,
+  .hero-image {
+    min-height: clamp(560px, 58vw, 710px);
+    height: 100%;
+  }
+
+  .hero-copy {
+    padding: 32px;
+  }
+
+  .hero-copy-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .hero-eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .hero-live {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #0d6f7a;
+  }
+
+  .hero-kicker {
+    margin: 18px 0 0;
+    font-size: 0.82rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #984107;
+  }
+
+  h1 {
+    margin: 14px 0 0;
+    font-size: clamp(4.4rem, 8vw, 7.8rem);
+    line-height: 0.9;
+    color: #13110f;
+    text-wrap: balance;
+  }
+
+  .hero-lead {
+    margin: 16px 0 0;
+    max-width: 34ch;
+    font-size: 1.08rem;
+    line-height: 1.6;
+    color: #47392a;
+  }
+
+  .hero-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 24px;
+  }
+
+  .hero-metrics article {
+    padding: 18px;
+    border: 1px solid rgba(17, 16, 14, 0.1);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.75);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  }
+
+  .hero-metric-label {
+    display: block;
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #7a664f;
+  }
+
+  .hero-metrics strong {
+    display: block;
+    margin-top: 8px;
+    font-family: "Bebas Neue", sans-serif;
+    font-size: clamp(2.2rem, 4vw, 3rem);
+    letter-spacing: 0.06em;
+  }
+
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 14px;
+  }
+
+  .meta-grid article {
+    padding: 16px;
+    border: 1px solid rgba(17, 16, 14, 0.1);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  }
+
+  .meta-grid h3 {
+    margin: 0;
+    font-size: 1.08rem;
+    letter-spacing: 0.08em;
+  }
+
+  .meta-grid p {
+    margin: 8px 0 0;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    color: #433628;
+  }
+
+  .progress-wrap {
+    margin-top: 18px;
+    padding: 18px;
+    border-radius: 24px;
+    background: linear-gradient(
+      160deg,
+      rgba(17, 20, 27, 0.98),
+      rgba(33, 38, 51, 0.95)
+    );
+    color: #fff4df;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 18px 36px rgba(13, 15, 22, 0.2);
+  }
+
+  .progress-track {
+    position: relative;
+    height: 18px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+  }
+
+  .progress-fill {
+    position: relative;
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #ff5b2e, #ff8d1f 56%, #11a7b5);
+    transition: width 0.5s ease;
+  }
+
+  .progress-fill::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.42),
+      transparent
+    );
+    transform: translateX(-100%);
+    animation: shimmer 2.8s linear infinite;
+  }
+
+  .progress-wrap p {
+    margin: 10px 0 0;
+    font-size: 0.95rem;
+    color: rgba(255, 244, 223, 0.84);
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: auto;
+    padding-top: 22px;
+  }
+
+  .hero-assurance {
+    margin: 0;
+    max-width: 26ch;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: #544535;
+  }
+
+  .hero-image {
+    position: relative;
+    overflow: hidden;
+    padding: 14px;
+    isolation: isolate;
+  }
+
+  .hero-image::before {
+    content: "";
+    position: absolute;
+    inset: 14px;
+    z-index: 2;
+    border-radius: 26px;
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.02),
+      transparent 30%,
+      rgba(0, 0, 0, 0.12)
+    );
+    pointer-events: none;
+  }
+
+  .hero-image-aura {
+    position: absolute;
+    top: -2%;
+    right: -4%;
+    z-index: 0;
+    width: 55%;
+    aspect-ratio: 1;
+    border-radius: 999px;
+    background: radial-gradient(
+      circle,
+      rgba(255, 91, 46, 0.58),
+      rgba(255, 177, 31, 0.22) 48%,
+      transparent 72%
+    );
+    filter: blur(24px);
+    animation: float-aura 8s ease-in-out infinite;
+  }
+
+  .hero-image-chip {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    z-index: 3;
+    padding: 10px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    background: rgba(17, 20, 27, 0.86);
+    color: #fff4df;
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .hero-image img {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    border-radius: 26px;
+    object-fit: cover;
+    transform: scale(1.02);
+    transition: transform 0.9s ease;
+  }
+
+  .hero-image:hover img {
+    transform: scale(1.06);
+  }
+
+  .hero-image-copy {
+    position: absolute;
+    left: 34px;
+    bottom: 28px;
+    z-index: 3;
+    max-width: min(48%, 300px);
+    color: #fff9ef;
+    text-shadow: 0 10px 24px rgba(0, 0, 0, 0.26);
+  }
+
+  .hero-image-copy span {
+    font-size: 1rem;
+  }
+
+  .hero-image-copy strong {
+    display: block;
+    margin-top: 8px;
+    font-family: "Bebas Neue", sans-serif;
+    font-size: clamp(2.3rem, 4vw, 3.4rem);
+    letter-spacing: 0.06em;
+    line-height: 0.92;
+  }
+
+  .image-stamp {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    z-index: 3;
+    display: grid;
+    gap: 2px;
+    padding: 14px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 18px;
+    background: rgba(17, 20, 27, 0.88);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.28);
+    color: #fff4df;
+    text-align: right;
+  }
+
+  .image-stamp span {
+    font-size: 0.92rem;
+  }
+
+  .image-stamp strong {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 2rem;
+    letter-spacing: 0.06em;
+  }
+
+  @keyframes shimmer {
+    from {
+      transform: translateX(-100%);
+    }
+
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes float-aura {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+
+    50% {
+      transform: translate3d(-10px, 8px, 0) scale(1.05);
+    }
+  }
+
+  @media (max-width: 980px) {
+    .hero {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-image {
+      order: -1;
+    }
+
+    .hero-copy,
+    .hero-image {
+      min-height: unset;
+      height: auto;
+    }
+
+    .hero-image {
+      min-height: 380px;
+    }
+
+    .meta-grid,
+    .hero-metrics {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-actions {
+      align-items: stretch;
+    }
+
+    .hero-actions .cta-btn {
+      width: 100%;
+    }
+
+    .hero-image-copy {
+      max-width: 62%;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero-copy {
+      padding: 24px;
+    }
+
+    h1 {
+      font-size: clamp(3.3rem, 16vw, 5rem);
+    }
+
+    .hero-image-chip {
+      top: 24px;
+      left: 24px;
+    }
+
+    .hero-image-copy {
+      left: 24px;
+      bottom: 22px;
+      max-width: calc(100% - 170px);
+    }
+  }
+</style>

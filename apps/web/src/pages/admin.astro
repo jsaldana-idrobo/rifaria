@@ -1,0 +1,21 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { AdminPanel } from "@/components/AdminPanel";
+---
+
+<BaseLayout
+  title="Rifaria Admin"
+  description="Panel administrativo de Rifaria para gestionar ventas, pagos y rifas."
+>
+  <meta slot="head" name="robots" content="noindex, nofollow, noarchive" />
+
+  <header
+    class="container"
+    style="padding-top:22px; display:flex; justify-content:space-between; align-items:center;"
+  >
+    <strong class="brand-title" style="font-size:2.1rem;">RIFARIA ADMIN</strong>
+    <a href="/" class="pill">Volver a landing</a>
+  </header>
+
+  <AdminPanel client:load />
+</BaseLayout>

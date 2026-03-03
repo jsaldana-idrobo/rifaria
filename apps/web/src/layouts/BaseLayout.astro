@@ -1,0 +1,63 @@
+---
+import "@/styles/global.css";
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  schema?: Record<string, unknown>;
+}
+
+const { title, description, image, schema } = Astro.props;
+const site = Astro.site ?? new URL("http://localhost:4321");
+const canonical = new URL(Astro.url.pathname, site).toString();
+const ogImage =
+  image ||
+  "https://images.unsplash.com/photo-1505236858219-8359eb29e329?auto=format&fit=crop&w=1200&q=80";
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content={title} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="theme-color" content="#11100e" />
+    <link rel="preconnect" href="https://images.unsplash.com" />
+    <link rel="dns-prefetch" href="//images.unsplash.com" />
+
+    {
+      schema ? (
+        <script
+          is:inline
+          type="application/ld+json"
+          set:html={JSON.stringify(schema)}
+        />
+      ) : null
+    }
+    <slot name="head" />
+  </head>
+  <body>
+    <div class="grid-overlay"></div>
+    <a class="skip-link" href="#main-content">Saltar al contenido principal</a>
+    <div id="main-content">
+      <slot />
+    </div>
+  </body>
+</html>

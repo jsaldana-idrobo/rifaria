@@ -1,0 +1,124 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { fetchActiveRaffle } from "@/lib/api";
+import RaffleHero from "@/components/RaffleHero.astro";
+import { PurchaseWidget } from "@/components/PurchaseWidget";
+
+const raffle = await fetchActiveRaffle();
+const remainingTickets = Math.max(raffle.totalTickets - raffle.soldTickets, 0);
+const soldProgress =
+  raffle.totalTickets > 0
+    ? Math.round((raffle.soldTickets / raffle.totalTickets) * 100)
+    : 0;
+const drawDate = new Intl.DateTimeFormat("es-CO", {
+  day: "2-digit",
+  month: "short",
+}).format(new Date(raffle.drawAt));
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: raffle.title,
+  description: raffle.description,
+  image: raffle.prizeImageUrl,
+  offers: {
+    "@type": "Offer",
+    priceCurrency: "COP",
+    price: "2000",
+    availability: "https://schema.org/InStock",
+  },
+};
+---
+
+<BaseLayout
+  title="Rifaria | Compra boletas online para rifas en Colombia"
+  description="Rifaria: compra boletas de 4 cifras, paga por tarjeta, PSE o Nequi y recibe tus numeros por correo."
+  image={raffle.prizeImageUrl}
+  schema={schema}
+>
+  <header class="site-header container">
+    <div class="brand-lockup">
+      <strong class="brand-title site-brand">RIFARIA</strong>
+      <span class="site-tag"
+        >rifas online con pago local y entrega inmediata</span
+      >
+    </div>
+
+    <div class="header-actions">
+      <span class="pill pill-outline">Sorteo auditado</span>
+      <a class="cta-btn cta-btn-compact" href="#comprar">Quiero participar</a>
+    </div>
+  </header>
+
+  <RaffleHero
+    title={raffle.title}
+    description={raffle.description}
+    prizeName={raffle.prizeName}
+    prizeImageUrl={raffle.prizeImageUrl}
+    soldTickets={raffle.soldTickets}
+    totalTickets={raffle.totalTickets}
+    drawAt={raffle.drawAt}
+    drawSource={raffle.drawSource}
+  />
+
+  <section class="stats-band container" aria-label="Resumen rapido de la rifa">
+    <article class="glass-card stat-card stat-card-hot">
+      <span class="stat-kicker">Traccion actual</span>
+      <strong class="stat-value">{soldProgress}%</strong>
+      <p class="stat-note">del inventario ya fue apartado por compradores.</p>
+    </article>
+
+    <article class="glass-card stat-card">
+      <span class="stat-kicker">Boletas disponibles</span>
+      <strong class="stat-value"
+        >{remainingTickets.toLocaleString("es-CO")}</strong
+      >
+      <p class="stat-note">
+        Todavia puedes entrar antes de que se cierre la venta.
+      </p>
+    </article>
+
+    <article class="glass-card stat-card">
+      <span class="stat-kicker">Fecha clave</span>
+      <strong class="stat-value">{drawDate}</strong>
+      <p class="stat-note">Resultado definido por {raffle.drawSource}.</p>
+    </article>
+  </section>
+
+  <PurchaseWidget raffleTitle={raffle.title} client:load />
+
+  <section class="feature-grid">
+    <article class="glass-card feature-card">
+      <span class="feature-tag">Seguridad</span>
+      <h3 class="brand-title">Compra Transparente</h3>
+      <p>
+        Confirmacion por webhook, boletas unicas por rifa y trazabilidad
+        completa en cada orden.
+      </p>
+    </article>
+    <article class="glass-card feature-card">
+      <span class="feature-tag">Checkout local</span>
+      <h3 class="brand-title">Pago Local</h3>
+      <p>
+        Flujo preparado para tarjeta, PSE y Nequi mediante Wompi, optimizado
+        para Colombia.
+      </p>
+    </article>
+    <article class="glass-card feature-card">
+      <span class="feature-tag">Confianza</span>
+      <h3 class="brand-title">Resultado Oficial</h3>
+      <p>
+        El numero ganador se toma de una loteria oficial definida por el
+        administrador y publicada para todos los participantes.
+      </p>
+    </article>
+  </section>
+
+  <footer class="site-footer container">
+    <span class="site-footer-copy">Rifaria © {new Date().getFullYear()}</span>
+    <div class="site-footer-links">
+      <a class="pill pill-outline" href="/terminos">Terminos</a>
+      <a class="pill pill-outline" href="/politica-datos">Politica de Datos</a>
+    </div>
+  </footer>
+</BaseLayout>

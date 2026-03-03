@@ -1,0 +1,424 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const lastUpdated = "3 de marzo de 2026";
+---
+
+<BaseLayout
+  title="Politica de Tratamiento de Datos | Rifaria"
+  description="Politica de tratamiento, uso y proteccion de datos personales en Rifaria."
+>
+  <main class="legal-shell container">
+    <section class="legal-hero glass-card">
+      <div>
+        <span class="pill pill-hot">Habeas data y privacidad</span>
+        <h1 class="brand-title">Politica de Tratamiento de Datos</h1>
+        <p class="legal-lead">
+          Esta politica regula la recoleccion, almacenamiento, uso, circulacion,
+          transmision, transferencia, supresion y proteccion de datos personales
+          tratados a traves de Rifaria en el contexto de rifas online, pagos,
+          soporte, comunicaciones operativas y relacion con los usuarios. Se
+          estructura con base en el regimen colombiano de proteccion de datos
+          personales y debe complementarse con la informacion del responsable
+          juridico definitivo antes del go-live en produccion.
+        </p>
+      </div>
+
+      <div class="legal-facts">
+        <div class="legal-fact">
+          <span class="legal-fact-label">Ultima actualizacion</span>
+          <strong>{lastUpdated}</strong>
+        </div>
+        <div class="legal-fact">
+          <span class="legal-fact-label">Consultas</span>
+          <strong>10 dias habiles</strong>
+        </div>
+        <div class="legal-fact">
+          <span class="legal-fact-label">Reclamos</span>
+          <strong>15 dias habiles</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="legal-body">
+      <aside class="legal-aside glass-card">
+        <p class="legal-aside-title">Indice</p>
+        <nav class="legal-toc" aria-label="Indice de politica de datos">
+          <a href="#responsable">Responsable y alcance</a>
+          <a href="#roles">Roles de tratamiento</a>
+          <a href="#datos">Datos tratados</a>
+          <a href="#finalidades">Finalidades</a>
+          <a href="#base-legal">Base legal y autorizacion</a>
+          <a href="#derechos">Derechos del titular</a>
+          <a href="#procedimiento">Consultas y reclamos</a>
+          <a href="#seguridad">Seguridad y conservacion</a>
+          <a href="#circulacion">Encargados y circulacion</a>
+          <a href="#menores">Menores de edad</a>
+          <a href="#referencias">Referencias</a>
+        </nav>
+
+        <div class="legal-note">
+          Antes de publicar esta politica debes completar la razon social, NIT,
+          domicilio y canal de habeas data del responsable real del tratamiento
+          y del operador juridicamente autorizado de cada rifa.
+        </div>
+      </aside>
+
+      <article class="legal-content glass-card">
+        <section class="legal-section" id="responsable">
+          <h2 class="brand-title">1. Responsable del tratamiento y alcance</h2>
+          <p>
+            Para efectos de esta politica, no debe presumirse que Rifaria es
+            siempre el unico responsable del tratamiento. Dependiendo de la rifa
+            y de la estructura contractual, Rifaria podra actuar como
+            responsable independiente para ciertos datos del canal digital, como
+            encargado del tratamiento por cuenta del operador autorizado, o de
+            forma coordinada con dicho operador en finalidades especificas.
+            Antes de la salida a produccion se debera publicar expresamente:
+            razon social, NIT, domicilio, correo electronico de atencion de
+            habeas data, telefono y area encargada de peticiones, consultas y
+            reclamos.
+          </p>
+          <p>
+            Esta politica aplica a toda informacion personal tratada por medios
+            digitales o fisicos en el marco de la venta de boletas, validacion
+            de pagos, entrega de premios, soporte, seguridad, cumplimiento
+            normativo y comunicaciones relacionadas con rifas online.
+          </p>
+        </section>
+
+        <section class="legal-section" id="roles">
+          <h2 class="brand-title">
+            2. Roles de tratamiento: plataforma, operador y terceros
+          </h2>
+          <p>
+            Cada rifa publicada debe informar una matriz clara de tratamiento de
+            datos. Esta separacion reduce el riesgo de confundir a quien
+            responde por la base principal de participantes, por la validacion
+            del ganador y por las obligaciones regulatorias frente a la
+            autoridad.
+          </p>
+
+          <div class="legal-grid">
+            <div class="legal-card">
+              <strong>Rifaria como plataforma</strong>
+              Puede actuar como responsable o encargado respecto de logs, autenticacion
+              del sitio, soporte del canal, comunicaciones operativas, analitica tecnica
+              y trazabilidad de la orden.
+            </div>
+            <div class="legal-card">
+              <strong>Operador autorizado</strong>
+              Debe asumir, como minimo, la responsabilidad principal sobre la base
+              de participantes, validacion de identidad del ganador, entrega del premio,
+              expedientes regulatorios y atencion sustancial de reclamaciones.
+            </div>
+            <div class="legal-card">
+              <strong>Pasarela de pago</strong>
+              Trata datos del medio de pago y de transaccion bajo su propia calidad
+              juridica y bajo sus politicas de privacidad, sin perjuicio de los datos
+              estrictamente necesarios que reporte al operador o a Rifaria para confirmar
+              la orden.
+            </div>
+            <div class="legal-card">
+              <strong>Proveedores de soporte</strong>
+              Infraestructura, correo transaccional, hosting y monitoreo solo deberian
+              acceder a la informacion necesaria para la prestacion del servicio y
+              bajo obligaciones de confidencialidad y seguridad.
+            </div>
+          </div>
+        </section>
+
+        <section class="legal-section" id="datos">
+          <h2 class="brand-title">3. Categorias de datos tratados</h2>
+          <p>
+            Rifaria podra tratar los datos personales estrictamente necesarios
+            para operar la plataforma y gestionar cada rifa. La recoleccion
+            debera ser adecuada, pertinente y no excesiva frente a la finalidad
+            informada.
+          </p>
+
+          <div class="legal-grid">
+            <div class="legal-card">
+              <strong>Identificacion</strong>
+              Nombre completo, tipo y numero de documento, ciudad o datos de validacion
+              del ganador, cuando correspondan.
+            </div>
+            <div class="legal-card">
+              <strong>Contacto</strong>
+              Correo electronico, numero celular, direccion y canales de respuesta.
+            </div>
+            <div class="legal-card">
+              <strong>Transaccionales</strong>
+              Ordenes, boletas asignadas, estados de pago, referencias, trazas antifraude
+              y comprobantes.
+            </div>
+            <div class="legal-card">
+              <strong>Tecnicos</strong>
+              IP, logs de acceso, identificadores de dispositivo, navegador y eventos
+              de seguridad.
+            </div>
+          </div>
+
+          <p>
+            Rifaria no solicitara datos sensibles salvo que exista necesidad
+            legal, contractual, operativa o de seguridad claramente justificada
+            y se cuente con la autorizacion expresa exigida por la ley. Tampoco
+            recolectara deliberadamente datos de menores de edad para la
+            participacion en rifas.
+          </p>
+        </section>
+
+        <section class="legal-section" id="finalidades">
+          <h2 class="brand-title">4. Finalidades del tratamiento</h2>
+          <p>
+            Los datos personales seran tratados para finalidades necesarias,
+            compatibles y previamente informadas al titular. Entre ellas se
+            incluyen:
+          </p>
+          <ul class="legal-list">
+            <li>
+              Crear y gestionar ordenes de compra, pagos, reservas y asignacion
+              de boletas.
+            </li>
+            <li>
+              Enviar comprobantes, confirmaciones, avisos operativos y
+              resultados del sorteo.
+            </li>
+            <li>
+              Prevenir fraude, suplantacion, transacciones irregulares y accesos
+              no autorizados.
+            </li>
+            <li>
+              Atender consultas, PQR, soporte, entrega de premios y validaciones
+              de identidad.
+            </li>
+            <li>
+              Cumplir obligaciones legales, contables, tributarias, regulatorias
+              y requerimientos de autoridad competente.
+            </li>
+          </ul>
+          <p>
+            Las finalidades de marketing, prospeccion comercial o envio de
+            publicidad no esencial solo deberan activarse si el titular otorga
+            una autorizacion previa, expresa e informada, separada de las
+            comunicaciones operativas indispensables.
+          </p>
+          <p>
+            Cuando una finalidad corresponda materialmente al operador
+            autorizado, Rifaria debera tratar los datos solo en la medida de su
+            rol tecnico u operativo. Cuando la finalidad corresponda al
+            funcionamiento propio del sitio, seguridad de la cuenta o soporte de
+            la plataforma, Rifaria podra actuar con autonomia sobre esa capa
+            especifica.
+          </p>
+        </section>
+
+        <section class="legal-section" id="base-legal">
+          <h2 class="brand-title">5. Base legal, autorizacion y principios</h2>
+          <p>
+            El tratamiento de datos se realizara con fundamento en la
+            autorizacion del titular, la necesidad contractual de ejecutar la
+            compra, el cumplimiento de deberes legales y las demas bases
+            habilitadas por la normativa colombiana. Rifaria aplicara, entre
+            otros, los principios de legalidad, finalidad, libertad, veracidad,
+            transparencia, acceso y circulacion restringida, seguridad y
+            confidencialidad.
+          </p>
+          <ul class="legal-list">
+            <li>
+              La autorizacion podra recaudarse por medios electronicos, casillas
+              de aceptacion, formularios y registros conservables.
+            </li>
+            <li>
+              El titular podra revocar la autorizacion cuando proceda, salvo que
+              exista deber legal o contractual que impida la supresion
+              inmediata.
+            </li>
+            <li>
+              Si el titular no autoriza finalidades opcionales, ello no afectara
+              la prestacion de los servicios estrictamente necesarios para la
+              rifa.
+            </li>
+          </ul>
+        </section>
+
+        <section class="legal-section" id="derechos">
+          <h2 class="brand-title">6. Derechos del titular</h2>
+          <p>
+            El titular de los datos personales podra ejercer, en los terminos
+            legales, sus derechos de conocer, actualizar, rectificar y suprimir
+            sus datos, revocar la autorizacion cuando sea procedente, solicitar
+            prueba del consentimiento otorgado, ser informado sobre el uso dado
+            a su informacion y presentar quejas ante la autoridad competente.
+          </p>
+          <div class="legal-kpis">
+            <div class="legal-kpi">
+              <span>Acceso</span>
+              <strong>Conocer y consultar</strong>
+            </div>
+            <div class="legal-kpi">
+              <span>Correccion</span>
+              <strong>Actualizar o rectificar</strong>
+            </div>
+            <div class="legal-kpi">
+              <span>Control</span>
+              <strong>Revocar o suprimir</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="legal-section" id="procedimiento">
+          <h2 class="brand-title">
+            7. Procedimiento para consultas y reclamos
+          </h2>
+          <p>
+            Las consultas y reclamos sobre datos personales deberan presentarse
+            por el canal de habeas data que el responsable publique en
+            produccion. En la solicitud el titular debera identificarse
+            suficientemente, indicar su peticion y, cuando aplique, adjuntar
+            soportes.
+          </p>
+          <ul class="legal-list">
+            <li>
+              Las consultas se responderan en un termino maximo de 10 dias
+              habiles contados desde su recibo. Si no es posible responder en
+              ese plazo, se informara la razon de la demora y la nueva fecha,
+              que no podra superar 5 dias habiles adicionales.
+            </li>
+            <li>
+              Los reclamos se atenderan en un termino maximo de 15 dias habiles.
+              Si no es posible resolverlos a tiempo, se informara la causa de la
+              demora y la fecha estimada de respuesta, que no podra superar 8
+              dias habiles adicionales.
+            </li>
+          </ul>
+          <p>
+            Cuando la solicitud verse sobre supresion o revocatoria, Rifaria
+            evaluara si existe deber legal, contable, antifraude, contractual o
+            probatorio que exija conservar la informacion por un tiempo
+            adicional.
+          </p>
+          <p>
+            Si la solicitud versa sobre datos que obran principalmente en cabeza
+            del operador autorizado, Rifaria podra remitirla o gestionarla
+            coordinadamente con dicho operador, sin perjuicio del deber de
+            orientar al titular sobre el canal correcto.
+          </p>
+        </section>
+
+        <section class="legal-section" id="seguridad">
+          <h2 class="brand-title">
+            8. Seguridad de la informacion y conservacion
+          </h2>
+          <p>
+            Rifaria implementara medidas tecnicas, humanas y administrativas
+            razonables para proteger la informacion personal contra perdida,
+            acceso no autorizado, uso indebido, alteracion, divulgacion o
+            destruccion. Estas medidas incluyen controles de acceso,
+            autenticacion, trazabilidad de eventos, segregacion de roles,
+            monitoreo y gestion de incidentes.
+          </p>
+          <p>
+            Los datos se conservaran por el tiempo necesario para cumplir las
+            finalidades informadas y por los plazos minimos que exijan la ley,
+            la contabilidad, la defensa de reclamaciones, el soporte del premio,
+            la prevencion de fraude o la relacion contractual con el titular.
+          </p>
+        </section>
+
+        <section class="legal-section" id="circulacion">
+          <h2 class="brand-title">
+            9. Encargados, transmisiones y circulacion restringida
+          </h2>
+          <p>
+            Rifaria podra compartir datos personales con proveedores y aliados
+            que actuen como encargados del tratamiento, siempre bajo contratos y
+            medidas de seguridad adecuadas. Esto puede incluir pasarelas de
+            pago, servicios de correo transaccional, alojamiento, monitoreo,
+            soporte tecnico, analitica, verificaciones antifraude y
+            cumplimiento.
+          </p>
+          <ul class="legal-list">
+            <li>
+              La informacion solo se compartira en la medida necesaria para
+              operar la rifa y cumplir obligaciones legales o contractuales.
+            </li>
+            <li>
+              Si existieran transmisiones o transferencias internacionales,
+              estas deberan sujetarse a la normativa colombiana y a garantias
+              contractuales apropiadas.
+            </li>
+            <li>
+              No se venderan bases de datos personales ni se cedera informacion
+              para usos no autorizados por el titular.
+            </li>
+          </ul>
+        </section>
+
+        <section class="legal-section" id="menores">
+          <h2 class="brand-title">10. Menores de edad</h2>
+          <p>
+            Las rifas publicadas en Rifaria estan dirigidas exclusivamente a
+            mayores de edad. En consecuencia, el sitio no esta disenado para
+            captar deliberadamente datos personales de ninos, ninas o
+            adolescentes con fines de participacion en sorteos o venta de
+            boletas. Si se detecta recoleccion accidental de datos de un menor,
+            la informacion sera bloqueada, revisada y eliminada cuando proceda
+            conforme a la ley.
+          </p>
+        </section>
+
+        <section class="legal-section" id="referencias">
+          <h2 class="brand-title">
+            11. Actualizaciones y referencias regulatorias
+          </h2>
+          <p>
+            Rifaria podra actualizar esta politica cuando cambien sus procesos,
+            tecnologias, proveedores, finalidades o la normativa aplicable. Toda
+            version nueva debera publicar su fecha de actualizacion y mantenerse
+            accesible para consulta del titular.
+          </p>
+          <p>
+            Antes de usar esta version en produccion, un abogado o equipo de
+            compliance debe completarla con los datos societarios definitivos y
+            validar su coherencia con el modelo operativo real de la rifa, la
+            pasarela de pagos, los proveedores y el canal de soporte.
+          </p>
+
+          <div class="legal-divider"></div>
+
+          <ul class="legal-links">
+            <li>
+              <a
+                href="https://www.sic.gov.co/sites/default/files/files/Nuestra_Entidad/Publicaciones/Proteccion_Datos_Personales/preguntas_claves_habeas_data(1).pdf"
+                target="_blank"
+                rel="noreferrer"
+              >
+                SIC - Preguntas claves sobre habeas data y proteccion de datos
+                personales
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://www.rnbd.com.co/politica-de-tratamiento-de-datos-personales"
+                target="_blank"
+                rel="noreferrer"
+              >
+                RNBD - Politica de tratamiento de datos personales
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=49981"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Ley 1581 de 2012 - Proteccion de datos personales
+              </a>
+            </li>
+          </ul>
+        </section>
+      </article>
+    </section>
+  </main>
+</BaseLayout>

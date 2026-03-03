@@ -1,0 +1,465 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const lastUpdated = "3 de marzo de 2026";
+---
+
+<BaseLayout
+  title="Terminos y Condiciones | Rifaria"
+  description="Terminos y condiciones de participacion en rifas online publicadas en Rifaria."
+>
+  <main class="legal-shell container">
+    <section class="legal-hero glass-card">
+      <div>
+        <span class="pill pill-hot">Rifas online y cumplimiento</span>
+        <h1 class="brand-title">Terminos y Condiciones</h1>
+        <p class="legal-lead">
+          Este documento regula la publicacion, promocion, venta de boletas,
+          participacion, asignacion de numeros, sorteo, entrega de premios y
+          atencion al usuario en Rifaria. Su objetivo es servir como base
+          contractual y operativa para rifas online en Colombia, sujeto a la
+          normativa aplicable y a la autorizacion administrativa que corresponda
+          en cada caso.
+        </p>
+      </div>
+
+      <div class="legal-facts">
+        <div class="legal-fact">
+          <span class="legal-fact-label">Ultima actualizacion</span>
+          <strong>{lastUpdated}</strong>
+        </div>
+        <div class="legal-fact">
+          <span class="legal-fact-label">Participacion</span>
+          <strong>Solo mayores de edad</strong>
+        </div>
+        <div class="legal-fact">
+          <span class="legal-fact-label">Condicion legal</span>
+          <strong>Operacion sujeta a autorizacion</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="legal-body">
+      <aside class="legal-aside glass-card">
+        <p class="legal-aside-title">Indice</p>
+        <nav class="legal-toc" aria-label="Indice de terminos">
+          <a href="#aviso-previo">Aviso previo</a>
+          <a href="#roles">Matriz de roles</a>
+          <a href="#naturaleza">Naturaleza de la rifa</a>
+          <a href="#informacion-obligatoria">Informacion obligatoria</a>
+          <a href="#participacion">Participacion y elegibilidad</a>
+          <a href="#compra">Compra y pagos</a>
+          <a href="#sorteo">Sorteo y resultado</a>
+          <a href="#premio">Entrega del premio</a>
+          <a href="#suspension">Suspension y reprogramacion</a>
+          <a href="#conducta">Conducta y fraude</a>
+          <a href="#pqr">PQR y referencias</a>
+        </nav>
+
+        <div class="legal-note">
+          Antes de publicar una rifa real en produccion debes completar y
+          exhibir la razon social del operador autorizado, NIT, domicilio,
+          autoridad competente, acto administrativo de autorizacion, territorio,
+          plan de premios, garantias, canales PQR y reglas particulares.
+        </div>
+      </aside>
+
+      <article class="legal-content glass-card">
+        <section class="legal-section" id="aviso-previo">
+          <h2 class="brand-title">1. Aviso previo de cumplimiento</h2>
+          <p>
+            Rifaria no debe presentarse en abstracto como la entidad que
+            autoriza o habilita por si misma una rifa. Salvo que exista una
+            persona juridica titular de la autorizacion administrativa y ello
+            quede expresamente informado, Rifaria debe entenderse como marca,
+            sitio web, infraestructura tecnologica y canal digital para la
+            publicacion, promocion y/o comercializacion de rifas de terceros o
+            del operador juridicamente responsable.
+          </p>
+          <p>
+            Este documento no reemplaza la resolucion o autorizacion particular
+            de cada rifa. Si existe una diferencia entre estos terminos y la
+            ficha juridica especifica de una rifa, prevalecera la ficha
+            particular en aquello que no contradiga la ley ni afecte derechos
+            del consumidor.
+          </p>
+
+          <div class="legal-kpis">
+            <div class="legal-kpi">
+              <span>Marco general</span>
+              <strong>Ley 643 de 2001</strong>
+            </div>
+            <div class="legal-kpi">
+              <span>Operacion online</span>
+              <strong>Decreto 1486 de 2024</strong>
+            </div>
+            <div class="legal-kpi">
+              <span>Venta valida</span>
+              <strong>Boleta nominativa y trazable</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="legal-section" id="roles">
+          <h2 class="brand-title">
+            2. Matriz de roles: plataforma, operador y pasarela
+          </h2>
+          <p>
+            Para evitar ambiguedades frente al usuario y a la autoridad, cada
+            rifa publicada debera identificar con precision quien cumple cada
+            funcion. Esta separacion es especialmente importante cuando la rifa
+            se ofrece por internet y participan terceros como plataformas
+            tecnologicas, fuerza de venta digital, procesadores de pago y
+            proveedores de soporte.
+          </p>
+
+          <div class="legal-grid">
+            <div class="legal-card">
+              <strong>Rifaria como plataforma tecnologica</strong>
+              Publica la landing, administra la experiencia digital, registra trazas
+              operativas, integra la pasarela y presta soporte de primer nivel sobre
+              el canal, sin reemplazar la responsabilidad legal del operador de la
+              rifa.
+            </div>
+            <div class="legal-card">
+              <strong>Operador autorizado de la rifa</strong>
+              Asume la titularidad juridica de la rifa, obtiene y conserva la autorizacion
+              administrativa, define el plan de premios, responde por impuestos, garantias,
+              entrega del premio, PQR sustanciales y cumplimiento regulatorio.
+            </div>
+            <div class="legal-card">
+              <strong>Pasarela o proveedor de pagos</strong>
+              Procesa la transaccion bajo sus propios terminos y politicas, administra
+              validaciones antifraude del medio de pago y reporta el estado necesario
+              para confirmar la orden.
+            </div>
+            <div class="legal-card">
+              <strong>Anexo juridico por rifa</strong>
+              Debe dejar visible si Rifaria actua solo como plataforma, canal de venta,
+              mandatario, encargado, aliado comercial o ademas como operador juridico
+              del sorteo.
+            </div>
+          </div>
+
+          <p>
+            Si una rifa no identifica claramente esta matriz de roles, la
+            publicacion deberia considerarse incompleta desde el punto de vista
+            de cumplimiento y no deberia habilitarse para compra en produccion.
+          </p>
+        </section>
+
+        <section class="legal-section" id="naturaleza">
+          <h2 class="brand-title">3. Naturaleza de la rifa</h2>
+          <p>
+            Cada rifa publicada en Rifaria debera corresponder a un juego de
+            suerte y azar no permanente, ofrecido mediante boletas o numeros
+            adquiridos a un precio fijo y con un premio en especie claramente
+            determinado. La rifa no podra presentarse como inversion, ahorro,
+            credito, instrumento financiero ni promesa de rentabilidad.
+          </p>
+          <ul class="legal-list">
+            <li>
+              La rifa debe informar el bien o premio ofrecido, su estado, sus
+              restricciones y las condiciones de entrega.
+            </li>
+            <li>
+              La venta online solo deberia habilitarse cuando el operador ya
+              cuente con la autorizacion correspondiente o con el soporte legal
+              exigible para su jurisdiccion.
+            </li>
+            <li>
+              El territorio de comercializacion debe coincidir con el alcance
+              autorizado para la rifa.
+            </li>
+          </ul>
+        </section>
+
+        <section class="legal-section" id="informacion-obligatoria">
+          <h2 class="brand-title">4. Informacion obligatoria por cada rifa</h2>
+          <p>
+            Antes de la compra, el participante debe poder consultar una ficha
+            clara y completa de la rifa. Rifaria debera exhibir, como minimo, la
+            siguiente informacion en la landing o en un anexo juridico visible.
+          </p>
+
+          <div class="legal-grid">
+            <div class="legal-card">
+              <strong>Identificacion del operador</strong>
+              Nombre o razon social, NIT, domicilio, canales de contacto y datos del
+              responsable de la rifa.
+            </div>
+            <div class="legal-card">
+              <strong>Rol exacto de Rifaria</strong>
+              Indicar si Rifaria actua como plataforma tecnologica, fuerza de venta,
+              canal digital, encargado operativo, aliado comercial o como operador
+              de la rifa.
+            </div>
+            <div class="legal-card">
+              <strong>Soporte de autorizacion</strong>
+              Autoridad competente, numero y fecha del acto administrativo, vigencia
+              y ambito territorial de la autorizacion.
+            </div>
+            <div class="legal-card">
+              <strong>Plan de la rifa</strong>
+              Premio, cantidad total de boletas, numeracion, precio unitario, fecha
+              de cierre y condiciones de entrega.
+            </div>
+            <div class="legal-card">
+              <strong>Mecanica de resultado</strong>
+              Fecha, hora, fuente oficial del numero ganador y procedimiento de validacion
+              del ganador.
+            </div>
+          </div>
+
+          <p>
+            Cuando el alcance de la rifa cambie de municipio, departamento o
+            cubra un ambito nacional, el operador debera revisar nuevamente la
+            autoridad competente y abstenerse de vender boletas fuera del
+            territorio autorizado.
+          </p>
+        </section>
+
+        <section class="legal-section" id="participacion">
+          <h2 class="brand-title">5. Participacion y elegibilidad</h2>
+          <p>
+            Solo podran participar personas naturales mayores de 18 anos con
+            capacidad legal para contratar y recibir el premio. El participante
+            declara que la informacion entregada en la compra es veraz, exacta y
+            actualizada. Rifaria y/o el operador podran rechazar, anular o
+            suspender participaciones cuando existan indicios razonables de
+            suplantacion, uso de identidad de terceros, incumplimiento legal o
+            fraude.
+          </p>
+          <ul class="legal-list">
+            <li>No se venderan boletas a menores de edad.</li>
+            <li>
+              El usuario debe verificar que puede participar desde el territorio
+              donde se encuentra.
+            </li>
+            <li>
+              El operador podra pedir documentos adicionales para validar
+              identidad, titularidad del pago o entrega del premio.
+            </li>
+          </ul>
+        </section>
+
+        <section class="legal-section" id="compra">
+          <h2 class="brand-title">6. Compra, pagos y asignacion de boletas</h2>
+          <p>
+            La compra se perfecciona cuando el pago es confirmado por los
+            mecanismos definidos por la pasarela y el sistema de Rifaria asigna
+            boletas unicas a la orden. La sola intencion de compra, la orden
+            iniciada o el pago pendiente no garantizan cupo ni reserva
+            definitiva hasta la confirmacion efectiva del recaudo.
+          </p>
+          <ul class="legal-list">
+            <li>
+              Cada boleta o numero asignado sera nominativo, quedara vinculado
+              al comprador y no podra duplicarse dentro de la misma rifa.
+            </li>
+            <li>
+              Los valores cobrados incluiran el precio publicado de la boleta y,
+              cuando aplique, cualquier costo adicional debera estar informado
+              antes de pagar.
+            </li>
+            <li>
+              El comprobante electronico de compra y los correos operativos
+              hacen parte de la evidencia contractual.
+            </li>
+          </ul>
+          <p>
+            Si una transaccion se marca como fallida, reversada, desconocida o
+            cuestionada por fraude, el operador podra anular la asignacion de
+            boletas afectadas y adoptar las medidas de control correspondientes.
+          </p>
+          <p>
+            En esta etapa, Rifaria responde por la disponibilidad y trazabilidad
+            del canal digital dentro de sus capacidades tecnicas, mientras que
+            el operador autorizado responde por la validez juridica de la
+            oferta, la disponibilidad real del premio, la numeracion vendida y
+            la integridad material del reglamento.
+          </p>
+        </section>
+
+        <section class="legal-section" id="sorteo">
+          <h2 class="brand-title">
+            7. Sorteo, resultado y validacion del ganador
+          </h2>
+          <p>
+            Cada rifa debera informar de manera previa el mecanismo de
+            determinacion del numero ganador. El resultado podra basarse en una
+            loteria oficial, en el sorteo que autorice la autoridad competente o
+            en el mecanismo expresamente aprobado en la ficha de la rifa. El
+            sistema publicara el resultado con trazabilidad suficiente para su
+            verificacion.
+          </p>
+          <ul class="legal-list">
+            <li>
+              La fuente oficial del resultado debe estar anunciada antes del
+              cierre de ventas.
+            </li>
+            <li>
+              El ganador debera coincidir con una boleta valida, pagada, no
+              anulada y asignada correctamente.
+            </li>
+            <li>
+              Si la ficha legal preve un numero de respaldo, procedimiento de
+              desempate o una regla de validacion adicional, esta se aplicara
+              segun lo autorizado.
+            </li>
+          </ul>
+        </section>
+
+        <section class="legal-section" id="premio">
+          <h2 class="brand-title">
+            8. Entrega, reclamacion y perdida del premio
+          </h2>
+          <p>
+            El ganador debera acreditar identidad, titularidad de la compra y el
+            cumplimiento de los requisitos anunciados para recibir el premio. La
+            entrega se realizara dentro del plazo informado en la ficha
+            particular de la rifa y podra condicionarse a la firma del acta de
+            entrega, soportes tributarios y verificaciones razonables de
+            seguridad.
+          </p>
+          <div class="legal-grid">
+            <div class="legal-card">
+              <strong>Documentos minimos</strong>
+              Cedula o documento equivalente, soportes de la compra y datos de contacto
+              vigentes.
+            </div>
+            <div class="legal-card">
+              <strong>Costos e impuestos</strong>
+              Se informaran segun la ley aplicable y las reglas especificas de la
+              rifa.
+            </div>
+          </div>
+          <p>
+            Si el ganador no reclama el premio dentro del plazo legal o
+            reglamentario aplicable, el operador seguira el procedimiento
+            previsto en la autorizacion, en el reglamento de la rifa y en la
+            normativa vigente.
+          </p>
+          <p>
+            Salvo que la ficha particular diga lo contrario, Rifaria no sera
+            depositaria ni tenedora material del premio; su intervencion se
+            limita al soporte de la evidencia digital y a la comunicacion
+            operativa del proceso de entrega.
+          </p>
+        </section>
+
+        <section class="legal-section" id="suspension">
+          <h2 class="brand-title">
+            9. Suspension, reprogramacion, devoluciones y reversos
+          </h2>
+          <p>
+            Rifaria y/o el operador podran suspender temporalmente la venta,
+            aplazar el sorteo o reprogramar fechas cuando exista causa legal,
+            tecnica, operativa, de fuerza mayor, caso fortuito o instruccion de
+            la autoridad competente. Toda novedad material debera comunicarse
+            oportunamente al participante por los canales registrados.
+          </p>
+          <ul class="legal-list">
+            <li>
+              La reprogramacion no dara lugar automaticamente a devolucion,
+              salvo que la ley, la autoridad competente, la pasarela o la regla
+              especifica de la rifa dispongan lo contrario.
+            </li>
+            <li>
+              Los reversos por cobro duplicado, transaccion no reconocida o
+              error operativo se atenderan conforme a la normativa de pagos y a
+              los procedimientos de la pasarela.
+            </li>
+            <li>
+              Si una rifa debe cancelarse definitivamente, el operador informara
+              el procedimiento de devolucion aplicable.
+            </li>
+          </ul>
+        </section>
+
+        <section class="legal-section" id="conducta">
+          <h2 class="brand-title">
+            10. Conducta del usuario, monitoreo y fraude
+          </h2>
+          <p>
+            El participante se obliga a usar Rifaria de forma licita, diligente
+            y de buena fe. Queda prohibido manipular el sistema, emplear bots,
+            crear cuentas falsas, realizar pagos con instrumentos no
+            autorizados, alterar comprobantes o ejecutar cualquier accion que
+            afecte la transparencia de la rifa.
+          </p>
+          <p>
+            Rifaria y/o el operador podran bloquear transacciones, retener
+            temporalmente una compra para validacion, cancelar boletas
+            irregulares o reportar eventos a autoridades y terceros competentes
+            cuando existan hallazgos de fraude, lavado de activos, suplantacion
+            o uso indebido de datos.
+          </p>
+        </section>
+
+        <section class="legal-section" id="pqr">
+          <h2 class="brand-title">
+            11. PQR, datos personales y referencias regulatorias
+          </h2>
+          <p>
+            Toda solicitud, peticion, queja o reclamo podra presentarse por los
+            canales que el operador publique en la ficha de la rifa y en los
+            comprobantes de compra. El tratamiento de datos personales se rige
+            por la Politica de Tratamiento de Datos publicada por Rifaria y por
+            las autorizaciones expresas otorgadas por el titular.
+          </p>
+          <p>
+            Las reclamaciones sobre autorizacion de la rifa, plan de premios,
+            entrega del bien, obligaciones regulatorias, impuestos o validez
+            sustancial del sorteo deberan dirigirse principalmente al operador
+            autorizado identificado en la ficha juridica. Las incidencias sobre
+            usabilidad del sitio, errores del canal, disponibilidad de la cuenta
+            o soporte operativo del flujo digital podran ser atendidas por
+            Rifaria segun su rol contractual.
+          </p>
+          <p>
+            Estos terminos se interpretan conforme a la ley colombiana. Antes de
+            salir a produccion, el operador debe someter este texto a revision
+            juridica final para completar datos societarios, definir el alcance
+            territorial de cada rifa y validar que la mecanica operativa
+            coincida con la autorizacion expedida por la autoridad competente.
+          </p>
+
+          <div class="legal-divider"></div>
+
+          <ul class="legal-links">
+            <li>
+              <a
+                href="https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=4584"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Ley 643 de 2001 - Regimen propio de los juegos de suerte y azar
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://www.coljuegos.gov.co/publicaciones/101842/asi-operaran-las-rifas-de-fuerza-venta-por-influencers-en-colombia/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Coljuegos - Asi operaran las rifas de fuerza de venta por
+                internet en Colombia
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://www.coljuegos.gov.co/publicaciones/101067/coljuegos-publica-para-comentarios-el-proyecto-que-regula-rifas-operadas-por-internet/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Coljuegos - Antecedentes regulatorios sobre rifas operadas por
+                internet
+              </a>
+            </li>
+          </ul>
+        </section>
+      </article>
+    </section>
+  </main>
+</BaseLayout>
