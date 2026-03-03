@@ -2,10 +2,11 @@ import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
-NestFactory.createApplicationContext(AppModule, {
-  logger: ['log', 'error', 'warn']
-})
-  .then(async (app) => {
+async function bootstrap(): Promise<void> {
+  try {
+    const app = await NestFactory.createApplicationContext(AppModule, {
+      logger: ['log', 'error', 'warn']
+    });
     const logger = new Logger('WorkerMain');
     logger.log('Rifaria worker started and listening for jobs');
 
@@ -30,10 +31,11 @@ NestFactory.createApplicationContext(AppModule, {
     process.on('uncaughtException', (error) => {
       logger.error(`Uncaught exception: ${error.message}`);
     });
-  })
-  .catch((error: unknown) => {
-    // NOSONAR - Worker entrypoint remains CommonJS-compatible; top-level await would change the runtime contract.
+  } catch (error: unknown) {
     const logger = new Logger('WorkerMain');
     logger.error(error instanceof Error ? (error.stack ?? error.message) : String(error));
     process.exit(1);
-  });
+  }
+}
+
+void bootstrap();

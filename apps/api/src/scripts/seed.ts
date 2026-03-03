@@ -57,15 +57,19 @@ async function seedData(): Promise<void> {
   }
 }
 
-mongoose
-  .connect(env.MONGODB_URI)
-  .then(seedData)
-  .catch((error: unknown) => {
+async function runSeed(): Promise<void> {
+  try {
+    await mongoose.connect(env.MONGODB_URI);
+    await seedData();
+  } catch (error: unknown) {
     const message = error instanceof Error ? (error.stack ?? error.message) : String(error);
     console.error(message);
     process.exitCode = 1;
-  })
-  .finally(async () => {
-    // NOSONAR - Seed script stays CommonJS-compatible, so top-level await is intentionally avoided.
-    await mongoose.disconnect();
-  });
+  } finally {
+    if (mongoose.connection.readyState !== 0) {
+      await mongoose.disconnect();
+    }
+  }
+}
+
+void runSeed();
