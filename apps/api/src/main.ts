@@ -45,4 +45,4 @@ NestFactory.create(AppModule, {
     const message = error instanceof Error ? (error.stack ?? error.message) : String(error);
     console.error(message);
     process.exit(1);
-  });
+  }); // NOSONAR - NestJS CommonJS bootstrap cannot use top-level await without changing runtime module format.

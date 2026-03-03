@@ -67,4 +67,4 @@ mongoose
   })
   .finally(async () => {
     await mongoose.disconnect();
-  });
+  }); // NOSONAR - Seed script stays CommonJS-compatible, so top-level await is intentionally avoided.
