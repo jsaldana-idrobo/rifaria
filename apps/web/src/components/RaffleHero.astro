@@ -25,10 +25,45 @@ const progress =
     ? Math.min(100, Math.round((soldTickets / totalTickets) * 100))
     : 0;
 const remainingTickets = Math.max(totalTickets - soldTickets, 0);
+const isLongPrizeName = prizeName.trim().length > 22;
+const prizeWords = prizeName.trim().split(/\s+/).filter(Boolean);
 const drawDate = new Intl.DateTimeFormat("es-CO", {
   dateStyle: "medium",
   timeStyle: "short",
 }).format(new Date(drawAt));
+
+const bestSplitIndex = (() => {
+  if (!isLongPrizeName || prizeWords.length < 2) {
+    return 0;
+  }
+
+  let bestIndex = 1;
+  let bestDelta = Number.POSITIVE_INFINITY;
+
+  for (let index = 1; index < prizeWords.length; index += 1) {
+    const left = prizeWords.slice(0, index).join(" ");
+    const right = prizeWords.slice(index).join(" ");
+    const delta = Math.abs(left.length - right.length);
+
+    if (delta < bestDelta) {
+      bestDelta = delta;
+      bestIndex = index;
+    }
+  }
+
+  return bestIndex;
+})();
+const heroTitlePrimary =
+  isLongPrizeName && bestSplitIndex > 0
+    ? prizeWords.slice(0, bestSplitIndex).join(" ")
+    : prizeName;
+const heroTitleSecondary =
+  isLongPrizeName && bestSplitIndex > 0
+    ? prizeWords.slice(bestSplitIndex).join(" ")
+    : "";
+const heroTitleClass = isLongPrizeName
+  ? "brand-title hero-title hero-title-long"
+  : "brand-title hero-title";
 ---
 
 <section class="hero container">
@@ -40,7 +75,14 @@ const drawDate = new Intl.DateTimeFormat("es-CO", {
       </div>
 
       <p class="hero-kicker">{title}</p>
-      <h1 class="brand-title">{prizeName}</h1>
+      <h1 class={heroTitleClass}>
+        <span class="hero-title-primary">{heroTitlePrimary}</span>
+        {
+          heroTitleSecondary ? (
+            <span class="hero-title-secondary">{heroTitleSecondary}</span>
+          ) : null
+        }
+      </h1>
       <p class="hero-lead">{description}</p>
 
       <div class="hero-metrics">
@@ -97,7 +139,7 @@ const drawDate = new Intl.DateTimeFormat("es-CO", {
     </div>
   </div>
 
-  <div class="hero-image glass-card">
+  <div class="hero-image">
     <div class="hero-image-aura"></div>
     <span class="hero-image-chip">Premio destacado</span>
     <img
@@ -112,7 +154,6 @@ const drawDate = new Intl.DateTimeFormat("es-CO", {
     />
     <div class="hero-image-copy">
       <span class="brand-title">Entrega digital inmediata</span>
-      <strong>{prizeName}</strong>
     </div>
     <div class="image-stamp">
       <span class="brand-title">Compra Min.</span>
@@ -124,7 +165,7 @@ const drawDate = new Intl.DateTimeFormat("es-CO", {
 <style>
   .hero {
     display: grid;
-    grid-template-columns: minmax(320px, 0.84fr) minmax(440px, 1.16fr);
+    grid-template-columns: minmax(320px, 0.8fr) minmax(460px, 1.2fr);
     align-items: stretch;
     gap: 26px;
     padding: 36px 0 20px;
@@ -169,12 +210,54 @@ const drawDate = new Intl.DateTimeFormat("es-CO", {
     color: #984107;
   }
 
-  h1 {
+  .hero-title {
     margin: 14px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    color: #13110f;
+  }
+
+  .hero-title-primary,
+  .hero-title-secondary {
+    display: block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: none;
+  }
+
+  .hero-title-primary {
+    font-size: clamp(4.4rem, 8vw, 7.8rem);
+    line-height: 0.8;
+  }
+
+  .hero-title-secondary {
     font-size: clamp(4.4rem, 8vw, 7.8rem);
     line-height: 0.9;
-    color: #13110f;
-    text-wrap: balance;
+  }
+
+  .hero-title:not(.hero-title-long) .hero-title-secondary {
+    display: none;
+  }
+
+  .hero-title-long {
+    max-width: 100%;
+  }
+
+  .hero-title-long .hero-title-primary {
+    font-size: clamp(3.35rem, 4.5vw, 4.65rem);
+    line-height: 0.9;
+    letter-spacing: 0.06em;
+  }
+
+  .hero-title-long .hero-title-secondary {
+    margin-top: 6px;
+    font-size: clamp(1.72rem, 2.2vw, 2.35rem);
+    line-height: 0.94;
+    letter-spacing: 0.06em;
+    color: #7a3a11;
   }
 
   .hero-lead {
@@ -316,21 +399,23 @@ const drawDate = new Intl.DateTimeFormat("es-CO", {
   .hero-image {
     position: relative;
     overflow: hidden;
-    padding: 14px;
     isolation: isolate;
+    border-radius: 30px;
+    background: #15110d;
+    box-shadow: var(--shadow-strong);
   }
 
   .hero-image::before {
     content: "";
     position: absolute;
-    inset: 14px;
+    inset: 0;
     z-index: 2;
-    border-radius: 26px;
+    border-radius: inherit;
     background: linear-gradient(
       180deg,
-      rgba(0, 0, 0, 0.02),
-      transparent 30%,
-      rgba(0, 0, 0, 0.12)
+      rgba(255, 255, 255, 0.04),
+      transparent 28%,
+      rgba(0, 0, 0, 0.24)
     );
     pointer-events: none;
   }
@@ -374,9 +459,9 @@ const drawDate = new Intl.DateTimeFormat("es-CO", {
     z-index: 1;
     width: 100%;
     height: 100%;
-    border-radius: 26px;
+    border-radius: inherit;
     object-fit: cover;
-    transform: scale(1.02);
+    transform: scale(1.01);
     transition: transform 0.9s ease;
   }
 
@@ -387,24 +472,23 @@ const drawDate = new Intl.DateTimeFormat("es-CO", {
   .hero-image-copy {
     position: absolute;
     left: 34px;
-    bottom: 28px;
+    bottom: 24px;
     z-index: 3;
-    max-width: min(48%, 300px);
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    background: rgba(17, 20, 27, 0.72);
+    backdrop-filter: blur(12px);
     color: #fff9ef;
-    text-shadow: 0 10px 24px rgba(0, 0, 0, 0.26);
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.18);
   }
 
   .hero-image-copy span {
-    font-size: 1rem;
-  }
-
-  .hero-image-copy strong {
-    display: block;
-    margin-top: 8px;
-    font-family: "Bebas Neue", sans-serif;
-    font-size: clamp(2.3rem, 4vw, 3.4rem);
-    letter-spacing: 0.06em;
-    line-height: 0.92;
+    font-size: 0.98rem;
+    letter-spacing: 0.12em;
+    line-height: 1;
   }
 
   .image-stamp {
@@ -454,6 +538,20 @@ const drawDate = new Intl.DateTimeFormat("es-CO", {
     }
   }
 
+  @media (min-width: 1200px) {
+    .hero {
+      grid-template-columns: minmax(300px, 0.74fr) minmax(540px, 1.26fr);
+    }
+
+    .hero-title-long .hero-title-primary {
+      font-size: clamp(3rem, 4vw, 4.2rem);
+    }
+
+    .hero-title-long .hero-title-secondary {
+      font-size: clamp(1.55rem, 1.9vw, 2rem);
+    }
+  }
+
   @media (max-width: 980px) {
     .hero {
       grid-template-columns: 1fr;
@@ -496,8 +594,23 @@ const drawDate = new Intl.DateTimeFormat("es-CO", {
       padding: 24px;
     }
 
-    h1 {
+    .hero-title-primary {
+      white-space: normal;
       font-size: clamp(3.3rem, 16vw, 5rem);
+    }
+
+    .hero-title-secondary {
+      white-space: normal;
+      font-size: clamp(3.3rem, 16vw, 5rem);
+    }
+
+    .hero-title-long .hero-title-primary {
+      font-size: clamp(2.9rem, 12vw, 4rem);
+    }
+
+    .hero-title-long .hero-title-secondary {
+      margin-top: 8px;
+      font-size: clamp(1.5rem, 5.5vw, 2rem);
     }
 
     .hero-image-chip {
@@ -508,6 +621,7 @@ const drawDate = new Intl.DateTimeFormat("es-CO", {
     .hero-image-copy {
       left: 24px;
       bottom: 22px;
+      padding: 11px 14px;
       max-width: calc(100% - 170px);
     }
   }
