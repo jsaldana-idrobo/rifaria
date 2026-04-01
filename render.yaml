@@ -1,0 +1,36 @@
+services:
+  - type: worker
+    name: rifaria-worker
+    runtime: node
+    plan: starter
+    region: virginia
+    autoDeployTrigger: commit
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter @rifaria/worker build
+    startCommand: pnpm --filter @rifaria/worker start
+    maxShutdownDelaySeconds: 120
+    buildFilter:
+      paths:
+        - apps/worker/**
+        - package.json
+        - pnpm-lock.yaml
+        - pnpm-workspace.yaml
+        - tsconfig.base.json
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: REDIS_HOST
+        sync: false
+      - key: REDIS_PORT
+        sync: false
+      - key: REDIS_PASSWORD
+        sync: false
+      - key: EMAIL_PROVIDER
+        value: resend
+      - key: EMAIL_FROM
+        sync: false
+      - key: EMAIL_REPLY_TO
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false

@@ -60,13 +60,14 @@ Al correr `pnpm install`, el proyecto intenta configurar hooks de git para:
 
 Si la carpeta no es un repo git, el setup de hooks se omite de forma segura.
 
-## GitHub Actions, Vercel y Sonar
+## GitHub Actions, Vercel, Render y Sonar
 
 El repo incluye automatizacion para calidad y analisis Sonar.
 
 - `CI`: corre `format:check`, `lint`, `test` y `build`
 - `Sonar`: ejecuta analisis en pushes y PRs
-- `Vercel`: `apps/web` esta conectado al repo GitHub y despliega de forma nativa por cada push/PR
+- `Vercel`: `apps/web` (`rifaria`) y la API (`rifaria-api`) despliegan por push/manual
+- `Render`: `apps/worker` se despliega como `Background Worker` con `render.yaml`
 
 Secrets/vars necesarios en GitHub para Sonar:
 
@@ -99,3 +100,4 @@ SONAR_PROJECT_KEY       # variable del repo
 - El worker ya soporta envio real por `resend` y `postmark`.
 - API responde `x-request-id` en todas las rutas para trazabilidad de incidentes.
 - Guia de variables productivas: `docs/runbooks/production-env-secrets.md`
+- Guia de deploy del worker: `docs/runbooks/render-worker-deploy.md`

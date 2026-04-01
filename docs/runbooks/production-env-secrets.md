@@ -65,3 +65,19 @@ pnpm build
 pnpm --filter @rifaria/api start
 pnpm --filter @rifaria/worker start
 ```
+
+## 4) Host recomendado para el worker
+
+- `web`: Vercel
+- `api`: Vercel
+- `worker`: Render `Background Worker`
+
+Motivo:
+
+- el worker necesita un proceso continuo para BullMQ
+- procesa correos y expiracion de reservas en segundo plano
+- no depende de un request HTTP entrante
+
+Referencia operativa:
+
+- `docs/runbooks/render-worker-deploy.md`

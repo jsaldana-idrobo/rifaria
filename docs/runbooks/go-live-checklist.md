@@ -12,6 +12,7 @@ Fecha: 2026-02-20
 - [ ] `WEB_BASE_URL` al dominio final.
 - [ ] `EMAIL_PROVIDER` real (`resend` o `postmark`) y remitente validado.
 - [ ] `RESEND_API_KEY` o `POSTMARK_SERVER_TOKEN` configurados segun proveedor.
+- [ ] Worker `rifaria-worker` desplegado y corriendo en Render.
 
 ## 2) Operacion y seguridad
 
