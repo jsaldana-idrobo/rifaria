@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
 import { MongooseModule } from '@nestjs/mongoose';
+import { shouldEnableNotificationQueue } from '../../config/notifications-mode';
 import { QUEUE_NAMES } from '../../jobs/queue-names';
 import { Order, OrderSchema } from '../orders/schemas/order.schema';
 import { PrizeDraw, PrizeDrawSchema } from '../prize-draws/schemas/prize-draw.schema';
@@ -15,9 +16,13 @@ import { NotificationsService } from './notifications.service';
       { name: PrizeDraw.name, schema: PrizeDrawSchema },
       { name: Raffle.name, schema: RaffleSchema }
     ]),
-    BullModule.registerQueue({
-      name: QUEUE_NAMES.NOTIFICATIONS
-    })
+    ...(shouldEnableNotificationQueue()
+      ? [
+          BullModule.registerQueue({
+            name: QUEUE_NAMES.NOTIFICATIONS
+          })
+        ]
+      : [])
   ],
   providers: [NotificationsService, EmailService],
   exports: [NotificationsService]

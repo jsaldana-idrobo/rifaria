@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, Optional } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bullmq';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
@@ -16,8 +16,9 @@ export class NotificationsService {
   private readonly logger = new Logger(NotificationsService.name);
 
   constructor(
+    @Optional()
     @InjectQueue(QUEUE_NAMES.NOTIFICATIONS)
-    private readonly notificationsQueue: Queue,
+    private readonly notificationsQueue: Queue | null,
     private readonly configService: ConfigService,
     @InjectModel(Order.name) private readonly orderModel: Model<Order>,
     @InjectModel(PrizeDraw.name) private readonly prizeDrawModel: Model<PrizeDraw>,
@@ -27,6 +28,10 @@ export class NotificationsService {
 
   async sendTicketEmail(orderId: string): Promise<'queued' | 'sent'> {
     if (this.getNotificationsMode() === 'queue') {
+      if (!this.notificationsQueue) {
+        throw new Error('Notifications queue is not configured');
+      }
+
       await this.notificationsQueue.add(
         JOB_NAMES.SEND_TICKET_EMAIL,
         { orderId },
@@ -88,6 +93,10 @@ export class NotificationsService {
 
   async notifyPostponement(raffleId: string, reason: string): Promise<'queued' | 'sent'> {
     if (this.getNotificationsMode() === 'queue') {
+      if (!this.notificationsQueue) {
+        throw new Error('Notifications queue is not configured');
+      }
+
       await this.notificationsQueue.add(
         JOB_NAMES.NOTIFY_POSTPONEMENT,
         { raffleId, reason },

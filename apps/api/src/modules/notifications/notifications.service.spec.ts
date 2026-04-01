@@ -1,4 +1,11 @@
+import { Test } from '@nestjs/testing';
+import { ConfigService } from '@nestjs/config';
+import { getModelToken } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
+import { EmailService } from './email.service';
+import { Order } from '../orders/schemas/order.schema';
+import { PrizeDraw } from '../prize-draws/schemas/prize-draw.schema';
+import { Raffle } from '../raffles/schemas/raffle.schema';
 import { NotificationsService } from './notifications.service';
 
 describe('NotificationsService', () => {
@@ -111,5 +118,52 @@ describe('NotificationsService', () => {
         subject: 'Tus boletas de Rifaria - Rifa Rifaria'
       })
     );
+  });
+
+  it('can be constructed without a Bull queue when notifications mode is inline', async () => {
+    const moduleRef = await Test.createTestingModule({
+      providers: [
+        NotificationsService,
+        {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn((key: string, defaultValue?: string) => {
+              if (key === 'NOTIFICATIONS_MODE') {
+                return 'inline';
+              }
+
+              return defaultValue;
+            })
+          }
+        },
+        {
+          provide: getModelToken(Order.name),
+          useValue: {
+            findById: jest.fn(),
+            aggregate: jest.fn()
+          }
+        },
+        {
+          provide: getModelToken(PrizeDraw.name),
+          useValue: {
+            find: jest.fn()
+          }
+        },
+        {
+          provide: getModelToken(Raffle.name),
+          useValue: {
+            findById: jest.fn()
+          }
+        },
+        {
+          provide: EmailService,
+          useValue: {
+            send: jest.fn()
+          }
+        }
+      ]
+    }).compile();
+
+    expect(moduleRef.get(NotificationsService)).toBeInstanceOf(NotificationsService);
   });
 });
