@@ -40,6 +40,12 @@ export class Order {
 
   @Prop({ type: String, default: null })
   failureReason!: string | null;
+
+  @Prop({ type: Date, default: null })
+  emailSentAt!: Date | null;
+
+  @Prop({ type: String, enum: ['queued', 'sent', 'failed'], default: null })
+  emailDeliveryStatus!: 'queued' | 'sent' | 'failed' | null;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);

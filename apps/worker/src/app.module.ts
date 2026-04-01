@@ -7,6 +7,7 @@ import { QUEUE_NAMES } from './jobs/queue-names';
 import { NotificationsProcessor } from './processors/notifications.processor';
 import { TicketsProcessor } from './processors/tickets.processor';
 import { Order, OrderSchema } from './schemas/order.schema';
+import { PrizeDraw, PrizeDrawSchema } from './schemas/prize-draw.schema';
 import { Raffle, RaffleSchema } from './schemas/raffle.schema';
 import { Ticket, TicketSchema } from './schemas/ticket.schema';
 import { EmailService } from './services/email.service';
@@ -27,6 +28,7 @@ import { WorkerBootstrapService } from './worker-bootstrap.service';
     }),
     MongooseModule.forFeature([
       { name: Order.name, schema: OrderSchema },
+      { name: PrizeDraw.name, schema: PrizeDrawSchema },
       { name: Raffle.name, schema: RaffleSchema },
       { name: Ticket.name, schema: TicketSchema }
     ]),

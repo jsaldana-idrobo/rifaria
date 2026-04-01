@@ -12,17 +12,17 @@ async function readDistFile(relativePath) {
 test("home exposes the new conversion-first sections", async () => {
   const html = await readDistFile("index.html");
 
-  assert.match(html, /Rifas grandes\. Flujo claro\. Pago local\./);
+  assert.match(html, /Rifas grandes\. Varias fechas\. Todo visible\./);
   assert.match(html, /Elige tu estrategia/);
-  assert.match(html, /Ganadores que si dan confianza/);
-  assert.match(html, /Premios para todos los perfiles/);
+  assert.match(html, /Calendario de premios/);
+  assert.match(html, /Numeros ganadores/);
 });
 
 test("thanks page keeps the same visual language", async () => {
   const html = await readDistFile("gracias/index.html");
 
   assert.match(html, /Sigue el estado de tu orden/);
-  assert.match(html, /Que pasa ahora/);
+  assert.match(html, /Premios que sigues jugando/);
 });
 
 test("terms page uses the refreshed legal framing", async () => {
@@ -43,5 +43,7 @@ test("admin page adopts the shared redesign language", async () => {
   const html = await readDistFile("admin/index.html");
 
   assert.match(html, /Control operativo de Rifaria/);
-  assert.match(html, /Acceso seguro para el equipo/);
+  assert.match(html, /Gestion de premios/);
+  assert.match(html, /Inventario de boletas/);
+  assert.match(html, /Compradores recientes/);
 });

@@ -203,7 +203,13 @@ export class PaymentsWompiService {
 
     const assignedCount = await this.ticketsService.countAssignedByRaffle(paidOrder.raffleId);
     await this.rafflesService.setSoldTickets(paidOrder.raffleId, assignedCount);
-    await this.notificationsService.enqueueTicketEmail(String(paidOrder._id));
+
+    try {
+      await this.notificationsService.enqueueTicketEmail(String(paidOrder._id));
+      await this.ordersService.markEmailQueued(paidOrder._id);
+    } catch (error) {
+      await this.ordersService.markEmailFailed(paidOrder._id);
+    }
 
     await this.auditService.log({
       action: 'payment.approved',

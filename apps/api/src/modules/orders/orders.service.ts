@@ -19,6 +19,15 @@ export interface PublicOrderStatus {
   ticketQty: number;
   totalAmount: number;
   ticketNumbers: string[];
+  upcomingPrizeDraws: Array<{
+    id: string;
+    title: string;
+    displayValue: string;
+    drawAt: Date;
+    drawSource: string;
+    status: string;
+    isMajorPrize: boolean;
+  }>;
   expiresAt: Date | null;
   failureReason: string | null;
   createdAt: Date | null;
@@ -116,6 +125,18 @@ export class OrdersService {
     const order = await this.findByIdOrThrow(orderId);
 
     const ticketNumbers = order.status === 'paid' ? order.ticketNumbers : [];
+    const upcomingPrizeDraws =
+      order.status === 'paid'
+        ? (await this.rafflesService.getUpcomingPrizeDrawSummaries(order.raffleId)).map((draw) => ({
+            id: draw.id,
+            title: draw.title,
+            displayValue: draw.displayValue,
+            drawAt: draw.drawAt,
+            drawSource: draw.drawSource,
+            status: draw.status,
+            isMajorPrize: draw.isMajorPrize
+          }))
+        : [];
 
     return {
       id: String(order._id),
@@ -123,6 +144,7 @@ export class OrdersService {
       ticketQty: order.ticketQty,
       totalAmount: order.totalAmount,
       ticketNumbers,
+      upcomingPrizeDraws,
       expiresAt: order.expiresAt,
       failureReason: order.failureReason,
       createdAt:
@@ -185,6 +207,28 @@ export class OrdersService {
     await order.save();
 
     return order;
+  }
+
+  async markEmailQueued(orderId: Types.ObjectId): Promise<void> {
+    await this.orderModel.updateOne(
+      { _id: orderId },
+      {
+        $set: {
+          emailDeliveryStatus: 'queued'
+        }
+      }
+    );
+  }
+
+  async markEmailFailed(orderId: Types.ObjectId): Promise<void> {
+    await this.orderModel.updateOne(
+      { _id: orderId },
+      {
+        $set: {
+          emailDeliveryStatus: 'failed'
+        }
+      }
+    );
   }
 
   async expirePendingOrders(now = new Date()): Promise<number> {

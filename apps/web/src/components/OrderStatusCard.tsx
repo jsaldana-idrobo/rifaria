@@ -167,6 +167,27 @@ export function OrderStatusCard({ orderId }: OrderStatusCardProps) {
         </div>
       ) : null}
 
+      {status?.upcomingPrizeDraws?.length ? (
+        <div className="status-schedule">
+          <p>Premios que sigues jugando:</p>
+          <div className="status-schedule-list">
+            {status.upcomingPrizeDraws.map((draw) => (
+              <article key={draw.id} className="status-schedule-item">
+                <strong>{draw.title}</strong>
+                <span>{draw.displayValue}</span>
+                <small>
+                  {new Intl.DateTimeFormat("es-CO", {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  }).format(new Date(draw.drawAt))}{" "}
+                  | {draw.drawSource}
+                </small>
+              </article>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
       <a className="cta-btn status-action" href="/">
         Volver al inicio
       </a>

@@ -6,6 +6,8 @@ export type TicketDocument = HydratedDocument<Ticket>;
 
 @Schema({ timestamps: true })
 export class Ticket {
+  _id!: Types.ObjectId;
+
   @Prop({ required: true, type: Types.ObjectId, ref: 'Raffle', index: true })
   raffleId!: Types.ObjectId;
 
@@ -23,6 +25,12 @@ export class Ticket {
 
   @Prop({ type: Date, default: null })
   assignedAt!: Date | null;
+
+  @Prop({ type: Types.ObjectId, ref: 'PrizeDraw', default: null, index: true })
+  wonPrizeDrawId!: Types.ObjectId | null;
+
+  @Prop({ type: Date, default: null })
+  wonAt!: Date | null;
 }
 
 export const TicketSchema = SchemaFactory.createForClass(Ticket);

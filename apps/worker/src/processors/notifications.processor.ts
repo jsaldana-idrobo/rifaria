@@ -5,6 +5,7 @@ import { Job } from 'bullmq';
 import { Model } from 'mongoose';
 import { JOB_NAMES, QUEUE_NAMES } from '../jobs/queue-names';
 import { Order } from '../schemas/order.schema';
+import { PrizeDraw } from '../schemas/prize-draw.schema';
 import { Raffle } from '../schemas/raffle.schema';
 import { EmailService } from '../services/email.service';
 import { postponeEmailTemplate, ticketEmailTemplate } from '../services/email-templates';
@@ -16,6 +17,7 @@ export class NotificationsProcessor extends WorkerHost {
 
   constructor(
     @InjectModel(Order.name) private readonly orderModel: Model<Order>,
+    @InjectModel(PrizeDraw.name) private readonly prizeDrawModel: Model<PrizeDraw>,
     @InjectModel(Raffle.name) private readonly raffleModel: Model<Raffle>,
     private readonly emailService: EmailService
   ) {
@@ -45,8 +47,25 @@ export class NotificationsProcessor extends WorkerHost {
     const raffle = await this.raffleModel.findById(order.raffleId).lean();
     if (!raffle) {
       this.logger.warn(`Raffle ${String(order.raffleId)} not found for email send`);
+      await this.orderModel.updateOne(
+        { _id: order._id },
+        {
+          $set: {
+            emailDeliveryStatus: 'failed'
+          }
+        }
+      );
       return;
     }
+
+    const upcomingPrizeDraws = await this.prizeDrawModel
+      .find({
+        raffleId: order.raffleId,
+        status: 'scheduled'
+      })
+      .sort({ drawAt: 1 })
+      .limit(4)
+      .lean();
 
     const html = ticketEmailTemplate({
       fullName: order.fullName,
@@ -54,14 +73,41 @@ export class NotificationsProcessor extends WorkerHost {
       rafflePrize: raffle.prizeName,
       drawAt: new Date(raffle.drawAt),
       drawSource: raffle.drawSource,
-      ticketNumbers: order.ticketNumbers
+      ticketNumbers: order.ticketNumbers,
+      upcomingPrizeDraws: upcomingPrizeDraws.map((draw) => ({
+        title: draw.title,
+        displayValue: draw.displayValue,
+        drawAt: new Date(draw.drawAt)
+      }))
     });
 
-    await this.emailService.send({
-      to: order.email,
-      subject: `Tus boletas de Rifaria - ${raffle.title}`,
-      html
-    });
+    try {
+      await this.emailService.send({
+        to: order.email,
+        subject: `Tus boletas de Rifaria - ${raffle.title}`,
+        html
+      });
+
+      await this.orderModel.updateOne(
+        { _id: order._id },
+        {
+          $set: {
+            emailDeliveryStatus: 'sent',
+            emailSentAt: new Date()
+          }
+        }
+      );
+    } catch (error) {
+      await this.orderModel.updateOne(
+        { _id: order._id },
+        {
+          $set: {
+            emailDeliveryStatus: 'failed'
+          }
+        }
+      );
+      throw error;
+    }
   }
 
   private async handleNotifyPostponement(data: {

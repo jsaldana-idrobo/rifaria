@@ -5,6 +5,11 @@ export function ticketEmailTemplate(payload: {
   drawAt: Date;
   drawSource: string;
   ticketNumbers: string[];
+  upcomingPrizeDraws: Array<{
+    title: string;
+    displayValue: string;
+    drawAt: Date;
+  }>;
 }): string {
   const ticketsHtml = payload.ticketNumbers
     .map(
@@ -12,6 +17,18 @@ export function ticketEmailTemplate(payload: {
         `<span style="display:inline-block;margin:6px;padding:10px 14px;border-radius:999px;background:#111;color:#f6f3ee;font-weight:700;letter-spacing:0.08em;">${ticket}</span>`
     )
     .join('');
+  const upcomingHtml =
+    payload.upcomingPrizeDraws.length === 0
+      ? `<p style="margin:0;color:#5c554a;">No hay mas premios programados por ahora.</p>`
+      : payload.upcomingPrizeDraws
+          .map(
+            (draw) =>
+              `<div style="padding:10px 0;border-top:1px solid #e5e0d8;">
+                <strong style="display:block;">${draw.title}</strong>
+                <span style="color:#5c554a;">${draw.displayValue} | ${draw.drawAt.toLocaleString('es-CO')}</span>
+              </div>`
+          )
+          .join('');
 
   return `
   <div style="font-family: 'Trebuchet MS', 'Segoe UI', sans-serif; background:#f6f3ee; padding:40px 20px; color:#111;">
@@ -29,6 +46,10 @@ export function ticketEmailTemplate(payload: {
         </div>
         <p style="margin:0 0 6px;">Fecha de juego: <strong>${payload.drawAt.toLocaleString('es-CO')}</strong></p>
         <p style="margin:0;">Referencia de sorteo: <strong>${payload.drawSource}</strong></p>
+        <div style="padding:16px;border:1px solid #e5e0d8;border-radius:14px;background:#faf8f5;margin-top:18px;">
+          <p style="margin:0 0 8px;font-weight:700;">Premios en los que sigues participando:</p>
+          ${upcomingHtml}
+        </div>
       </div>
     </div>
   </div>

@@ -42,7 +42,9 @@ export class TicketsService {
               number4d,
               status: 'reserved',
               reservationExpiresAt: input.expiresAt,
-              assignedAt: null
+              assignedAt: null,
+              wonPrizeDrawId: null,
+              wonAt: null
             }
           ],
           input.session ? { session: input.session } : undefined
@@ -124,6 +126,32 @@ export class TicketsService {
       .lean();
   }
 
+  async findEligibleWinnerTicket(
+    raffleId: Types.ObjectId,
+    winningNumber: string
+  ): Promise<Ticket | null> {
+    return this.ticketModel
+      .findOne({
+        raffleId,
+        number4d: winningNumber,
+        status: 'assigned',
+        wonPrizeDrawId: null
+      })
+      .lean();
+  }
+
+  async markTicketAsWinner(ticketId: Types.ObjectId, prizeDrawId: Types.ObjectId): Promise<void> {
+    await this.ticketModel.updateOne(
+      { _id: ticketId, wonPrizeDrawId: null },
+      {
+        $set: {
+          wonPrizeDrawId: prizeDrawId,
+          wonAt: new Date()
+        }
+      }
+    );
+  }
+
   async listAssignedTicketNumbersForOrder(orderId: Types.ObjectId): Promise<string[]> {
     const assignedTickets = await this.ticketModel
       .find(
@@ -151,6 +179,14 @@ export class TicketsService {
     return this.ticketModel.countDocuments({
       raffleId,
       status: 'assigned'
+    });
+  }
+
+  async countWonByRaffle(raffleId: Types.ObjectId): Promise<number> {
+    return this.ticketModel.countDocuments({
+      raffleId,
+      status: 'assigned',
+      wonPrizeDrawId: { $ne: null }
     });
   }
 

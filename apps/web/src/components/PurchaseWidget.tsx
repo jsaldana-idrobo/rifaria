@@ -4,6 +4,7 @@ import { createCheckout, createOrder } from "@/lib/api";
 
 interface PurchaseWidgetProps {
   readonly raffleTitle: string;
+  readonly eligiblePrizeCount?: number;
 }
 
 const TICKET_PRICE = 2000;
@@ -31,7 +32,10 @@ const TICKET_BUNDLES = [
   },
 ] as const;
 
-export function PurchaseWidget({ raffleTitle }: PurchaseWidgetProps) {
+export function PurchaseWidget({
+  raffleTitle,
+  eligiblePrizeCount = 1,
+}: PurchaseWidgetProps) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -91,6 +95,9 @@ export function PurchaseWidget({ raffleTitle }: PurchaseWidgetProps) {
         <p className="buy-lead">
           Elige un pack rapido o ajusta tu cantidad. El bloque queda arriba de
           la mitad de la pagina para empujar la compra sin sacrificar claridad.
+          Una vez el pago queda aprobado, tus boletas siguen activas para{" "}
+          {eligiblePrizeCount} premio{eligiblePrizeCount === 1 ? "" : "s"}{" "}
+          programado{eligiblePrizeCount === 1 ? "" : "s"}.
         </p>
 
         <div className="bundle-grid" aria-label="Packs sugeridos">
@@ -128,7 +135,8 @@ export function PurchaseWidget({ raffleTitle }: PurchaseWidgetProps) {
           <div className="buy-point">
             <strong>Entrega digital</strong>
             <span>
-              Recibes tus numeros por correo apenas el pago quede confirmado.
+              Recibes tus numeros por correo apenas el pago quede confirmado y
+              sigues jugando por las siguientes fechas publicadas.
             </span>
           </div>
         </div>

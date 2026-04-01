@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { AuditService } from '../audit/audit.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { OrdersService } from '../orders/orders.service';
+import { PrizeDrawsService } from '../prize-draws/prize-draws.service';
 import { RafflesService } from '../raffles/raffles.service';
 import { TicketsService } from '../tickets/tickets.service';
 import { PostponeRaffleDto } from './dto/postpone-raffle.dto';
@@ -11,6 +12,7 @@ import { SettleDrawDto } from './dto/settle-draw.dto';
 export class DrawsService {
   constructor(
     private readonly rafflesService: RafflesService,
+    private readonly prizeDrawsService: PrizeDrawsService,
     private readonly ticketsService: TicketsService,
     private readonly notificationsService: NotificationsService,
     private readonly ordersService: OrdersService,
@@ -43,10 +45,10 @@ export class DrawsService {
     return updated;
   }
 
-  async settleDraw(raffleId: string, dto: SettleDrawDto) {
-    const updatedRaffle = await this.rafflesService.settleDraw(raffleId, dto);
-    const winnerTicket = await this.ticketsService.findWinnerTicket(
-      updatedRaffle._id,
+  async settleDraw(prizeDrawId: string, dto: SettleDrawDto) {
+    const prizeDraw = await this.prizeDrawsService.findByIdOrThrow(prizeDrawId);
+    const winnerTicket = await this.ticketsService.findEligibleWinnerTicket(
+      prizeDraw.raffleId,
       dto.winningNumber
     );
 
@@ -55,13 +57,27 @@ export class DrawsService {
       winnerOrder = await this.ordersService.findByIdOrThrow(String(winnerTicket.orderId));
     }
 
+    if (winnerTicket) {
+      await this.ticketsService.markTicketAsWinner(winnerTicket._id, prizeDraw._id);
+    }
+
+    const updatedPrizeDraw = await this.prizeDrawsService.markAsSettled(prizeDraw._id, {
+      winningNumber: dto.winningNumber,
+      drawResultSourceUrl: dto.drawResultSourceUrl,
+      winningTicketId: winnerTicket?._id ?? null,
+      winnerOrderId: winnerOrder?._id ?? null,
+      winnerFullNameSnapshot: winnerOrder?.fullName ?? null,
+      winnerMaskedEmailSnapshot: winnerOrder ? this.maskEmail(winnerOrder.email) : null
+    });
+
     await this.auditService.log({
-      action: 'draw.settled',
-      entityType: 'raffle',
-      entityId: String(updatedRaffle._id),
+      action: 'prize-draw.settled',
+      entityType: 'prize-draw',
+      entityId: String(updatedPrizeDraw._id),
       actorType: 'admin',
       actorId: null,
       metadata: {
+        raffleId: String(updatedPrizeDraw.raffleId),
         winningNumber: dto.winningNumber,
         winnerOrderId: winnerOrder ? String(winnerOrder._id) : null,
         drawResultSourceUrl: dto.drawResultSourceUrl
@@ -69,7 +85,7 @@ export class DrawsService {
     });
 
     return {
-      raffle: updatedRaffle,
+      prizeDraw: updatedPrizeDraw,
       winningNumber: dto.winningNumber,
       winner: winnerOrder
         ? {
@@ -80,5 +96,12 @@ export class DrawsService {
           }
         : null
     };
+  }
+
+  private maskEmail(email: string): string {
+    const [rawLocalPart = '', domain = ''] = email.split('@');
+    const localPart = rawLocalPart;
+    const visiblePrefix = localPart.slice(0, 2);
+    return `${visiblePrefix}${'*'.repeat(Math.max(localPart.length - visiblePrefix.length, 1))}@${domain}`;
   }
 }

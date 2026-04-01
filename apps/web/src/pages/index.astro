@@ -6,6 +6,15 @@ import { fetchActiveRaffle } from "@/lib/api";
 import { PurchaseWidget } from "@/components/PurchaseWidget";
 
 const raffle = await fetchActiveRaffle();
+const featuredPrize =
+  raffle.featuredPrize ??
+  raffle.upcomingPrizeDraws[0] ??
+  raffle.completedPrizeDraws[0] ??
+  null;
+const primaryPrize = featuredPrize?.displayValue ?? raffle.prizeName;
+const primaryImage = featuredPrize?.imageUrl ?? raffle.prizeImageUrl;
+const primaryDrawAt = featuredPrize?.drawAt ?? raffle.drawAt;
+const primaryDrawSource = featuredPrize?.drawSource ?? raffle.drawSource;
 const remainingTickets = Math.max(raffle.totalTickets - raffle.soldTickets, 0);
 const soldProgress =
   raffle.totalTickets > 0
@@ -13,52 +22,31 @@ const soldProgress =
     : 0;
 const drawDate = new Intl.DateTimeFormat("es-CO", {
   dateStyle: "medium",
-}).format(new Date(raffle.drawAt));
+}).format(new Date(primaryDrawAt));
 const drawTime = new Intl.DateTimeFormat("es-CO", {
   timeStyle: "short",
-}).format(new Date(raffle.drawAt));
+}).format(new Date(primaryDrawAt));
+const prizeCalendar = raffle.upcomingPrizeDraws.slice(0, 4);
+const publicResults = raffle.completedPrizeDraws.slice(0, 6);
 
-const schema = {
-  "@context": "https://schema.org",
-  "@type": "Product",
-  name: raffle.title,
-  description: raffle.description,
-  image: raffle.prizeImageUrl,
-  offers: {
-    "@type": "Offer",
-    priceCurrency: "COP",
-    price: "2000",
-    availability: "https://schema.org/InStock",
-  },
-};
-
-const prizeCards = [
-  {
-    label: "Activa ahora",
-    title: raffle.prizeName,
-    copy: "Hero principal con urgencia comercial, informacion del sorteo y una ruta de compra clara desde el primer scroll.",
-    meta: `${remainingTickets.toLocaleString("es-CO")} boletas disponibles`,
-    featured: true,
-  },
-  {
-    label: "Categoria aspiracional",
-    title: "Carros de lanzamiento",
-    copy: "Presentacion premium para rifas de alto ticket, con espacio para precio comercial, cobertura y fecha del sorteo.",
-    meta: "Listo para campanas de carro nuevo o usado",
-  },
-  {
-    label: "Categoria patrimonial",
-    title: "Casas y lotes",
-    copy: "Bloques mas explicativos para premios de alto valor que necesitan confianza, reglas visibles y soporte documental.",
-    meta: "Ideal para premios con detalle legal adicional",
-  },
-  {
-    label: "Categoria directa",
-    title: "Dinero y premios multiples",
-    copy: "Tarjetas compactas para rifas con varios premios, bolsas en efectivo o dinamicas de ganadores escalonados.",
-    meta: "Se adapta a motos, dinero, bonos y combos",
-  },
-];
+const categoryLabels = Array.from(
+  new Set(
+    raffle.upcomingPrizeDraws.map((draw) => {
+      switch (draw.prizeType) {
+        case "cash":
+          return "Dinero";
+        case "vehicle":
+          return "Vehiculos";
+        case "property":
+          return "Casas";
+        case "bundle":
+          return "Combos";
+        default:
+          return "Premios";
+      }
+    }),
+  ),
+).slice(0, 5);
 
 const winnerStories = [
   {
@@ -80,37 +68,44 @@ const winnerStories = [
     name: "Andres Rios",
     city: "Medellin",
     amount: "Moto",
-    copy: "La landing puso el premio arriba, los packs al centro y la prueba social justo donde mas influye en conversion.",
-  },
-  {
-    label: "Confianza operativa",
-    name: "Diana Soto",
-    city: "Cali",
-    amount: "$2.5M",
-    copy: "Uso un premio secundario y aun asi encontro claridad en reglas, fecha del sorteo y estados de compra.",
+    copy: "La landing pone el premio arriba, los packs al centro y los numeros ganadores siempre visibles para todos.",
   },
 ];
 
 const processSteps = [
   {
-    title: "Publica el premio correcto",
-    copy: "La home soporta motos, carros, casas, dinero y campanas con varios premios sin romper la composicion.",
+    title: "Compra una sola vez",
+    copy: "El comprador entra una vez y sus boletas quedan activas para todas las fechas futuras de la campana.",
   },
   {
-    title: "Empuja compra desde arriba",
-    copy: "Packs rapidos, formulario visible y resumen de pago sin obligar al usuario a perderse en scroll largo.",
+    title: "Publica resultados sin esconder nada",
+    copy: "Cada premio sorteado muestra numero ganador, prueba y estado del ganador incluso cuando nadie lo tiene pagado.",
   },
   {
-    title: "Refuerza confianza abajo",
-    copy: "Ganadores, metodos de pago, legales y soporte quedan integrados al mismo lenguaje visual para cerrar la conversion.",
+    title: "Opera desde un mismo panel",
+    copy: "Premios, compradores, inventario y correo quedan en el mismo lenguaje visual para lanzar y administrar sin friccion.",
   },
 ];
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: raffle.title,
+  description: raffle.description,
+  image: primaryImage,
+  offers: {
+    "@type": "Offer",
+    priceCurrency: "COP",
+    price: "2000",
+    availability: "https://schema.org/InStock",
+  },
+};
 ---
 
 <BaseLayout
-  title="Rifaria | Rifas grandes con pago local y compra segura"
-  description="Rifaria organiza rifas online con premios grandes, packs de compra rapidos, pago local y una landing pensada para convertir."
-  image={raffle.prizeImageUrl}
+  title="Rifaria | Campanas de rifas con premios por fecha"
+  description="Compra una vez y participa en multiples premios. Rifaria publica calendario, numeros ganadores y compra segura en una sola landing."
+  image={primaryImage}
   schema={schema}
 >
   <PublicHeader ctaHref="#comprar" ctaLabel="Comprar ahora" />
@@ -119,24 +114,24 @@ const processSteps = [
     <section class="hero-shell container">
       <article class="hero-copy glass-card">
         <div class="hero-label-row">
-          <span class="pill pill-hot">Lanzamiento balanceado</span>
-          <span class="pill pill-outline">Pagos locales y reglas visibles</span>
+          <span class="pill pill-hot">Campana multi premio</span>
+          <span class="pill pill-outline">Resultados publicos visibles</span>
         </div>
 
-        <p class="section-kicker">Plataforma visual para rifas activas</p>
+        <p class="section-kicker">Rifas activas con calendario completo</p>
         <h1 class="brand-title hero-headline">
-          Rifas grandes. Flujo claro. Pago local.
+          Rifas grandes. Varias fechas. Todo visible.
         </h1>
         <p class="hero-subtitle">
-          Una distribucion comercial inspirada en lo que hoy convierte bien:
-          premio protagonista, compra arriba, prueba social debajo y el mismo
-          formato listo para motos, carros, casas, dinero y varios premios.
+          Compra una sola vez y deja tus boletas jugando por dinero, motos,
+          carros, casas o premios escalonados. El calendario sale publico desde
+          el primer scroll y los numeros ganadores no se esconden.
         </p>
 
         <div class="hero-actions">
           <a class="cta-btn" href="#comprar">Comprar boletas</a>
-          <a class="pill pill-outline hero-secondary-action" href="#ganadores">
-            Ver prueba social
+          <a class="pill pill-outline hero-secondary-action" href="#resultados">
+            Ver numeros ganadores
           </a>
         </div>
 
@@ -144,27 +139,29 @@ const processSteps = [
           <article class="metric-card">
             <span class="metric-label">Boletas disponibles</span>
             <strong>{remainingTickets.toLocaleString("es-CO")}</strong>
-            <p>Inventario visible para empujar decision rapida.</p>
+            <p>
+              Inventario en tiempo real para empujar urgencia sin ocultar datos.
+            </p>
           </article>
           <article class="metric-card">
-            <span class="metric-label">Ritmo de venta</span>
-            <strong>{soldProgress}%</strong>
-            <p>Lectura inmediata de traccion para reforzar urgencia.</p>
+            <span class="metric-label">Premios activos</span>
+            <strong>{raffle.upcomingPrizeDraws.length}</strong>
+            <p>Una compra queda participando en todo el calendario futuro.</p>
           </article>
           <article class="metric-card">
-            <span class="metric-label">Sorteo</span>
+            <span class="metric-label">Siguiente sorteo</span>
             <strong>{drawDate}</strong>
-            <p>{drawTime} con referencia en {raffle.drawSource}.</p>
+            <p>{drawTime} con referencia en {primaryDrawSource}.</p>
           </article>
         </div>
       </article>
 
       <aside class="hero-visual glass-card">
         <div class="hero-visual-frame">
-          <span class="prize-chip">Premio activo</span>
+          <span class="prize-chip">Premio destacado</span>
           <img
-            src={raffle.prizeImageUrl}
-            alt={`Premio destacado: ${raffle.prizeName}`}
+            src={primaryImage}
+            alt={`Premio destacado: ${primaryPrize}`}
             loading="eager"
             decoding="async"
             fetchpriority="high"
@@ -174,19 +171,19 @@ const processSteps = [
           />
 
           <div class="hero-floating-card">
-            <span class="hero-floating-label">Salida en vivo</span>
-            <strong class="brand-title hero-floating-value">
-              {raffle.prizeName}
-            </strong>
-            <p>{raffle.description}</p>
+            <span class="hero-floating-label">Siguiente salida publica</span>
+            <strong class="brand-title hero-floating-value"
+              >{primaryPrize}</strong
+            >
+            <p>{featuredPrize?.title ?? raffle.description}</p>
           </div>
 
           <div class="hero-category-cloud" aria-label="Tipos de premios">
-            <span class="hero-category-chip">Motos</span>
-            <span class="hero-category-chip">Carros</span>
-            <span class="hero-category-chip">Casas</span>
-            <span class="hero-category-chip">Dinero</span>
-            <span class="hero-category-chip">Premios multiples</span>
+            {
+              categoryLabels.map((label) => (
+                <span class="hero-category-chip">{label}</span>
+              ))
+            }
           </div>
         </div>
       </aside>
@@ -194,50 +191,57 @@ const processSteps = [
 
     <section class="live-strip container" aria-label="Resumen de lanzamiento">
       <article class="live-card">
-        <span class="live-label">Premio principal</span>
-        <strong class="brand-title live-value">{raffle.prizeName}</strong>
+        <span class="live-label">Premio mayor</span>
+        <strong class="brand-title live-value">{primaryPrize}</strong>
         <p class="live-copy">
-          La pieza visual dominante mantiene el premio arriba.
+          El premio destacado domina la landing desde arriba.
         </p>
       </article>
       <article class="live-card">
-        <span class="live-label">Compra minima</span>
-        <strong class="brand-title live-value">10 boletas</strong>
+        <span class="live-label">Venta en curso</span>
+        <strong class="brand-title live-value">{soldProgress}%</strong>
         <p class="live-copy">
-          Base suficiente para packs rapidos y upsell comercial.
+          Lectura inmediata del ritmo comercial de la campana.
         </p>
       </article>
       <article class="live-card">
-        <span class="live-label">Canales activos</span>
-        <strong class="brand-title live-value">Tarjeta, PSE, Nequi</strong>
-        <p class="live-copy">Checkout local visible antes del formulario.</p>
+        <span class="live-label">Resultados publicados</span>
+        <strong class="brand-title live-value">{publicResults.length}</strong>
+        <p class="live-copy">
+          Cada numero ganador queda visible con su prueba.
+        </p>
       </article>
     </section>
 
-    <section class="section-shell container" id="premios">
+    <section class="section-shell container" id="calendario">
       <div class="section-heading">
-        <p class="section-kicker">Escala visual para distintos lanzamientos</p>
+        <p class="section-kicker">Calendario de premios</p>
         <h2 class="brand-title section-title">
-          Premios para todos los perfiles
+          Fechas claras para toda la campana
         </h2>
         <p class="section-copy">
-          La landing queda lista para usar un premio estrella arriba y despues
-          abrir un catalogo con otras categorias o proximos sorteos sin perder
-          foco de conversion.
+          Esta zona deja claro por que una sola compra sigue viva mas alla del
+          primer sorteo. Cada premio tiene fecha, valor, fuente y prioridad.
         </p>
       </div>
 
-      <div class="prize-grid">
+      <div class="timeline-grid">
         {
-          prizeCards.map((card) => (
-            <article
-              class={`prize-card glass-card${card.featured ? " prize-card-featured" : ""}`}
-            >
-              <span class="prize-chip">{card.label}</span>
-              <h3 class="brand-title prize-title">{card.title}</h3>
-              <p class="prize-copy">{card.copy}</p>
-              <div class="prize-meta">
-                <span>{card.meta}</span>
+          prizeCalendar.map((draw) => (
+            <article class="timeline-card glass-card">
+              <span class="prize-chip">
+                {draw.isMajorPrize ? "Premio mayor" : draw.displayValue}
+              </span>
+              <h3 class="brand-title timeline-title">{draw.title}</h3>
+              <p class="timeline-copy">{draw.description}</p>
+              <div class="timeline-meta">
+                <span>
+                  {new Intl.DateTimeFormat("es-CO", {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  }).format(new Date(draw.drawAt))}
+                </span>
+                <span>{draw.drawSource}</span>
               </div>
             </article>
           ))
@@ -245,18 +249,73 @@ const processSteps = [
       </div>
     </section>
 
-    <PurchaseWidget raffleTitle={raffle.title} client:load />
+    <PurchaseWidget
+      raffleTitle={raffle.title}
+      eligiblePrizeCount={Math.max(raffle.upcomingPrizeDraws.length, 1)}
+      client:load
+    />
+
+    <section class="section-shell container" id="resultados">
+      <div class="section-heading">
+        <p class="section-kicker">Numeros ganadores</p>
+        <h2 class="brand-title section-title">
+          Resultados publicos de cada premio
+        </h2>
+        <p class="section-copy">
+          Los cortes ya realizados siguen visibles para todos. Si hubo ganador,
+          se muestra su resumen. Si no lo hubo, el numero igual queda publicado
+          con la etiqueta correspondiente.
+        </p>
+      </div>
+
+      <div class="results-grid">
+        {
+          publicResults.map((draw) => (
+            <article class="result-card glass-card">
+              <div class="result-top">
+                <span class="winner-badge">{draw.displayValue}</span>
+                <span
+                  class={`result-status ${draw.winnerLabel ? "is-winner" : "is-empty"}`}
+                >
+                  {draw.winnerLabel ? "Ganador confirmado" : "Sin ganador"}
+                </span>
+              </div>
+              <h3 class="brand-title">{draw.title}</h3>
+              <strong class="brand-title result-number">
+                {draw.winningNumber ?? "Pendiente"}
+              </strong>
+              <p class="winner-copy">{draw.description}</p>
+              <div class="result-meta">
+                <span>
+                  {new Intl.DateTimeFormat("es-CO", {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  }).format(new Date(draw.drawAt))}
+                </span>
+                <span>{draw.drawSource}</span>
+              </div>
+              <div class="result-meta">
+                <span>
+                  {draw.winnerLabel ??
+                    "Resultado publico sin boleta pagada ganadora"}
+                </span>
+                {draw.proofUrl ? <a href={draw.proofUrl}>Ver prueba</a> : null}
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </section>
 
     <section class="section-shell container" id="ganadores">
       <div class="section-heading">
         <p class="section-kicker">Prueba social con peso real</p>
         <h2 class="brand-title section-title">
-          Ganadores que si dan confianza
+          Ganadores y compradores visibles
         </h2>
         <p class="section-copy">
-          La referencia deja claro que la credibilidad no se explica una sola
-          vez: se repite con testimonios, ciudades, montos y tono verificado en
-          una zona completa debajo del bloque de compra.
+          La confianza no depende de una sola frase. Se refuerza con ejemplos
+          concretos, seguimiento de orden y resultados publicados en paralelo.
         </p>
       </div>
 
@@ -285,9 +344,8 @@ const processSteps = [
             Confianza visible antes de la ultima decision
           </h2>
           <p class="section-copy">
-            Metodos de pago, seguimiento de orden y marcos legales quedan dentro
-            del mismo sistema visual. No parece una pagina bonita aislada: se
-            siente como una operacion completa.
+            Metodos de pago, seguimiento de orden, resultados publicos y marcos
+            legales quedan dentro del mismo sistema visual.
           </p>
         </div>
 
@@ -302,18 +360,18 @@ const processSteps = [
           </article>
 
           <article class="trust-block">
-            <span class="footer-label">Capas de confianza</span>
+            <span class="footer-label">Trazabilidad</span>
             <p>
-              Trazabilidad de orden, seguimiento post-pago, terminos visibles y
-              bloques de soporte repartidos donde realmente influyen.
+              El correo solo sale cuando el pago se confirma y desde ahi la
+              orden ya muestra sus boletas y proximos premios elegibles.
             </p>
           </article>
 
           <article class="trust-block">
-            <span class="footer-label">Acompanamiento</span>
+            <span class="footer-label">Operacion completa</span>
             <p>
-              La interfaz tambien prepara el recorrido de gracias, legales y
-              admin para que toda la app parezca un producto consistente.
+              La misma base visual se extiende a gracias, legales y admin para
+              que la campana se sienta cerrada de punta a punta.
             </p>
           </article>
         </div>
@@ -327,9 +385,8 @@ const processSteps = [
           Una estructura comercial completa
         </h2>
         <p class="section-copy">
-          Premio arriba, compra en la mitad alta, prueba social debajo y un
-          cierre con informacion operativa. Eso es lo que mejor traduce la
-          referencia a una app de rifas propia.
+          Premio arriba, compra en la mitad alta, calendario visible, resultados
+          publicos debajo y un cierre con informacion operativa.
         </p>
       </div>
 

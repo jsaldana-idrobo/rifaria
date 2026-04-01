@@ -17,9 +17,9 @@ export class DrawsController {
     return this.drawsService.postponeRaffle(raffleId, dto);
   }
 
-  @Post('draws/:raffleId/settle')
+  @Post('prize-draws/:prizeDrawId/settle')
   @Roles('owner', 'admin')
-  settle(@Param('raffleId') raffleId: string, @Body() dto: SettleDrawDto) {
-    return this.drawsService.settleDraw(raffleId, dto);
+  settle(@Param('prizeDrawId') prizeDrawId: string, @Body() dto: SettleDrawDto) {
+    return this.drawsService.settleDraw(prizeDrawId, dto);
   }
 }

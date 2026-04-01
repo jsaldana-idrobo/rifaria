@@ -2,24 +2,76 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types } from 'mongoose';
 import type { RaffleStatus } from '@rifaria/shared';
+import { PrizeDrawsService } from '../prize-draws/prize-draws.service';
+import type { PrizeDraw } from '../prize-draws/schemas/prize-draw.schema';
 import { Raffle } from './schemas/raffle.schema';
 import { UpdateRaffleDto } from './dto/update-raffle.dto';
 
+export interface PublicPrizeDrawSummary {
+  id: string;
+  title: string;
+  description: string;
+  prizeType: string;
+  displayValue: string;
+  imageUrl: string;
+  drawAt: Date;
+  drawSource: string;
+  status: string;
+  isMajorPrize: boolean;
+  winningNumber: string | null;
+  proofUrl: string | null;
+  winnerLabel: string | null;
+}
+
+export interface PublicRaffleCampaign {
+  _id: string;
+  title: string;
+  description: string;
+  prizeName: string;
+  prizeImageUrl: string;
+  drawAt: Date;
+  drawSource: string;
+  totalTickets: number;
+  soldTickets: number;
+  status: string;
+  featuredPrize: PublicPrizeDrawSummary | null;
+  upcomingPrizeDraws: PublicPrizeDrawSummary[];
+  completedPrizeDraws: PublicPrizeDrawSummary[];
+}
+
 @Injectable()
 export class RafflesService {
-  constructor(@InjectModel(Raffle.name) private readonly raffleModel: Model<Raffle>) {}
+  constructor(
+    @InjectModel(Raffle.name) private readonly raffleModel: Model<Raffle>,
+    private readonly prizeDrawsService: PrizeDrawsService
+  ) {}
 
-  async getActivePublicRaffle(): Promise<Raffle> {
-    const raffle = await this.raffleModel
-      .findOne({ status: { $in: ['selling', 'postponed'] } })
-      .sort({ updatedAt: -1 })
-      .lean();
+  async getActivePublicRaffle(): Promise<PublicRaffleCampaign> {
+    const raffle = await this.getActiveRaffleForSales();
+    const prizeDraws = await this.prizeDrawsService.ensureAndListForRaffle(
+      this.toLegacySnapshot(raffle)
+    );
+    const featuredPrize = prizeDraws.find((draw) => draw.isMajorPrize) ?? prizeDraws[0] ?? null;
 
-    if (!raffle) {
-      throw new NotFoundException('No active raffle found');
-    }
-
-    return raffle as unknown as Raffle;
+    return {
+      _id: String(raffle._id),
+      title: raffle.title,
+      description: raffle.description,
+      prizeName: featuredPrize?.displayValue ?? raffle.prizeName,
+      prizeImageUrl: featuredPrize?.imageUrl ?? raffle.prizeImageUrl,
+      drawAt: featuredPrize?.drawAt ?? raffle.drawAt,
+      drawSource: featuredPrize?.drawSource ?? raffle.drawSource,
+      totalTickets: raffle.totalTickets,
+      soldTickets: raffle.soldTickets,
+      status: raffle.status,
+      featuredPrize: featuredPrize ? this.serializePrizeDraw(featuredPrize) : null,
+      upcomingPrizeDraws: prizeDraws
+        .filter((draw) => draw.status === 'scheduled')
+        .map((draw) => this.serializePrizeDraw(draw)),
+      completedPrizeDraws: prizeDraws
+        .filter((draw) => draw.status === 'drawn')
+        .map((draw) => this.serializePrizeDraw(draw))
+    };
   }
 
   async getRaffleByIdOrThrow(raffleId: string): Promise<Raffle> {
@@ -160,6 +212,17 @@ export class RafflesService {
     });
   }
 
+  async getUpcomingPrizeDrawSummaries(raffleId: Types.ObjectId): Promise<PublicPrizeDrawSummary[]> {
+    const raffle = await this.getRaffleByIdOrThrow(String(raffleId));
+    const prizeDraws = await this.prizeDrawsService.ensureAndListForRaffle(
+      this.toLegacySnapshot(raffle)
+    );
+
+    return prizeDraws
+      .filter((draw) => draw.status === 'scheduled')
+      .map((draw) => this.serializePrizeDraw(draw));
+  }
+
   private async assertSingleSellingRaffle(currentRaffleId?: Types.ObjectId): Promise<void> {
     const filter: FilterQuery<Raffle> = { status: 'selling' };
 
@@ -171,5 +234,41 @@ export class RafflesService {
     if (anotherSelling) {
       throw new ConflictException('Only one raffle can be selling at a time');
     }
+  }
+
+  private serializePrizeDraw(draw: PrizeDraw): PublicPrizeDrawSummary {
+    const firstName = draw.winnerFullNameSnapshot?.split(/\s+/)[0] ?? null;
+
+    return {
+      id: String(draw._id),
+      title: draw.title,
+      description: draw.description,
+      prizeType: draw.prizeType,
+      displayValue: draw.displayValue,
+      imageUrl: draw.imageUrl,
+      drawAt: draw.drawAt,
+      drawSource: draw.drawSource,
+      status: draw.status,
+      isMajorPrize: draw.isMajorPrize,
+      winningNumber: draw.winningNumber,
+      proofUrl: draw.drawResultSourceUrl,
+      winnerLabel:
+        firstName === null
+          ? null
+          : draw.winnerMaskedEmailSnapshot
+            ? `${firstName} | ${draw.winnerMaskedEmailSnapshot}`
+            : firstName
+    };
+  }
+
+  private toLegacySnapshot(raffle: Raffle) {
+    return {
+      _id: raffle._id,
+      prizeName: raffle.prizeName,
+      prizeImageUrl: raffle.prizeImageUrl,
+      description: raffle.description,
+      drawAt: raffle.drawAt,
+      drawSource: raffle.drawSource
+    };
   }
 }

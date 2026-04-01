@@ -532,6 +532,85 @@ button {
   grid-template-columns: 1.2fr repeat(3, minmax(0, 0.9fr));
 }
 
+.timeline-grid,
+.results-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.timeline-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.timeline-card,
+.result-card {
+  display: grid;
+  gap: 14px;
+  padding: 24px;
+}
+
+.timeline-title {
+  margin: 0;
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+}
+
+.timeline-copy,
+.timeline-meta,
+.result-meta {
+  margin: 0;
+  color: var(--text-soft);
+}
+
+.timeline-meta,
+.result-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 0.92rem;
+}
+
+.results-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.result-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.result-status {
+  display: inline-flex;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.result-status.is-winner {
+  background: rgba(136, 193, 161, 0.18);
+  color: #376247;
+}
+
+.result-status.is-empty {
+  background: rgba(216, 115, 45, 0.12);
+  color: #8a4c1f;
+}
+
+.result-number {
+  font-size: clamp(2.6rem, 4vw, 4rem);
+}
+
+.result-card a {
+  color: #19526d;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .prize-card {
   display: grid;
   gap: 14px;
@@ -715,6 +794,16 @@ button {
   color: var(--text-main);
 }
 
+.buy-form select {
+  width: 100%;
+  min-height: 52px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(21, 37, 52, 0.12);
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--text-main);
+}
+
 .qty-row {
   display: grid;
   grid-template-columns: 56px 1fr 56px;
@@ -793,6 +882,44 @@ button {
   background: var(--surface-dark);
   color: var(--text-inverse);
   font-size: 0.88rem;
+}
+
+.status-schedule {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(216, 115, 45, 0.16);
+  background: rgba(255, 249, 238, 0.92);
+}
+
+.status-schedule p {
+  margin: 0;
+}
+
+.status-schedule-list {
+  display: grid;
+  gap: 10px;
+}
+
+.status-schedule-item {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid rgba(21, 37, 52, 0.08);
+}
+
+.status-schedule-item strong {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 1.16rem;
+  letter-spacing: 0.08em;
+}
+
+.status-schedule-item span,
+.status-schedule-item small {
+  color: var(--text-soft);
 }
 
 .error {
@@ -1022,6 +1149,96 @@ button {
 
 .admin-row {
   color: var(--text-soft);
+}
+
+.admin-preview-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.admin-section {
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+}
+
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.admin-form-grid input,
+.admin-form-grid select,
+.admin-toolbar input,
+.admin-inline-form input {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(21, 37, 52, 0.12);
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--text-main);
+}
+
+.admin-check {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-check input {
+  width: 18px;
+  min-height: 18px;
+}
+
+.admin-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+}
+
+.admin-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.admin-list,
+.inventory-list {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-ticket-row,
+.inventory-row {
+  display: grid;
+  gap: 6px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.68);
+  border: 1px solid rgba(21, 37, 52, 0.08);
+}
+
+.admin-ticket-row strong,
+.inventory-row strong {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: 0.08em;
+}
+
+.admin-ticket-row span,
+.admin-ticket-row small,
+.inventory-row span,
+.inventory-row small {
+  color: var(--text-soft);
+}
+
+.admin-inline-form {
+  display: grid;
+  grid-template-columns: minmax(0, 0.4fr) minmax(0, 1fr) auto auto;
+  gap: 10px;
+  align-items: center;
 }
 
 .legal-shell {
@@ -1290,7 +1507,10 @@ button {
 
   .winner-grid,
   .trust-grid,
-  .process-grid {
+  .process-grid,
+  .timeline-grid,
+  .results-grid,
+  .admin-summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -1326,7 +1546,10 @@ button {
   .trust-grid,
   .prize-grid,
   .winner-grid,
-  .process-grid {
+  .process-grid,
+  .timeline-grid,
+  .results-grid,
+  .admin-summary-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1349,6 +1572,12 @@ button {
 
   .legal-aside {
     position: static;
+  }
+
+  .admin-inline-form,
+  .admin-toolbar,
+  .admin-form-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1389,7 +1618,8 @@ button {
   }
 
   .buy-form-grid,
-  .bundle-grid {
+  .bundle-grid,
+  .admin-form-grid {
     grid-template-columns: 1fr;
   }
 

@@ -9,6 +9,8 @@ describe('PaymentsWompiService', () => {
     findByIdOrThrow: jest.Mock;
     markPaid: jest.Mock;
     markFailed: jest.Mock;
+    markEmailQueued: jest.Mock;
+    markEmailFailed: jest.Mock;
   };
   let ticketsService: {
     assignTicketsForOrder: jest.Mock;
@@ -37,7 +39,9 @@ describe('PaymentsWompiService', () => {
     ordersService = {
       findByIdOrThrow: jest.fn(),
       markPaid: jest.fn(),
-      markFailed: jest.fn()
+      markFailed: jest.fn(),
+      markEmailQueued: jest.fn(),
+      markEmailFailed: jest.fn()
     };
     ticketsService = {
       assignTicketsForOrder: jest.fn(),
@@ -114,6 +118,7 @@ describe('PaymentsWompiService', () => {
     });
 
     expect(ordersService.markPaid).toHaveBeenCalledTimes(1);
+    expect(ordersService.markEmailQueued).toHaveBeenCalledWith(orderId);
     expect(rafflesService.setSoldTickets).toHaveBeenCalledWith(raffleId, 2);
     expect(notificationsService.enqueueTicketEmail).toHaveBeenCalledWith(String(orderId));
     expect(auditService.log).toHaveBeenCalledTimes(1);

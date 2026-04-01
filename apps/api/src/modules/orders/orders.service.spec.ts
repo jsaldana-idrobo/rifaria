@@ -38,6 +38,7 @@ describe('OrdersService', () => {
       ticketQty: 10,
       totalAmount: 20000,
       ticketNumbers: [],
+      upcomingPrizeDraws: [],
       expiresAt: new Date('2026-02-20T14:15:00.000Z'),
       failureReason: null,
       createdAt,
@@ -47,9 +48,21 @@ describe('OrdersService', () => {
 
   it('returns assigned ticket numbers when order is paid', async () => {
     const orderId = new Types.ObjectId();
+    const upcomingPrizeDraws = [
+      {
+        id: 'draw-1',
+        title: 'Bono semanal',
+        displayValue: '$10.000.000',
+        drawAt: new Date('2026-03-01T00:00:00.000Z'),
+        drawSource: 'Loteria de Medellin',
+        status: 'scheduled',
+        isMajorPrize: false
+      }
+    ];
 
     orderModel.findById.mockResolvedValue({
       _id: orderId,
+      raffleId: new Types.ObjectId(),
       status: 'paid',
       ticketQty: 10,
       totalAmount: 20000,
@@ -59,8 +72,14 @@ describe('OrdersService', () => {
       createdAt: null,
       updatedAt: null
     });
+    (
+      service as unknown as { rafflesService: { getUpcomingPrizeDrawSummaries: jest.Mock } }
+    ).rafflesService = {
+      getUpcomingPrizeDrawSummaries: jest.fn().mockResolvedValue(upcomingPrizeDraws)
+    };
 
     const result = await service.findPublicStatusByIdOrThrow(String(orderId));
     expect(result.ticketNumbers).toEqual(['0001', '0002']);
+    expect(result.upcomingPrizeDraws).toEqual(upcomingPrizeDraws);
   });
 });
