@@ -16,6 +16,7 @@ coverage/
 .DS_Store
 .vscode/
 *.log
+.worktrees/
 
 # lock files from alternative PMs
 package-lock.json
