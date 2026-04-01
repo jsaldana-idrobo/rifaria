@@ -10,68 +10,70 @@ const orderId = Astro.url.searchParams.get("order");
   title="Gracias por tu compra | Rifaria"
   description="Tu orden fue creada. Estamos validando el pago para enviar tus boletas al correo."
 >
-  <PublicHeader ctaHref="/#comprar" ctaLabel="Comprar otra vez" />
+  <div class="public-page-shell">
+    <PublicHeader ctaHref="/#comprar" ctaLabel="Comprar otra vez" />
 
-  <main class="status-page container">
-    <section class="status-hero glass-card">
-      <div>
-        <p class="section-kicker">Seguimiento post-checkout</p>
-        <h1 class="brand-title">Sigue el estado de tu orden</h1>
-        <p class="section-copy">
-          Esta vista mantiene el mismo lenguaje visual de la landing para que el
-          comprador entienda rapido en que punto va su pago y que esperar
-          despues.
-        </p>
-      </div>
-
-      <div class="status-steps">
-        <article class="status-step">
-          <strong>01</strong>
-          <span>Orden creada y datos guardados</span>
-        </article>
-        <article class="status-step">
-          <strong>02</strong>
-          <span>Pasarela valida el pago y actualiza estado</span>
-        </article>
-        <article class="status-step">
-          <strong>03</strong>
-          <span>Boletas confirmadas y correo enviado</span>
-        </article>
-      </div>
-    </section>
-
-    <section class="status-layout">
-      <OrderStatusCard orderId={orderId} client:load />
-
-      <aside class="status-side">
-        <article class="glass-card buy-point">
-          <p class="section-kicker">Que pasa ahora</p>
-          <p>
-            Si el pago ya fue aprobado, esta pantalla mostrara tus boletas. Si
-            la orden sigue pendiente, el polling se encargara de refrescar el
-            estado automaticamente.
+    <main class="status-page container">
+      <section class="status-hero glass-card">
+        <div>
+          <p class="section-kicker">Seguimiento post-checkout</p>
+          <h1 class="brand-title">Sigue el estado de tu orden</h1>
+          <p class="section-copy">
+            Esta vista mantiene el mismo lenguaje visual de la landing para que
+            el comprador entienda rapido en que punto va su pago y que esperar
+            despues.
           </p>
-        </article>
+        </div>
 
-        <article class="glass-card buy-point">
-          <p class="section-kicker">Premios que sigues jugando</p>
-          <p>
-            Una compra aprobada no te deja atado a una sola fecha. Tus boletas
-            siguen activas para los proximos premios programados dentro de la
-            misma campana.
-          </p>
-        </article>
+        <div class="status-steps">
+          <article class="status-step">
+            <strong>01</strong>
+            <span>Orden creada y datos guardados</span>
+          </article>
+          <article class="status-step">
+            <strong>02</strong>
+            <span>Pasarela valida el pago y actualiza estado</span>
+          </article>
+          <article class="status-step">
+            <strong>03</strong>
+            <span>Boletas confirmadas y correo enviado</span>
+          </article>
+        </div>
+      </section>
 
-        <article class="glass-card buy-point">
-          <p class="section-kicker">Si algo falla</p>
-          <p>
-            Puedes volver a la landing, reintentar la compra o revisar los datos
-            cargados en tu correo y celular para soporte operativo.
-          </p>
-        </article>
-      </aside>
-    </section>
-  </main>
+      <section class="status-layout">
+        <OrderStatusCard orderId={orderId} client:load />
 
-  <PublicFooter />
+        <aside class="status-side">
+          <article class="glass-card buy-point">
+            <p class="section-kicker">Que pasa ahora</p>
+            <p>
+              Si el pago ya fue aprobado, esta pantalla mostrara tus boletas. Si
+              la orden sigue pendiente, el polling se encargara de refrescar el
+              estado automaticamente.
+            </p>
+          </article>
+
+          <article class="glass-card buy-point">
+            <p class="section-kicker">Premios que sigues jugando</p>
+            <p>
+              Una compra aprobada no te deja atado a una sola fecha. Tus boletas
+              siguen activas para los proximos premios programados dentro de la
+              misma campana.
+            </p>
+          </article>
+
+          <article class="glass-card buy-point">
+            <p class="section-kicker">Si algo falla</p>
+            <p>
+              Puedes volver a la landing, reintentar la compra o revisar los
+              datos cargados en tu correo y celular para soporte operativo.
+            </p>
+          </article>
+        </aside>
+      </section>
+    </main>
+
+    <PublicFooter />
+  </div>
 </BaseLayout>
