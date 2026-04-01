@@ -14,7 +14,9 @@ async function seedData(): Promise<void> {
   const UserModel = mongoose.model('User', UserSchema);
 
   const raffleExists = await RaffleModel.exists({});
-  if (!raffleExists) {
+  if (raffleExists) {
+    console.log('Seed: raffle already exists');
+  } else {
     await RaffleModel.create({
       title: 'Rifa de lanzamiento Rifaria',
       slug: 'rifa-lanzamiento-rifaria',
@@ -34,15 +36,15 @@ async function seedData(): Promise<void> {
     });
 
     console.log('Seed: raffle created');
-  } else {
-    console.log('Seed: raffle already exists');
   }
 
   const adminEmail = process.env[seedAdminEmailKey] || 'admin@rifaria.local';
   const adminSecret = process.env[seedAdminSecretKey] || defaultAdminSecret;
   const adminExists = await UserModel.exists({ email: adminEmail.toLowerCase() });
 
-  if (!adminExists) {
+  if (adminExists) {
+    console.log('Seed: admin already exists');
+  } else {
     const credentialHash = await hash(adminSecret, 12);
     const credentialHashField = ['pass', 'word', 'Hash'].join('') as 'passwordHash';
 
@@ -56,8 +58,6 @@ async function seedData(): Promise<void> {
     });
 
     console.log(`Seed: admin created (${adminEmail})`);
-  } else {
-    console.log('Seed: admin already exists');
   }
 }
 
