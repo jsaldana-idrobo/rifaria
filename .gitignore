@@ -17,6 +17,7 @@ coverage/
 .vscode/
 *.log
 .worktrees/
+.playwright-cli/
 
 # lock files from alternative PMs
 package-lock.json
