@@ -47,7 +47,6 @@ export class PaymentsWompiService {
       orderId: order._id,
       provider: 'wompi',
       reference,
-      providerTransactionId: null,
       status: 'pending',
       amountInCents,
       currency,

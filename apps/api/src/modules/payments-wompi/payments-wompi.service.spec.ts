@@ -3,7 +3,7 @@ import { PaymentsWompiService } from './payments-wompi.service';
 import { WompiWebhookDto } from './dto/wompi-webhook.dto';
 
 describe('PaymentsWompiService', () => {
-  let paymentModel: { findOne: jest.Mock };
+  let paymentModel: { findOne: jest.Mock; create: jest.Mock };
   let configService: { get: jest.Mock };
   let ordersService: {
     findByIdOrThrow: jest.Mock;
@@ -25,7 +25,8 @@ describe('PaymentsWompiService', () => {
 
   beforeEach(() => {
     paymentModel = {
-      findOne: jest.fn()
+      findOne: jest.fn(),
+      create: jest.fn()
     };
     configService = {
       get: jest.fn((key: string, defaultValue?: string) => {
@@ -218,5 +219,41 @@ describe('PaymentsWompiService', () => {
       'Wompi status: DECLINED'
     );
     expect(auditService.log).not.toHaveBeenCalled();
+  });
+
+  it('creates pending checkout payments without persisting a null provider transaction id', async () => {
+    const orderId = new Types.ObjectId();
+    const paymentId = new Types.ObjectId();
+
+    ordersService.findByIdOrThrow.mockResolvedValue({
+      _id: orderId,
+      status: 'pending_payment',
+      totalAmount: 20000
+    });
+    paymentModel.create.mockResolvedValue({
+      _id: paymentId
+    });
+    configService.get.mockImplementation((key: string, defaultValue?: string) => {
+      if (key === 'WOMPI_INTEGRITY_SECRET') {
+        return 'integrity-secret';
+      }
+
+      if (key === 'WOMPI_PUBLIC_KEY') {
+        return 'pub_test_123';
+      }
+
+      return defaultValue;
+    });
+
+    await service.createCheckout({
+      orderId: String(orderId),
+      returnUrl: 'http://localhost:4321/gracias'
+    });
+
+    expect(paymentModel.create).toHaveBeenCalledWith(
+      expect.not.objectContaining({
+        providerTransactionId: null
+      })
+    );
   });
 });

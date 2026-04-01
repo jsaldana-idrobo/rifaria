@@ -15,8 +15,8 @@ export class Payment {
   @Prop({ required: true, index: true })
   reference!: string;
 
-  @Prop({ type: String, default: null, index: true, sparse: true, unique: true })
-  providerTransactionId!: string | null;
+  @Prop({ type: String, default: undefined, index: true, sparse: true, unique: true })
+  providerTransactionId!: string | undefined;
 
   @Prop({ type: String, enum: paymentStatuses, default: 'pending' })
   status!: PaymentStatus;

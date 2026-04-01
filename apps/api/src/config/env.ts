@@ -10,9 +10,30 @@ const placeholderValues = new Set([
 ]);
 
 const placeholderPattern = /^(<[^>]+>|.*placeholder.*|.*change-me.*)$/i;
+const emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/i;
 
 function isTemplateValue(value: string): boolean {
   return placeholderPattern.test(value.trim());
+}
+
+function extractEmailAddress(value: string): string {
+  const trimmed = value.trim();
+  const match = trimmed.match(/<([^>]+)>/);
+  return (match?.[1] ?? trimmed).trim();
+}
+
+function hasInvalidEmailIdentity(value: string): boolean {
+  if (isTemplateValue(value)) {
+    return true;
+  }
+
+  const email = extractEmailAddress(value);
+  if (!emailPattern.test(email)) {
+    return true;
+  }
+
+  const domain = email.split('@')[1]?.toLowerCase() ?? '';
+  return domain.length === 0 || domain === 'localhost' || domain.endsWith('.local');
 }
 
 const envSchema = z
@@ -32,9 +53,29 @@ const envSchema = z
     REDIS_PORT: z.coerce.number().default(6379),
     REDIS_PASSWORD: z.string().optional(),
     EMAIL_PROVIDER: z.enum(['console', 'resend', 'postmark']).default('console'),
-    EMAIL_FROM: z.string().default('Rifaria <no-reply@rifaria.local>')
+    EMAIL_FROM: z.string().default('Rifaria <no-reply@rifaria.local>'),
+    EMAIL_REPLY_TO: z.string().optional()
   })
   .superRefine((env, ctx) => {
+    if (env.EMAIL_PROVIDER !== 'console' && hasInvalidEmailIdentity(env.EMAIL_FROM)) {
+      ctx.addIssue({
+        path: ['EMAIL_FROM'],
+        code: z.ZodIssueCode.custom,
+        message: 'EMAIL_FROM must use a valid non-local sender when EMAIL_PROVIDER is enabled'
+      });
+    }
+
+    if (env.EMAIL_PROVIDER !== 'console' && env.EMAIL_REPLY_TO) {
+      if (hasInvalidEmailIdentity(env.EMAIL_REPLY_TO)) {
+        ctx.addIssue({
+          path: ['EMAIL_REPLY_TO'],
+          code: z.ZodIssueCode.custom,
+          message:
+            'EMAIL_REPLY_TO must use a valid non-local address when EMAIL_PROVIDER is enabled'
+        });
+      }
+    }
+
     if (env.NODE_ENV !== 'production') {
       return;
     }

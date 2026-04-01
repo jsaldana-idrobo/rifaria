@@ -38,4 +38,29 @@ describe('loadEnv (api)', () => {
 
     expect(() => loadEnv()).not.toThrow();
   });
+
+  it('fails in production when email sender settings still use placeholders', () => {
+    process.env = {
+      ...originalEnv,
+      NODE_ENV: 'production',
+      PORT: '4000',
+      MONGODB_URI: 'mongodb+srv://user:pass@cluster.mongodb.net/rifaria',
+      JWT_ACCESS_SECRET: 'access-super-secret-value-123456',
+      JWT_REFRESH_SECRET: 'refresh-super-secret-value-123456',
+      WOMPI_ENV: 'production',
+      WOMPI_PUBLIC_KEY: 'pub_prod_live_12345',
+      WOMPI_PRIVATE_KEY: 'prv_prod_live_12345',
+      WOMPI_INTEGRITY_SECRET: 'integrity-secret-live-12345',
+      WOMPI_EVENTS_SECRET: 'events-secret-live-12345',
+      WEB_BASE_URL: 'https://rifaria.co',
+      REDIS_HOST: 'redis.internal',
+      REDIS_PORT: '6379',
+      EMAIL_PROVIDER: 'resend',
+      EMAIL_FROM: 'Rifaria <no-reply@<your-domain>>',
+      EMAIL_REPLY_TO: 'soporte@<your-domain>',
+      RESEND_API_KEY: 're_live_12345'
+    };
+
+    expect(() => loadEnv()).toThrow(/Invalid environment configuration/);
+  });
 });
