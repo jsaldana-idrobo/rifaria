@@ -423,7 +423,7 @@ button {
   filter: saturate(0.95) contrast(1.02);
 }
 
-.prize-chip {
+.hero-prize-chip {
   position: absolute;
   top: 18px;
   left: 18px;
@@ -532,36 +532,22 @@ button {
   grid-template-columns: 1.2fr repeat(3, minmax(0, 0.9fr));
 }
 
-.timeline-grid,
 .results-grid {
   display: grid;
   gap: 16px;
 }
 
-.timeline-grid {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.timeline-card,
 .result-card {
   display: grid;
   gap: 14px;
   padding: 24px;
 }
 
-.timeline-title {
-  margin: 0;
-  font-size: clamp(1.8rem, 3vw, 2.8rem);
-}
-
-.timeline-copy,
-.timeline-meta,
 .result-meta {
   margin: 0;
   color: var(--text-soft);
 }
 
-.timeline-meta,
 .result-meta {
   display: flex;
   justify-content: space-between;
@@ -646,10 +632,15 @@ button {
 .buy-card {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(360px, 0.92fr);
+  align-items: start;
   gap: 24px;
   width: min(1200px, 92vw);
   margin: 0 auto 28px;
   padding: 30px;
+}
+
+.buy-panel {
+  padding: 8px 4px 8px 0;
 }
 
 .buy-header {
@@ -756,6 +747,8 @@ button {
 .buy-form {
   display: grid;
   gap: 16px;
+  position: sticky;
+  top: 18px;
   padding: 24px;
   border-radius: 24px;
   border: 1px solid rgba(21, 37, 52, 0.08);
@@ -771,6 +764,149 @@ button {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
+}
+
+.calendar-shell {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.38fr) minmax(0, 0.62fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.calendar-feature {
+  display: grid;
+  gap: 16px;
+  min-height: 100%;
+  padding: 26px;
+  background: linear-gradient(
+    180deg,
+    rgba(16, 39, 54, 0.98),
+    rgba(20, 48, 66, 0.94)
+  );
+  border-color: rgba(255, 255, 255, 0.08);
+  color: var(--text-inverse);
+}
+
+.calendar-feature-label {
+  display: inline-flex;
+  width: fit-content;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.calendar-feature-title {
+  margin: 0;
+  font-size: clamp(3rem, 5vw, 4.8rem);
+}
+
+.calendar-feature-copy {
+  margin: 0;
+  color: rgba(237, 244, 239, 0.76);
+}
+
+.calendar-feature-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.calendar-feature-meta span {
+  display: inline-flex;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(237, 244, 239, 0.86);
+  font-size: 0.9rem;
+}
+
+.calendar-list {
+  display: grid;
+  gap: 14px;
+}
+
+.calendar-row {
+  display: grid;
+  grid-template-columns: 108px minmax(0, 1fr) minmax(180px, 0.42fr);
+  gap: 18px;
+  align-items: center;
+  padding: 20px 22px;
+}
+
+.calendar-row-index {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+
+.calendar-row-step {
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+
+.calendar-row-index strong {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 2.2rem;
+  letter-spacing: 0.08em;
+  color: var(--text-main);
+}
+
+.calendar-row-body {
+  display: grid;
+  gap: 8px;
+}
+
+.calendar-row-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.calendar-row-value,
+.calendar-row-flag {
+  display: inline-flex;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.calendar-row-value {
+  background: rgba(216, 115, 45, 0.12);
+  color: #8a4c1f;
+}
+
+.calendar-row-flag {
+  background: rgba(136, 193, 161, 0.16);
+  color: #376247;
+}
+
+.calendar-row-title {
+  margin: 0;
+  font-size: clamp(1.8rem, 2.8vw, 2.6rem);
+}
+
+.calendar-row-copy {
+  margin: 0;
+  color: var(--text-soft);
+}
+
+.calendar-row-meta {
+  display: grid;
+  gap: 10px;
+  justify-items: end;
+  text-align: right;
+  color: var(--text-soft);
+  font-size: 0.92rem;
 }
 
 .buy-form label {
@@ -1495,6 +1631,7 @@ button {
 @media (max-width: 1160px) {
   .hero-shell,
   .buy-card,
+  .calendar-shell,
   .admin-panel,
   .status-layout,
   .footer-grid {
@@ -1508,7 +1645,6 @@ button {
   .winner-grid,
   .trust-grid,
   .process-grid,
-  .timeline-grid,
   .results-grid,
   .admin-summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1534,6 +1670,14 @@ button {
     min-height: auto;
   }
 
+  .hero-copy {
+    order: 2;
+  }
+
+  .hero-visual {
+    order: 1;
+  }
+
   .hero-headline {
     max-width: none;
   }
@@ -1547,7 +1691,6 @@ button {
   .prize-grid,
   .winner-grid,
   .process-grid,
-  .timeline-grid,
   .results-grid,
   .admin-summary-grid {
     grid-template-columns: 1fr;
@@ -1568,6 +1711,25 @@ button {
 
   .hero-visual-frame img {
     min-height: 420px;
+  }
+
+  .buy-panel {
+    padding-right: 0;
+  }
+
+  .buy-form {
+    position: static;
+    order: -1;
+  }
+
+  .calendar-row {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .calendar-row-meta {
+    justify-items: start;
+    text-align: left;
   }
 
   .legal-aside {
@@ -1617,6 +1779,11 @@ button {
     padding: 18px;
   }
 
+  .calendar-feature,
+  .calendar-row {
+    padding: 20px;
+  }
+
   .buy-form-grid,
   .bundle-grid,
   .admin-form-grid {
@@ -1638,6 +1805,10 @@ button {
 
   .status-action {
     width: 100%;
+  }
+
+  .calendar-feature-title {
+    font-size: 3.2rem;
   }
 }
 

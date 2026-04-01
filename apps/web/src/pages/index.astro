@@ -28,6 +28,12 @@ const drawTime = new Intl.DateTimeFormat("es-CO", {
 }).format(new Date(primaryDrawAt));
 const prizeCalendar = raffle.upcomingPrizeDraws.slice(0, 4);
 const publicResults = raffle.completedPrizeDraws.slice(0, 6);
+const calendarRows =
+  prizeCalendar.length > 0
+    ? prizeCalendar
+    : featuredPrize
+      ? [featuredPrize]
+      : [];
 
 const categoryLabels = Array.from(
   new Set(
@@ -158,7 +164,7 @@ const schema = {
 
       <aside class="hero-visual glass-card">
         <div class="hero-visual-frame">
-          <span class="prize-chip">Premio destacado</span>
+          <span class="hero-prize-chip">Premio destacado</span>
           <img
             src={primaryImage}
             alt={`Premio destacado: ${primaryPrize}`}
@@ -189,12 +195,18 @@ const schema = {
       </aside>
     </section>
 
+    <PurchaseWidget
+      raffleTitle={raffle.title}
+      eligiblePrizeCount={Math.max(raffle.upcomingPrizeDraws.length, 1)}
+      client:load
+    />
+
     <section class="live-strip container" aria-label="Resumen de lanzamiento">
       <article class="live-card">
         <span class="live-label">Premio mayor</span>
         <strong class="brand-title live-value">{primaryPrize}</strong>
         <p class="live-copy">
-          El premio destacado domina la landing desde arriba.
+          El premio principal se mantiene arriba y la compra queda justo debajo.
         </p>
       </article>
       <article class="live-card">
@@ -213,47 +225,76 @@ const schema = {
       </article>
     </section>
 
-    <section class="section-shell container" id="calendario">
+    <section class="section-shell container" id="premios">
       <div class="section-heading">
         <p class="section-kicker">Calendario de premios</p>
         <h2 class="brand-title section-title">
-          Fechas claras para toda la campana
+          Fechas claras sin quitarle foco a la compra
         </h2>
         <p class="section-copy">
-          Esta zona deja claro por que una sola compra sigue viva mas alla del
-          primer sorteo. Cada premio tiene fecha, valor, fuente y prioridad.
+          Primero premio y compra. Despues, un calendario compacto que deja
+          claras las siguientes salidas publicas sin romper la jerarquia
+          comercial de la landing.
         </p>
       </div>
 
-      <div class="timeline-grid">
-        {
-          prizeCalendar.map((draw) => (
-            <article class="timeline-card glass-card">
-              <span class="prize-chip">
-                {draw.isMajorPrize ? "Premio mayor" : draw.displayValue}
-              </span>
-              <h3 class="brand-title timeline-title">{draw.title}</h3>
-              <p class="timeline-copy">{draw.description}</p>
-              <div class="timeline-meta">
-                <span>
-                  {new Intl.DateTimeFormat("es-CO", {
-                    dateStyle: "medium",
-                    timeStyle: "short",
-                  }).format(new Date(draw.drawAt))}
-                </span>
-                <span>{draw.drawSource}</span>
-              </div>
-            </article>
-          ))
-        }
+      <div class="calendar-shell">
+        <article class="calendar-feature glass-card">
+          <span class="calendar-feature-label">Premio que manda la pagina</span>
+          <h3 class="brand-title calendar-feature-title">{primaryPrize}</h3>
+          <p class="calendar-feature-copy">
+            La misma compra queda participando en los siguientes cortes. Este
+            bloque resume el premio fuerte y deja el resto de fechas en una
+            lista rapida, mas cercana al patron comercial que estabas buscando.
+          </p>
+
+          <div class="calendar-feature-meta">
+            <span>{drawDate}</span>
+            <span>{drawTime}</span>
+            <span>{primaryDrawSource}</span>
+          </div>
+        </article>
+
+        <div class="calendar-list">
+          {
+            calendarRows.map((draw, index) => (
+              <article class="calendar-row glass-card">
+                <div class="calendar-row-index">
+                  <span class="calendar-row-step">Corte 0{index + 1}</span>
+                  <strong>
+                    {new Intl.DateTimeFormat("es-CO", {
+                      day: "2-digit",
+                      month: "short",
+                    }).format(new Date(draw.drawAt))}
+                  </strong>
+                </div>
+
+                <div class="calendar-row-body">
+                  <div class="calendar-row-top">
+                    <span class="calendar-row-value">{draw.displayValue}</span>
+                    {draw.isMajorPrize ? (
+                      <span class="calendar-row-flag">Premio mayor</span>
+                    ) : null}
+                  </div>
+                  <h3 class="brand-title calendar-row-title">{draw.title}</h3>
+                  <p class="calendar-row-copy">{draw.description}</p>
+                </div>
+
+                <div class="calendar-row-meta">
+                  <span>
+                    {new Intl.DateTimeFormat("es-CO", {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    }).format(new Date(draw.drawAt))}
+                  </span>
+                  <span>{draw.drawSource}</span>
+                </div>
+              </article>
+            ))
+          }
+        </div>
       </div>
     </section>
-
-    <PurchaseWidget
-      raffleTitle={raffle.title}
-      eligiblePrizeCount={Math.max(raffle.upcomingPrizeDraws.length, 1)}
-      client:load
-    />
 
     <section class="section-shell container" id="resultados">
       <div class="section-heading">

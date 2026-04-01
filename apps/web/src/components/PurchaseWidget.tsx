@@ -90,12 +90,12 @@ export function PurchaseWidget({
   return (
     <section id="comprar" className="buy-card glass-card">
       <div className="buy-header buy-panel">
-        <p className="section-kicker">Compra guiada y packs visibles</p>
-        <h2 className="brand-title">Elige tu estrategia</h2>
+        <p className="section-kicker">Compra inmediata y packs visibles</p>
+        <h2 className="brand-title">Compra tus boletas</h2>
         <p className="buy-lead">
-          Elige un pack rapido o ajusta tu cantidad. El bloque queda arriba de
-          la mitad de la pagina para empujar la compra sin sacrificar claridad.
-          Una vez el pago queda aprobado, tus boletas siguen activas para{" "}
+          Elige un pack rapido o ajusta tu cantidad. Esta zona ahora va antes
+          del calendario para que la accion principal aparezca donde debe. Una
+          vez el pago queda aprobado, tus boletas siguen activas para{" "}
           {eligiblePrizeCount} premio{eligiblePrizeCount === 1 ? "" : "s"}{" "}
           programado{eligiblePrizeCount === 1 ? "" : "s"}.
         </p>
