@@ -1,5 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import PublicHeader from "@/components/PublicHeader.astro";
+import PublicFooter from "@/components/PublicFooter.astro";
 import { AdminPanel } from "@/components/AdminPanel";
 ---
 
@@ -9,13 +11,39 @@ import { AdminPanel } from "@/components/AdminPanel";
 >
   <meta slot="head" name="robots" content="noindex, nofollow, noarchive" />
 
-  <header
-    class="container"
-    style="padding-top:22px; display:flex; justify-content:space-between; align-items:center;"
-  >
-    <strong class="brand-title" style="font-size:2.1rem;">RIFARIA ADMIN</strong>
-    <a href="/" class="pill">Volver a landing</a>
-  </header>
+  <PublicHeader admin ctaHref="/" ctaLabel="Ver landing" />
 
-  <AdminPanel client:load />
+  <main class="admin-shell container">
+    <section class="admin-hero glass-card">
+      <div>
+        <p class="section-kicker">Backoffice de operacion</p>
+        <h1 class="brand-title">Control operativo de Rifaria</h1>
+        <p class="section-copy">
+          Acceso seguro para el equipo, tablero de ventas y lectura de estados
+          con el mismo estilo que el sitio publico.
+        </p>
+      </div>
+
+      <div class="admin-highlights">
+        <article class="admin-highlight">
+          <strong>Ventas</strong>
+          <span>Lectura rapida del avance de la rifa activa.</span>
+        </article>
+        <article class="admin-highlight">
+          <strong>Pagos</strong>
+          <span>Resumen de estados para detectar friccion o retrasos.</span>
+        </article>
+        <article class="admin-highlight">
+          <strong>Equipo</strong>
+          <span
+            >Ingreso centralizado con continuidad visual en todo el producto.</span
+          >
+        </article>
+      </div>
+    </section>
+
+    <AdminPanel client:load />
+  </main>
+
+  <PublicFooter />
 </BaseLayout>

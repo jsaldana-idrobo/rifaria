@@ -66,19 +66,35 @@ export function AdminPanel() {
   };
 
   return (
-    <section className="buy-card glass-card" style={{ marginTop: "36px" }}>
-      <div>
-        <p className="pill">Admin</p>
-        <h1
-          className="brand-title"
-          style={{ fontSize: "3.3rem", margin: "10px 0" }}
-        >
-          Panel Operativo
-        </h1>
-        <p>
-          Visualiza ventas, pagos y avance de la rifa. Esta vista es MVP y quedo
-          lista para conectarse al backend productivo.
+    <section className="admin-panel glass-card">
+      <div className="buy-header">
+        <p className="section-kicker">Control diario</p>
+        <h2 className="brand-title">Panel operativo</h2>
+        <p className="buy-lead">
+          Visualiza ventas, pagos y avance de la rifa con el mismo sistema
+          visual de la experiencia publica.
         </p>
+
+        <div className="buy-points" aria-label="Puntos del panel">
+          <div className="buy-point">
+            <strong>Acceso seguro</strong>
+            <span>
+              Ingreso rapido para el equipo con autenticacion dedicada.
+            </span>
+          </div>
+          <div className="buy-point">
+            <strong>Lectura de ventas</strong>
+            <span>
+              Estados de orden y pagos visibles sin cambiar de modulo.
+            </span>
+          </div>
+          <div className="buy-point">
+            <strong>Base para escalar</strong>
+            <span>
+              La vista ya queda preparada para crecer con mas reportes.
+            </span>
+          </div>
+        </div>
       </div>
 
       {token === null ? (
@@ -115,22 +131,28 @@ export function AdminPanel() {
           </button>
         </form>
       ) : (
-        <div className="buy-form">
+        <div className="buy-form admin-dashboard">
           {data ? (
             <>
               <div className="summary">
-                <strong>Rifa:</strong> {data.raffle.title}
-                <strong>Estado:</strong> {data.raffle.status}
-                <strong>Boletas:</strong> {data.raffle.soldTickets}/
-                {data.raffle.totalTickets}
-                <strong>Ingresos:</strong> $
-                {data.raffle.grossRevenueCop.toLocaleString("es-CO")} COP
+                <strong>Rifa</strong>
+                <span>{data.raffle.title}</span>
+                <strong>Estado</strong>
+                <span>{data.raffle.status}</span>
+                <strong>Boletas</strong>
+                <span>
+                  {data.raffle.soldTickets}/{data.raffle.totalTickets}
+                </span>
+                <strong>Ingresos</strong>
+                <span>
+                  ${data.raffle.grossRevenueCop.toLocaleString("es-CO")} COP
+                </span>
               </div>
 
               <div className="summary">
                 <strong>Ordenes por estado</strong>
                 {data.orderCounts.map((row) => (
-                  <div key={row._id}>
+                  <div key={row._id} className="admin-row">
                     {row._id}: {row.count}
                   </div>
                 ))}
@@ -139,7 +161,7 @@ export function AdminPanel() {
               <div className="summary">
                 <strong>Pagos por estado</strong>
                 {data.paymentCounts.map((row) => (
-                  <div key={row._id}>
+                  <div key={row._id} className="admin-row">
                     {row._id}: {row.count}
                   </div>
                 ))}

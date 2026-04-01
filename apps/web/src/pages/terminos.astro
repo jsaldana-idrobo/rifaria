@@ -1,5 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import PublicHeader from "@/components/PublicHeader.astro";
+import PublicFooter from "@/components/PublicFooter.astro";
 
 const lastUpdated = "3 de marzo de 2026";
 ---
@@ -8,18 +10,19 @@ const lastUpdated = "3 de marzo de 2026";
   title="Terminos y Condiciones | Rifaria"
   description="Terminos y condiciones de participacion en rifas online publicadas en Rifaria."
 >
+  <PublicHeader ctaHref="/#comprar" ctaLabel="Ir a comprar" />
+
   <main class="legal-shell container">
     <section class="legal-hero glass-card">
       <div>
         <span class="pill pill-hot">Rifas online y cumplimiento</span>
+        <p class="section-kicker">Resumen ejecutivo</p>
         <h1 class="brand-title">Terminos y Condiciones</h1>
         <p class="legal-lead">
-          Este documento regula la publicacion, promocion, venta de boletas,
-          participacion, asignacion de numeros, sorteo, entrega de premios y
-          atencion al usuario en Rifaria. Su objetivo es servir como base
-          contractual y operativa para rifas online en Colombia, sujeto a la
-          normativa aplicable y a la autorizacion administrativa que corresponda
-          en cada caso.
+          Marco legal para rifas publicadas en Rifaria. Este documento regula la
+          publicacion, promocion, venta de boletas, participacion, asignacion de
+          numeros, sorteo, entrega de premios y atencion al usuario con una base
+          contractual y operativa pensada para Colombia.
         </p>
       </div>
 
@@ -462,4 +465,6 @@ const lastUpdated = "3 de marzo de 2026";
       </article>
     </section>
   </main>
+
+  <PublicFooter />
 </BaseLayout>

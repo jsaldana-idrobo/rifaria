@@ -1,0 +1,52 @@
+---
+interface Props {
+  ctaHref?: string;
+  ctaLabel?: string;
+  admin?: boolean;
+}
+
+const {
+  ctaHref = "/#comprar",
+  ctaLabel = "Comprar ahora",
+  admin = false,
+} = Astro.props;
+
+const navLinks = admin
+  ? [
+      { href: "/", label: "Landing" },
+      { href: "/terminos", label: "Terminos" },
+      { href: "/politica-datos", label: "Datos" },
+    ]
+  : [
+      { href: "/#premios", label: "Premios" },
+      { href: "/#ganadores", label: "Ganadores" },
+      { href: "/terminos", label: "Terminos" },
+      { href: "/politica-datos", label: "Datos" },
+    ];
+---
+
+<header class={`public-header container${admin ? " public-header-admin" : ""}`}>
+  <a class="brand-lockup public-brand" href="/">
+    <strong class="brand-title site-brand">RIFARIA</strong>
+    <span class="site-tag">
+      {
+        admin
+          ? "operacion, pagos y seguimiento en un solo lugar"
+          : "rifas online con flujo claro y pago local"
+      }
+    </span>
+  </a>
+
+  <nav class="public-nav" aria-label="Navegacion principal">
+    {
+      navLinks.map((link) => (
+        <a href={link.href} class="public-nav-link">
+          {link.label}
+        </a>
+      ))
+    }
+    <a class="cta-btn cta-btn-compact" href={ctaHref}>
+      {ctaLabel}
+    </a>
+  </nav>
+</header>

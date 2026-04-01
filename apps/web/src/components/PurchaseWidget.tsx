@@ -8,6 +8,28 @@ interface PurchaseWidgetProps {
 
 const TICKET_PRICE = 2000;
 const MIN_TICKETS = 10;
+const TICKET_BUNDLES = [
+  {
+    qty: 10,
+    name: "Arranque",
+    note: "Entrada minima para activar la compra",
+  },
+  {
+    qty: 25,
+    name: "Impulso",
+    note: "Balance entre cobertura y presupuesto",
+  },
+  {
+    qty: 50,
+    name: "Cobertura",
+    note: "Pack fuerte para campanas con mas traccion",
+  },
+  {
+    qty: 100,
+    name: "Dominio",
+    note: "Pensado para compradores que van con todo",
+  },
+] as const;
 
 export function PurchaseWidget({ raffleTitle }: PurchaseWidgetProps) {
   const [fullName, setFullName] = useState("");
@@ -64,12 +86,31 @@ export function PurchaseWidget({ raffleTitle }: PurchaseWidgetProps) {
   return (
     <section id="comprar" className="buy-card glass-card">
       <div className="buy-header buy-panel">
-        <p className="pill pill-hot">Compra segura</p>
-        <h2 className="brand-title">Asegura Tus Boletas</h2>
+        <p className="section-kicker">Compra guiada y packs visibles</p>
+        <h2 className="brand-title">Elige tu estrategia</h2>
         <p className="buy-lead">
-          Elige tu cantidad, completa tus datos y paga con tarjeta, PSE o Nequi.
-          Tus numeros llegan por correo apenas se confirme el pago.
+          Elige un pack rapido o ajusta tu cantidad. El bloque queda arriba de
+          la mitad de la pagina para empujar la compra sin sacrificar claridad.
         </p>
+
+        <div className="bundle-grid" aria-label="Packs sugeridos">
+          {TICKET_BUNDLES.map((bundle) => {
+            const isActive = bundle.qty === ticketQty;
+
+            return (
+              <button
+                key={bundle.qty}
+                type="button"
+                className={`bundle-card${isActive ? " is-active" : ""}`}
+                onClick={() => setTicketQty(bundle.qty)}
+              >
+                <span className="bundle-qty">x{bundle.qty}</span>
+                <strong className="bundle-name">{bundle.name}</strong>
+                <span className="bundle-note">{bundle.note}</span>
+              </button>
+            );
+          })}
+        </div>
 
         <div className="buy-points" aria-label="Beneficios de compra">
           <div className="buy-point">
@@ -181,7 +222,8 @@ export function PurchaseWidget({ raffleTitle }: PurchaseWidgetProps) {
             Total: ${total.toLocaleString("es-CO")} COP
           </div>
           <div className="summary-note">
-            Compra minima: {MIN_TICKETS} boletas por orden.
+            Compra minima: {MIN_TICKETS} boletas por orden. Puedes empezar por
+            un pack y despues subir la cantidad libremente.
           </div>
         </div>
 
@@ -204,7 +246,8 @@ export function PurchaseWidget({ raffleTitle }: PurchaseWidgetProps) {
 
         <p className="buy-footnote">
           Seras redirigido al checkout seguro para completar el pago de{" "}
-          {raffleTitle}.
+          {raffleTitle}. Tus datos quedan listos para seguimiento en la pantalla
+          de gracias.
         </p>
 
         <button className="cta-btn" type="submit" disabled={isSubmitting}>

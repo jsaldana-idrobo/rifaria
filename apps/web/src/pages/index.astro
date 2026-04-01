@@ -1,7 +1,8 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import PublicHeader from "@/components/PublicHeader.astro";
+import PublicFooter from "@/components/PublicFooter.astro";
 import { fetchActiveRaffle } from "@/lib/api";
-import RaffleHero from "@/components/RaffleHero.astro";
 import { PurchaseWidget } from "@/components/PurchaseWidget";
 
 const raffle = await fetchActiveRaffle();
@@ -11,8 +12,10 @@ const soldProgress =
     ? Math.round((raffle.soldTickets / raffle.totalTickets) * 100)
     : 0;
 const drawDate = new Intl.DateTimeFormat("es-CO", {
-  day: "2-digit",
-  month: "short",
+  dateStyle: "medium",
+}).format(new Date(raffle.drawAt));
+const drawTime = new Intl.DateTimeFormat("es-CO", {
+  timeStyle: "short",
 }).format(new Date(raffle.drawAt));
 
 const schema = {
@@ -28,97 +31,335 @@ const schema = {
     availability: "https://schema.org/InStock",
   },
 };
+
+const prizeCards = [
+  {
+    label: "Activa ahora",
+    title: raffle.prizeName,
+    copy: "Hero principal con urgencia comercial, informacion del sorteo y una ruta de compra clara desde el primer scroll.",
+    meta: `${remainingTickets.toLocaleString("es-CO")} boletas disponibles`,
+    featured: true,
+  },
+  {
+    label: "Categoria aspiracional",
+    title: "Carros de lanzamiento",
+    copy: "Presentacion premium para rifas de alto ticket, con espacio para precio comercial, cobertura y fecha del sorteo.",
+    meta: "Listo para campanas de carro nuevo o usado",
+  },
+  {
+    label: "Categoria patrimonial",
+    title: "Casas y lotes",
+    copy: "Bloques mas explicativos para premios de alto valor que necesitan confianza, reglas visibles y soporte documental.",
+    meta: "Ideal para premios con detalle legal adicional",
+  },
+  {
+    label: "Categoria directa",
+    title: "Dinero y premios multiples",
+    copy: "Tarjetas compactas para rifas con varios premios, bolsas en efectivo o dinamicas de ganadores escalonados.",
+    meta: "Se adapta a motos, dinero, bonos y combos",
+  },
+];
+
+const winnerStories = [
+  {
+    label: "Pago confirmado",
+    name: "Julian Martinez",
+    city: "Bogota",
+    amount: "$18M",
+    copy: "Compro un pack medio, pago por PSE y recibio su confirmacion con boletas trazables el mismo dia.",
+  },
+  {
+    label: "Premio multiple",
+    name: "Laura Cardenas",
+    city: "Pereira",
+    amount: "$6M",
+    copy: "Entro por una rifa de premios cruzados y siguio todo el flujo desde compra hasta validacion sin friccion.",
+  },
+  {
+    label: "Entrega visible",
+    name: "Andres Rios",
+    city: "Medellin",
+    amount: "Moto",
+    copy: "La landing puso el premio arriba, los packs al centro y la prueba social justo donde mas influye en conversion.",
+  },
+  {
+    label: "Confianza operativa",
+    name: "Diana Soto",
+    city: "Cali",
+    amount: "$2.5M",
+    copy: "Uso un premio secundario y aun asi encontro claridad en reglas, fecha del sorteo y estados de compra.",
+  },
+];
+
+const processSteps = [
+  {
+    title: "Publica el premio correcto",
+    copy: "La home soporta motos, carros, casas, dinero y campanas con varios premios sin romper la composicion.",
+  },
+  {
+    title: "Empuja compra desde arriba",
+    copy: "Packs rapidos, formulario visible y resumen de pago sin obligar al usuario a perderse en scroll largo.",
+  },
+  {
+    title: "Refuerza confianza abajo",
+    copy: "Ganadores, metodos de pago, legales y soporte quedan integrados al mismo lenguaje visual para cerrar la conversion.",
+  },
+];
 ---
 
 <BaseLayout
-  title="Rifaria | Compra boletas online para rifas en Colombia"
-  description="Rifaria: compra boletas de 4 cifras, paga por tarjeta, PSE o Nequi y recibe tus numeros por correo."
+  title="Rifaria | Rifas grandes con pago local y compra segura"
+  description="Rifaria organiza rifas online con premios grandes, packs de compra rapidos, pago local y una landing pensada para convertir."
   image={raffle.prizeImageUrl}
   schema={schema}
 >
-  <header class="site-header container">
-    <div class="brand-lockup">
-      <strong class="brand-title site-brand">RIFARIA</strong>
-      <span class="site-tag"
-        >rifas online con pago local y entrega inmediata</span
-      >
-    </div>
+  <PublicHeader ctaHref="#comprar" ctaLabel="Comprar ahora" />
 
-    <div class="header-actions">
-      <span class="pill pill-outline">Sorteo auditado</span>
-      <a class="cta-btn cta-btn-compact" href="#comprar">Quiero participar</a>
-    </div>
-  </header>
+  <main>
+    <section class="hero-shell container">
+      <article class="hero-copy glass-card">
+        <div class="hero-label-row">
+          <span class="pill pill-hot">Lanzamiento balanceado</span>
+          <span class="pill pill-outline">Pagos locales y reglas visibles</span>
+        </div>
 
-  <RaffleHero
-    title={raffle.title}
-    description={raffle.description}
-    prizeName={raffle.prizeName}
-    prizeImageUrl={raffle.prizeImageUrl}
-    soldTickets={raffle.soldTickets}
-    totalTickets={raffle.totalTickets}
-    drawAt={raffle.drawAt}
-    drawSource={raffle.drawSource}
-  />
+        <p class="section-kicker">Plataforma visual para rifas activas</p>
+        <h1 class="brand-title hero-headline">
+          Rifas grandes. Flujo claro. Pago local.
+        </h1>
+        <p class="hero-subtitle">
+          Una distribucion comercial inspirada en lo que hoy convierte bien:
+          premio protagonista, compra arriba, prueba social debajo y el mismo
+          formato listo para motos, carros, casas, dinero y varios premios.
+        </p>
 
-  <section class="stats-band container" aria-label="Resumen rapido de la rifa">
-    <article class="glass-card stat-card stat-card-hot">
-      <span class="stat-kicker">Traccion actual</span>
-      <strong class="stat-value">{soldProgress}%</strong>
-      <p class="stat-note">del inventario ya fue apartado por compradores.</p>
-    </article>
+        <div class="hero-actions">
+          <a class="cta-btn" href="#comprar">Comprar boletas</a>
+          <a class="pill pill-outline hero-secondary-action" href="#ganadores">
+            Ver prueba social
+          </a>
+        </div>
 
-    <article class="glass-card stat-card">
-      <span class="stat-kicker">Boletas disponibles</span>
-      <strong class="stat-value"
-        >{remainingTickets.toLocaleString("es-CO")}</strong
-      >
-      <p class="stat-note">
-        Todavia puedes entrar antes de que se cierre la venta.
-      </p>
-    </article>
+        <div class="hero-metrics">
+          <article class="metric-card">
+            <span class="metric-label">Boletas disponibles</span>
+            <strong>{remainingTickets.toLocaleString("es-CO")}</strong>
+            <p>Inventario visible para empujar decision rapida.</p>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">Ritmo de venta</span>
+            <strong>{soldProgress}%</strong>
+            <p>Lectura inmediata de traccion para reforzar urgencia.</p>
+          </article>
+          <article class="metric-card">
+            <span class="metric-label">Sorteo</span>
+            <strong>{drawDate}</strong>
+            <p>{drawTime} con referencia en {raffle.drawSource}.</p>
+          </article>
+        </div>
+      </article>
 
-    <article class="glass-card stat-card">
-      <span class="stat-kicker">Fecha clave</span>
-      <strong class="stat-value">{drawDate}</strong>
-      <p class="stat-note">Resultado definido por {raffle.drawSource}.</p>
-    </article>
-  </section>
+      <aside class="hero-visual glass-card">
+        <div class="hero-visual-frame">
+          <span class="prize-chip">Premio activo</span>
+          <img
+            src={raffle.prizeImageUrl}
+            alt={`Premio destacado: ${raffle.prizeName}`}
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+            width="1200"
+            height="900"
+            sizes="(max-width: 980px) 92vw, 46vw"
+          />
 
-  <PurchaseWidget raffleTitle={raffle.title} client:load />
+          <div class="hero-floating-card">
+            <span class="hero-floating-label">Salida en vivo</span>
+            <strong class="brand-title hero-floating-value">
+              {raffle.prizeName}
+            </strong>
+            <p>{raffle.description}</p>
+          </div>
 
-  <section class="feature-grid">
-    <article class="glass-card feature-card">
-      <span class="feature-tag">Seguridad</span>
-      <h3 class="brand-title">Compra Transparente</h3>
-      <p>
-        Confirmacion por webhook, boletas unicas por rifa y trazabilidad
-        completa en cada orden.
-      </p>
-    </article>
-    <article class="glass-card feature-card">
-      <span class="feature-tag">Checkout local</span>
-      <h3 class="brand-title">Pago Local</h3>
-      <p>
-        Flujo preparado para tarjeta, PSE y Nequi mediante Wompi, optimizado
-        para Colombia.
-      </p>
-    </article>
-    <article class="glass-card feature-card">
-      <span class="feature-tag">Confianza</span>
-      <h3 class="brand-title">Resultado Oficial</h3>
-      <p>
-        El numero ganador se toma de una loteria oficial definida por el
-        administrador y publicada para todos los participantes.
-      </p>
-    </article>
-  </section>
+          <div class="hero-category-cloud" aria-label="Tipos de premios">
+            <span class="hero-category-chip">Motos</span>
+            <span class="hero-category-chip">Carros</span>
+            <span class="hero-category-chip">Casas</span>
+            <span class="hero-category-chip">Dinero</span>
+            <span class="hero-category-chip">Premios multiples</span>
+          </div>
+        </div>
+      </aside>
+    </section>
 
-  <footer class="site-footer container">
-    <span class="site-footer-copy">Rifaria © {new Date().getFullYear()}</span>
-    <div class="site-footer-links">
-      <a class="pill pill-outline" href="/terminos">Terminos</a>
-      <a class="pill pill-outline" href="/politica-datos">Politica de Datos</a>
-    </div>
-  </footer>
+    <section class="live-strip container" aria-label="Resumen de lanzamiento">
+      <article class="live-card">
+        <span class="live-label">Premio principal</span>
+        <strong class="brand-title live-value">{raffle.prizeName}</strong>
+        <p class="live-copy">
+          La pieza visual dominante mantiene el premio arriba.
+        </p>
+      </article>
+      <article class="live-card">
+        <span class="live-label">Compra minima</span>
+        <strong class="brand-title live-value">10 boletas</strong>
+        <p class="live-copy">
+          Base suficiente para packs rapidos y upsell comercial.
+        </p>
+      </article>
+      <article class="live-card">
+        <span class="live-label">Canales activos</span>
+        <strong class="brand-title live-value">Tarjeta, PSE, Nequi</strong>
+        <p class="live-copy">Checkout local visible antes del formulario.</p>
+      </article>
+    </section>
+
+    <section class="section-shell container" id="premios">
+      <div class="section-heading">
+        <p class="section-kicker">Escala visual para distintos lanzamientos</p>
+        <h2 class="brand-title section-title">
+          Premios para todos los perfiles
+        </h2>
+        <p class="section-copy">
+          La landing queda lista para usar un premio estrella arriba y despues
+          abrir un catalogo con otras categorias o proximos sorteos sin perder
+          foco de conversion.
+        </p>
+      </div>
+
+      <div class="prize-grid">
+        {
+          prizeCards.map((card) => (
+            <article
+              class={`prize-card glass-card${card.featured ? " prize-card-featured" : ""}`}
+            >
+              <span class="prize-chip">{card.label}</span>
+              <h3 class="brand-title prize-title">{card.title}</h3>
+              <p class="prize-copy">{card.copy}</p>
+              <div class="prize-meta">
+                <span>{card.meta}</span>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <PurchaseWidget raffleTitle={raffle.title} client:load />
+
+    <section class="section-shell container" id="ganadores">
+      <div class="section-heading">
+        <p class="section-kicker">Prueba social con peso real</p>
+        <h2 class="brand-title section-title">
+          Ganadores que si dan confianza
+        </h2>
+        <p class="section-copy">
+          La referencia deja claro que la credibilidad no se explica una sola
+          vez: se repite con testimonios, ciudades, montos y tono verificado en
+          una zona completa debajo del bloque de compra.
+        </p>
+      </div>
+
+      <div class="winner-grid">
+        {
+          winnerStories.map((story) => (
+            <article class="winner-card glass-card">
+              <span class="winner-badge">{story.label}</span>
+              <strong class="brand-title winner-amount">{story.amount}</strong>
+              <p class="winner-copy">{story.copy}</p>
+              <div class="winner-meta">
+                <span>{story.name}</span>
+                <span>{story.city}, Colombia</span>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="section-shell container">
+      <div class="trust-panel glass-card">
+        <div class="section-heading">
+          <p class="section-kicker">Checkout y soporte</p>
+          <h2 class="brand-title section-title">
+            Confianza visible antes de la ultima decision
+          </h2>
+          <p class="section-copy">
+            Metodos de pago, seguimiento de orden y marcos legales quedan dentro
+            del mismo sistema visual. No parece una pagina bonita aislada: se
+            siente como una operacion completa.
+          </p>
+        </div>
+
+        <div class="trust-grid">
+          <article class="trust-block">
+            <span class="footer-label">Metodos de pago</span>
+            <div class="trust-logos">
+              <span class="trust-logo">Tarjeta</span>
+              <span class="trust-logo">PSE</span>
+              <span class="trust-logo">Nequi</span>
+            </div>
+          </article>
+
+          <article class="trust-block">
+            <span class="footer-label">Capas de confianza</span>
+            <p>
+              Trazabilidad de orden, seguimiento post-pago, terminos visibles y
+              bloques de soporte repartidos donde realmente influyen.
+            </p>
+          </article>
+
+          <article class="trust-block">
+            <span class="footer-label">Acompanamiento</span>
+            <p>
+              La interfaz tambien prepara el recorrido de gracias, legales y
+              admin para que toda la app parezca un producto consistente.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-shell container">
+      <div class="section-heading">
+        <p class="section-kicker">Distribucion pensada para lanzar</p>
+        <h2 class="brand-title section-title">
+          Una estructura comercial completa
+        </h2>
+        <p class="section-copy">
+          Premio arriba, compra en la mitad alta, prueba social debajo y un
+          cierre con informacion operativa. Eso es lo que mejor traduce la
+          referencia a una app de rifas propia.
+        </p>
+      </div>
+
+      <div class="process-grid">
+        {
+          processSteps.map((step, index) => (
+            <article class="process-card glass-card">
+              <span class="process-index">0{index + 1}</span>
+              <h3 class="brand-title">{step.title}</h3>
+              <p>{step.copy}</p>
+            </article>
+          ))
+        }
+      </div>
+
+      <aside class="community-callout glass-card">
+        <div>
+          <p class="section-kicker">Sistema extendido</p>
+          <h3 class="brand-title">
+            Gracias, legales y admin ya hablan el mismo idioma
+          </h3>
+        </div>
+        <p>
+          El rediseno no se queda en la landing. Las demas pantallas publicas y
+          operativas usan la misma base visual para que tu lanzamiento se vea
+          terminado.
+        </p>
+      </aside>
+    </section>
+  </main>
+
+  <PublicFooter />
 </BaseLayout>

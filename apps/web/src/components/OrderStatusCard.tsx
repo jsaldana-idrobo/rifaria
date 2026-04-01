@@ -12,6 +12,24 @@ const FINAL_STATUSES = new Set<PublicOrderStatus["status"]>([
   "refunded",
 ]);
 
+function mapStatusLabel(status: PublicOrderStatus["status"]): string {
+  switch (status) {
+    case "paid":
+      return "Pago aprobado";
+    case "failed":
+      return "Pago rechazado";
+    case "expired":
+      return "Reserva vencida";
+    case "refunded":
+      return "Pago reversado";
+    case "pending_payment":
+      return "Pago en validacion";
+    case "initiated":
+    default:
+      return "Orden creada";
+  }
+}
+
 function mapStatusMessage(status: PublicOrderStatus["status"]): string {
   switch (status) {
     case "paid":
@@ -19,11 +37,11 @@ function mapStatusMessage(status: PublicOrderStatus["status"]): string {
     case "failed":
       return "El pago fue rechazado. Puedes intentar una nueva compra.";
     case "expired":
-      return "La reserva de boletas expiró antes de confirmar el pago.";
+      return "La reserva de boletas expiro antes de confirmar el pago.";
     case "refunded":
-      return "El pago fue reversado y la orden quedó en estado reembolsado.";
+      return "El pago fue reversado y la orden quedo en estado reembolsado.";
     case "pending_payment":
-      return "Pago en validación. Estamos esperando confirmación del webhook.";
+      return "Pago en validacion. Estamos esperando confirmacion del webhook.";
     case "initiated":
     default:
       return "La orden fue creada. Falta confirmar el intento de pago.";
@@ -91,27 +109,17 @@ export function OrderStatusCard({ orderId }: OrderStatusCardProps) {
 
   if (!orderId) {
     return (
-      <section className="glass-card" style={{ padding: "34px" }}>
-        <p className="pill">Compra en proceso</p>
-        <h1
-          className="brand-title"
-          style={{ fontSize: "4rem", margin: "12px 0 8px" }}
-        >
-          Gracias por participar
-        </h1>
-        <p>
-          Estamos validando el estado de tu pago. Si recibiste un link de pago,
-          revísalo en tu correo.
-        </p>
-        <a
-          className="cta-btn"
-          href="/"
-          style={{
-            display: "inline-flex",
-            marginTop: "14px",
-            textDecoration: "none",
-          }}
-        >
+      <section className="status-card glass-card">
+        <div className="status-top">
+          <p className="pill pill-outline">Compra en proceso</p>
+          <h2 className="brand-title">Resumen de la orden</h2>
+          <p className="status-note">
+            Estamos validando el estado del intento de pago. Si ya abriste el
+            checkout, revisa tambien tu correo y tu pasarela.
+          </p>
+        </div>
+
+        <a className="cta-btn status-action" href="/">
           Volver al inicio
         </a>
       </section>
@@ -119,28 +127,37 @@ export function OrderStatusCard({ orderId }: OrderStatusCardProps) {
   }
 
   return (
-    <section className="glass-card" style={{ padding: "34px" }}>
-      <p className="pill">Estado de orden</p>
-      <h1
-        className="brand-title"
-        style={{ fontSize: "4rem", margin: "12px 0 8px" }}
-      >
-        Gracias por participar
-      </h1>
-
-      <div className="summary">
-        <strong>Orden:</strong> {orderId}
-        <strong>Estado:</strong>{" "}
-        {loading ? "consultando..." : (status?.status ?? "desconocido")}
+    <section className="status-card glass-card">
+      <div className="status-top">
+        <p className="pill">Estado de orden</p>
+        <h2 className="brand-title">Resumen de la orden</h2>
+        <p className="status-note">
+          Esta tarjeta se actualiza sola mientras llega la confirmacion del
+          pago. Mantiene el mismo tono visual del checkout para que el usuario
+          no sienta que salio a otra app.
+        </p>
       </div>
 
-      {statusMessage ? (
-        <p style={{ marginTop: "12px" }}>{statusMessage}</p>
-      ) : null}
+      <div className="status-grid">
+        <div className="summary">
+          <strong>Orden</strong>
+          <span>{orderId}</span>
+        </div>
+        <div className="summary">
+          <strong>Estado actual</strong>
+          <span>
+            {loading
+              ? "consultando..."
+              : mapStatusLabel(status?.status ?? "initiated")}
+          </span>
+        </div>
+      </div>
+
+      {statusMessage ? <p className="status-note">{statusMessage}</p> : null}
       {error ? <p className="error">{error}</p> : null}
 
       {status?.ticketNumbers?.length ? (
-        <div className="ticket-preview" style={{ marginTop: "12px" }}>
+        <div className="ticket-preview">
           <p>Tus boletas confirmadas:</p>
           <div>
             {status.ticketNumbers.map((ticket) => (
@@ -150,15 +167,7 @@ export function OrderStatusCard({ orderId }: OrderStatusCardProps) {
         </div>
       ) : null}
 
-      <a
-        className="cta-btn"
-        href="/"
-        style={{
-          display: "inline-flex",
-          marginTop: "14px",
-          textDecoration: "none",
-        }}
-      >
+      <a className="cta-btn status-action" href="/">
         Volver al inicio
       </a>
     </section>

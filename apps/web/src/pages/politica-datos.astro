@@ -1,5 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import PublicHeader from "@/components/PublicHeader.astro";
+import PublicFooter from "@/components/PublicFooter.astro";
 
 const lastUpdated = "3 de marzo de 2026";
 ---
@@ -8,19 +10,19 @@ const lastUpdated = "3 de marzo de 2026";
   title="Politica de Tratamiento de Datos | Rifaria"
   description="Politica de tratamiento, uso y proteccion de datos personales en Rifaria."
 >
+  <PublicHeader ctaHref="/#comprar" ctaLabel="Volver a la landing" />
+
   <main class="legal-shell container">
     <section class="legal-hero glass-card">
       <div>
         <span class="pill pill-hot">Habeas data y privacidad</span>
+        <p class="section-kicker">Controles y tiempos clave</p>
         <h1 class="brand-title">Politica de Tratamiento de Datos</h1>
         <p class="legal-lead">
+          Privacidad y tratamiento de datos para rifas publicadas en Rifaria.
           Esta politica regula la recoleccion, almacenamiento, uso, circulacion,
           transmision, transferencia, supresion y proteccion de datos personales
-          tratados a traves de Rifaria en el contexto de rifas online, pagos,
-          soporte, comunicaciones operativas y relacion con los usuarios. Se
-          estructura con base en el regimen colombiano de proteccion de datos
-          personales y debe complementarse con la informacion del responsable
-          juridico definitivo antes del go-live en produccion.
+          tratados a traves del sitio, pagos y soporte.
         </p>
       </div>
 
@@ -421,4 +423,6 @@ const lastUpdated = "3 de marzo de 2026";
       </article>
     </section>
   </main>
+
+  <PublicFooter />
 </BaseLayout>
