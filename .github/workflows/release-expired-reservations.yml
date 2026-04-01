@@ -14,16 +14,49 @@ jobs:
           MAINTENANCE_TOKEN: ${{ secrets.RIFARIA_MAINTENANCE_TOKEN }}
           API_BASE_URL: https://rifaria-api.vercel.app
         run: |
+          set -euo pipefail
+
           if [ -z "${MAINTENANCE_TOKEN}" ]; then
             echo "Missing secret RIFARIA_MAINTENANCE_TOKEN"
             exit 1
           fi
 
-          curl --fail-with-body --silent --show-error \
-            --retry 4 \
-            --retry-delay 5 \
-            --retry-all-errors \
-            --max-time 90 \
-            -X POST \
-            -H "x-maintenance-token: ${MAINTENANCE_TOKEN}" \
-            "${API_BASE_URL}/v1/internal/maintenance/release-expired-reservations"
+          endpoint="${API_BASE_URL}/v1/internal/maintenance/release-expired-reservations"
+          max_attempts=5
+          attempt=1
+
+          while [ "${attempt}" -le "${max_attempts}" ]; do
+            response_file="$(mktemp)"
+            curl_exit=0
+            http_code="$(
+              curl --silent \
+                --connect-timeout 10 \
+                --max-time 90 \
+                --output "${response_file}" \
+                --write-out "%{http_code}" \
+                -X POST \
+                -H "x-maintenance-token: ${MAINTENANCE_TOKEN}" \
+                "${endpoint}"
+            )" || curl_exit=$?
+
+            if [ "${curl_exit}" -eq 0 ] && [ "${http_code}" -ge 200 ] && [ "${http_code}" -lt 300 ]; then
+              cat "${response_file}"
+              rm -f "${response_file}"
+              exit 0
+            fi
+
+            if [ "${attempt}" -lt "${max_attempts}" ]; then
+              echo "Attempt ${attempt}/${max_attempts} failed (curl=${curl_exit}, http=${http_code}). Retrying in 5s..."
+              rm -f "${response_file}"
+              sleep 5
+              attempt=$((attempt + 1))
+              continue
+            fi
+
+            echo "Release expired reservations failed after ${max_attempts} attempts (curl=${curl_exit}, http=${http_code})."
+            if [ -s "${response_file}" ]; then
+              cat "${response_file}"
+            fi
+            rm -f "${response_file}"
+            exit 1
+          done
