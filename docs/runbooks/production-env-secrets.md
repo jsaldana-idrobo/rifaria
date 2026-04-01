@@ -22,6 +22,20 @@ Variables obligatorias en produccion:
 - `REDIS_HOST` (no localhost)
 - `REDIS_PORT`
 - `REDIS_PASSWORD` (si aplica)
+- `NOTIFICATIONS_MODE` (`inline` para modo gratis, `queue` para worker futuro)
+- `MAINTENANCE_TOKEN` (fuerte, para el endpoint interno de cleanup)
+- `EMAIL_PROVIDER`
+- `EMAIL_FROM`
+- `EMAIL_REPLY_TO` (opcional recomendado)
+
+Si `NOTIFICATIONS_MODE=inline` y `EMAIL_PROVIDER=resend`:
+
+- `RESEND_API_KEY` (obligatoria)
+
+Si `NOTIFICATIONS_MODE=inline` y `EMAIL_PROVIDER=postmark`:
+
+- `POSTMARK_SERVER_TOKEN` (obligatoria)
+- `POSTMARK_MESSAGE_STREAM` (por defecto `outbound`)
 
 ## 2) Worker (`apps/worker/.env`)
 
@@ -66,7 +80,19 @@ pnpm --filter @rifaria/api start
 pnpm --filter @rifaria/worker start
 ```
 
-## 4) Host recomendado para el worker
+## 4) Modo gratis recomendado
+
+- `web`: Vercel
+- `api`: Vercel
+- `worker`: no desplegado
+- `cleanup`: GitHub Actions cada 5 minutos
+
+Variables operativas adicionales:
+
+- secret GitHub: `RIFARIA_MAINTENANCE_TOKEN`
+- Vercel API env: `MAINTENANCE_TOKEN`
+
+## 5) Host recomendado para el worker futuro
 
 - `web`: Vercel
 - `api`: Vercel

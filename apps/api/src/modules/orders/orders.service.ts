@@ -220,6 +220,18 @@ export class OrdersService {
     );
   }
 
+  async markEmailSent(orderId: Types.ObjectId): Promise<void> {
+    await this.orderModel.updateOne(
+      { _id: orderId },
+      {
+        $set: {
+          emailDeliveryStatus: 'sent',
+          emailSentAt: new Date()
+        }
+      }
+    );
+  }
+
   async markEmailFailed(orderId: Types.ObjectId): Promise<void> {
     await this.orderModel.updateOne(
       { _id: orderId },
@@ -231,7 +243,10 @@ export class OrdersService {
     );
   }
 
-  async expirePendingOrders(now = new Date()): Promise<number> {
+  async expirePendingOrders(now = new Date()): Promise<{
+    releasedOrders: number;
+    releasedTickets: number;
+  }> {
     const expiredOrders = await this.orderModel
       .find({
         status: 'pending_payment',
@@ -240,8 +255,13 @@ export class OrdersService {
       .lean();
 
     if (expiredOrders.length === 0) {
-      return 0;
+      return {
+        releasedOrders: 0,
+        releasedTickets: 0
+      };
     }
+
+    let releasedTickets = 0;
 
     for (const order of expiredOrders) {
       await this.orderModel.updateOne(
@@ -254,9 +274,14 @@ export class OrdersService {
         }
       );
 
-      await this.ticketsService.releaseTicketsForOrder(order._id as Types.ObjectId);
+      releasedTickets += await this.ticketsService.releaseTicketsForOrder(
+        order._id as Types.ObjectId
+      );
     }
 
-    return expiredOrders.length;
+    return {
+      releasedOrders: expiredOrders.length,
+      releasedTickets
+    };
   }
 }

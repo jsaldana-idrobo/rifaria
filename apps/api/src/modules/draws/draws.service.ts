@@ -26,7 +26,7 @@ export class DrawsService {
     });
 
     if (dto.notifyParticipants) {
-      await this.notificationsService.enqueuePostponement(String(updated._id), dto.reason);
+      await this.notificationsService.notifyPostponement(String(updated._id), dto.reason);
     }
 
     await this.auditService.log({

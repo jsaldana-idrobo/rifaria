@@ -6,7 +6,9 @@ const placeholderValues = new Set([
   'pk_test_placeholder',
   'prv_test_placeholder',
   'integrity_placeholder',
-  'events_placeholder'
+  'events_placeholder',
+  'resend_placeholder',
+  'postmark_placeholder'
 ]);
 
 const placeholderPattern = /^(<[^>]+>|.*placeholder.*|.*change-me.*)$/i;
@@ -52,9 +54,14 @@ const envSchema = z
     REDIS_HOST: z.string().default('127.0.0.1'),
     REDIS_PORT: z.coerce.number().default(6379),
     REDIS_PASSWORD: z.string().optional(),
+    NOTIFICATIONS_MODE: z.enum(['inline', 'queue']).default('queue'),
     EMAIL_PROVIDER: z.enum(['console', 'resend', 'postmark']).default('console'),
     EMAIL_FROM: z.string().default('Rifaria <no-reply@rifaria.local>'),
-    EMAIL_REPLY_TO: z.string().optional()
+    EMAIL_REPLY_TO: z.string().optional(),
+    RESEND_API_KEY: z.string().optional(),
+    POSTMARK_SERVER_TOKEN: z.string().optional(),
+    POSTMARK_MESSAGE_STREAM: z.string().default('outbound'),
+    MAINTENANCE_TOKEN: z.string().optional()
   })
   .superRefine((env, ctx) => {
     if (env.EMAIL_PROVIDER !== 'console' && hasInvalidEmailIdentity(env.EMAIL_FROM)) {
@@ -72,6 +79,40 @@ const envSchema = z
           code: z.ZodIssueCode.custom,
           message:
             'EMAIL_REPLY_TO must use a valid non-local address when EMAIL_PROVIDER is enabled'
+        });
+      }
+    }
+
+    if (env.NOTIFICATIONS_MODE === 'inline') {
+      if (env.EMAIL_PROVIDER === 'console') {
+        ctx.addIssue({
+          path: ['EMAIL_PROVIDER'],
+          code: z.ZodIssueCode.custom,
+          message: 'EMAIL_PROVIDER must be resend or postmark when NOTIFICATIONS_MODE=inline'
+        });
+      }
+
+      if (
+        env.EMAIL_PROVIDER === 'resend' &&
+        (!env.RESEND_API_KEY || isTemplateValue(env.RESEND_API_KEY))
+      ) {
+        ctx.addIssue({
+          path: ['RESEND_API_KEY'],
+          code: z.ZodIssueCode.custom,
+          message:
+            'RESEND_API_KEY is required when EMAIL_PROVIDER=resend and inline mode is enabled'
+        });
+      }
+
+      if (
+        env.EMAIL_PROVIDER === 'postmark' &&
+        (!env.POSTMARK_SERVER_TOKEN || isTemplateValue(env.POSTMARK_SERVER_TOKEN))
+      ) {
+        ctx.addIssue({
+          path: ['POSTMARK_SERVER_TOKEN'],
+          code: z.ZodIssueCode.custom,
+          message:
+            'POSTMARK_SERVER_TOKEN is required when EMAIL_PROVIDER=postmark and inline mode is enabled'
         });
       }
     }
@@ -171,6 +212,22 @@ const envSchema = z
         path: ['REDIS_HOST'],
         code: z.ZodIssueCode.custom,
         message: 'REDIS_HOST cannot point to localhost in production'
+      });
+    }
+
+    if (!env.MAINTENANCE_TOKEN || isTemplateValue(env.MAINTENANCE_TOKEN)) {
+      ctx.addIssue({
+        path: ['MAINTENANCE_TOKEN'],
+        code: z.ZodIssueCode.custom,
+        message: 'MAINTENANCE_TOKEN must be a strong non-placeholder value in production'
+      });
+    }
+
+    if (env.MAINTENANCE_TOKEN && env.MAINTENANCE_TOKEN.length < 24) {
+      ctx.addIssue({
+        path: ['MAINTENANCE_TOKEN'],
+        code: z.ZodIssueCode.custom,
+        message: 'MAINTENANCE_TOKEN must be at least 24 characters in production'
       });
     }
   });

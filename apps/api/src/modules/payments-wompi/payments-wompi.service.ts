@@ -204,8 +204,14 @@ export class PaymentsWompiService {
     await this.rafflesService.setSoldTickets(paidOrder.raffleId, assignedCount);
 
     try {
-      await this.notificationsService.enqueueTicketEmail(String(paidOrder._id));
-      await this.ordersService.markEmailQueued(paidOrder._id);
+      const notificationResult = await this.notificationsService.sendTicketEmail(
+        String(paidOrder._id)
+      );
+      if (notificationResult === 'queued') {
+        await this.ordersService.markEmailQueued(paidOrder._id);
+      } else {
+        await this.ordersService.markEmailSent(paidOrder._id);
+      }
     } catch (error) {
       await this.ordersService.markEmailFailed(paidOrder._id);
     }

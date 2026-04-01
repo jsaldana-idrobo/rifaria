@@ -10,6 +10,7 @@ describe('PaymentsWompiService', () => {
     markPaid: jest.Mock;
     markFailed: jest.Mock;
     markEmailQueued: jest.Mock;
+    markEmailSent: jest.Mock;
     markEmailFailed: jest.Mock;
   };
   let ticketsService: {
@@ -19,7 +20,7 @@ describe('PaymentsWompiService', () => {
     releaseTicketsForOrder: jest.Mock;
   };
   let rafflesService: { setSoldTickets: jest.Mock };
-  let notificationsService: { enqueueTicketEmail: jest.Mock };
+  let notificationsService: { sendTicketEmail: jest.Mock };
   let auditService: { log: jest.Mock };
   let service: PaymentsWompiService;
 
@@ -42,6 +43,7 @@ describe('PaymentsWompiService', () => {
       markPaid: jest.fn(),
       markFailed: jest.fn(),
       markEmailQueued: jest.fn(),
+      markEmailSent: jest.fn(),
       markEmailFailed: jest.fn()
     };
     ticketsService = {
@@ -54,7 +56,7 @@ describe('PaymentsWompiService', () => {
       setSoldTickets: jest.fn()
     };
     notificationsService = {
-      enqueueTicketEmail: jest.fn()
+      sendTicketEmail: jest.fn()
     };
     auditService = {
       log: jest.fn()
@@ -96,6 +98,7 @@ describe('PaymentsWompiService', () => {
       raffleId,
       status: 'paid'
     });
+    notificationsService.sendTicketEmail.mockResolvedValue('queued');
     ticketsService.countAssignedByRaffle.mockResolvedValue(2);
 
     const payload: WompiWebhookDto = {
@@ -120,9 +123,62 @@ describe('PaymentsWompiService', () => {
 
     expect(ordersService.markPaid).toHaveBeenCalledTimes(1);
     expect(ordersService.markEmailQueued).toHaveBeenCalledWith(orderId);
+    expect(ordersService.markEmailSent).not.toHaveBeenCalled();
     expect(rafflesService.setSoldTickets).toHaveBeenCalledWith(raffleId, 2);
-    expect(notificationsService.enqueueTicketEmail).toHaveBeenCalledWith(String(orderId));
+    expect(notificationsService.sendTicketEmail).toHaveBeenCalledWith(String(orderId));
     expect(auditService.log).toHaveBeenCalledTimes(1);
+  });
+
+  it('marks email as sent when inline notifications are used after approval', async () => {
+    const orderId = new Types.ObjectId();
+    const raffleId = new Types.ObjectId();
+    const paymentId = new Types.ObjectId();
+
+    paymentModel.findOne.mockResolvedValue({
+      _id: paymentId,
+      orderId,
+      reference: 'RIF-REF-inline',
+      providerTransactionId: 'tx-inline-1',
+      status: 'approved',
+      save: jest.fn()
+    });
+
+    ordersService.findByIdOrThrow.mockResolvedValue({
+      _id: orderId,
+      raffleId,
+      status: 'pending_payment'
+    });
+    ticketsService.assignTicketsForOrder.mockResolvedValue(['1020', '2040']);
+    ordersService.markPaid.mockResolvedValue({
+      _id: orderId,
+      raffleId,
+      status: 'paid'
+    });
+    notificationsService.sendTicketEmail.mockResolvedValue('sent');
+    ticketsService.countAssignedByRaffle.mockResolvedValue(2);
+
+    const payload: WompiWebhookDto = {
+      event: 'transaction.updated',
+      data: {
+        transaction: {
+          id: 'tx-inline-1',
+          reference: 'RIF-REF-inline',
+          status: 'APPROVED',
+          amount_in_cents: 200000,
+          currency: 'COP'
+        }
+      }
+    };
+
+    await expect(service.handleWebhook(payload)).resolves.toEqual({
+      ok: true,
+      status: 'approved',
+      orderId: String(orderId),
+      idempotent: true
+    });
+
+    expect(ordersService.markEmailSent).toHaveBeenCalledWith(orderId);
+    expect(ordersService.markEmailQueued).not.toHaveBeenCalled();
   });
 
   it('keeps approved duplicate events idempotent when the order is already paid', async () => {
@@ -166,7 +222,7 @@ describe('PaymentsWompiService', () => {
     });
 
     expect(ordersService.markPaid).not.toHaveBeenCalled();
-    expect(notificationsService.enqueueTicketEmail).not.toHaveBeenCalled();
+    expect(notificationsService.sendTicketEmail).not.toHaveBeenCalled();
     expect(auditService.log).not.toHaveBeenCalled();
     expect(rafflesService.setSoldTickets).toHaveBeenCalledWith(raffleId, 10);
   });

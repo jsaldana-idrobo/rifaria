@@ -67,7 +67,8 @@ El repo incluye automatizacion para calidad y analisis Sonar.
 - `CI`: corre `format:check`, `lint`, `test` y `build`
 - `Sonar`: ejecuta analisis en pushes y PRs
 - `Vercel`: `apps/web` (`rifaria`) y la API (`rifaria-api`) despliegan por push/manual
-- `Render`: `apps/worker` se despliega como `Background Worker` con `render.yaml`
+- `GitHub Actions`: puede liberar reservas vencidas cada 5 minutos en modo gratis
+- `Render`: `apps/worker` queda disponible como opcion futura de pago con `render.yaml`
 
 Secrets/vars necesarios en GitHub para Sonar:
 
@@ -86,6 +87,7 @@ SONAR_PROJECT_KEY       # variable del repo
 - `GET /v1/public/orders/:id` (estado publico de orden, sin PII)
 - `POST /v1/public/payments/wompi/checkout`
 - `POST /v1/public/payments/wompi/webhook`
+- `POST /v1/internal/maintenance/release-expired-reservations`
 - `POST /v1/auth/bootstrap-admin`
 - `POST /v1/auth/login`
 - `GET /v1/admin/dashboard`
@@ -97,7 +99,8 @@ SONAR_PROJECT_KEY       # variable del repo
 - Credenciales reales de Wompi, email providers e infraestructura se dejan para la fase final de configuracion.
 - El flujo de compra se confirma solo por webhook.
 - En `production`, API y worker validan que no uses placeholders inseguros.
-- El worker ya soporta envio real por `resend` y `postmark`.
+- La API ya soporta `NOTIFICATIONS_MODE=inline` para envio gratis sin worker persistente.
+- El worker sigue soportando `queue + resend/postmark` como opcion futura.
 - API responde `x-request-id` en todas las rutas para trazabilidad de incidentes.
 - Guia de variables productivas: `docs/runbooks/production-env-secrets.md`
 - Guia de deploy del worker: `docs/runbooks/render-worker-deploy.md`

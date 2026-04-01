@@ -10,9 +10,11 @@ Fecha: 2026-02-20
 - [ ] `MONGODB_URI` de produccion con backups y monitoreo.
 - [ ] `REDIS_HOST/REDIS_PORT/REDIS_PASSWORD` de produccion.
 - [ ] `WEB_BASE_URL` al dominio final.
+- [ ] `NOTIFICATIONS_MODE=inline` en la API para modo gratis.
 - [ ] `EMAIL_PROVIDER` real (`resend` o `postmark`) y remitente validado.
 - [ ] `RESEND_API_KEY` o `POSTMARK_SERVER_TOKEN` configurados segun proveedor.
-- [ ] Worker `rifaria-worker` desplegado y corriendo en Render.
+- [ ] `MAINTENANCE_TOKEN` configurado en Vercel API y como secret `RIFARIA_MAINTENANCE_TOKEN` en GitHub.
+- [ ] Workflow `Release Expired Reservations` activo.
 
 ## 2) Operacion y seguridad
 
@@ -30,6 +32,7 @@ Fecha: 2026-02-20
 - [ ] Webhook duplicado responde idempotente sin duplicar efectos.
 - [ ] Webhook `DECLINED` libera reservas.
 - [ ] Correo de boletas enviado (o registrado en proveedor).
+- [ ] Cleanup automatico de reservas vencidas ejecutando sin `401`.
 - [ ] Panel admin muestra dashboard, ordenes y pagos.
 
 ## 4) Preparacion legal/comercial
@@ -42,5 +45,6 @@ Fecha: 2026-02-20
 ## 5) Rollback minimo
 
 - [ ] Procedimiento de rollback documentado (web + api + worker).
+- [ ] Procedimiento de rollback documentado para modo gratis (`inline + GitHub Actions`) y modo futuro (`queue + worker`).
 - [ ] Contacto de soporte de pasarela y proveedor de email disponible.
 - [ ] Runbook de incidente webhook/cola validado por el equipo.

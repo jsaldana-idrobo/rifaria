@@ -1,0 +1,25 @@
+name: Release Expired Reservations
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Release expired reservations
+        env:
+          MAINTENANCE_TOKEN: ${{ secrets.RIFARIA_MAINTENANCE_TOKEN }}
+          API_BASE_URL: https://rifaria-api.vercel.app
+        run: |
+          if [ -z "${MAINTENANCE_TOKEN}" ]; then
+            echo "Missing secret RIFARIA_MAINTENANCE_TOKEN"
+            exit 1
+          fi
+
+          curl --fail-with-body --silent --show-error \
+            -X POST \
+            -H "x-maintenance-token: ${MAINTENANCE_TOKEN}" \
+            "${API_BASE_URL}/v1/internal/maintenance/release-expired-reservations"

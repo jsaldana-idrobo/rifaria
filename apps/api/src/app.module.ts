@@ -9,6 +9,7 @@ import { AuditModule } from './modules/audit/audit.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { DrawsModule } from './modules/draws/draws.module';
 import { HealthModule } from './modules/health/health.module';
+import { MaintenanceModule } from './modules/maintenance/maintenance.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { PaymentsWompiModule } from './modules/payments-wompi/payments-wompi.module';
@@ -49,6 +50,7 @@ import { TicketsModule } from './modules/tickets/tickets.module';
       })
     }),
     HealthModule,
+    MaintenanceModule,
     RafflesModule,
     TicketsModule,
     OrdersModule,
