@@ -94,12 +94,11 @@ export function PurchaseWidget({
   return (
     <section id="comprar" className="buy-card glass-card">
       <div className="buy-header buy-panel">
-        <p className="section-kicker">Compra inmediata y packs visibles</p>
-        <h2 className="brand-title">Compra tus boletas</h2>
+        <p className="section-kicker">Compra inmediata</p>
+        <h2 className="brand-title">Elige tu pack</h2>
         <p className="buy-lead">
-          Elige un pack visible, mira el valor al instante y entra al checkout
-          sin perderte entre bloques secundarios. Una vez el pago queda
-          aprobado, tus boletas siguen activas para {eligiblePrizeCount} premio
+          Selecciona una opcion, mira el valor al instante y entra al checkout.
+          Tus boletas quedan activas para {eligiblePrizeCount} premio
           {eligiblePrizeCount === 1 ? "" : "s"} programado
           {eligiblePrizeCount === 1 ? "" : "s"}.
         </p>
@@ -130,26 +129,14 @@ export function PurchaseWidget({
           })}
         </div>
 
-        <div className="buy-points" aria-label="Beneficios de compra">
-          <div className="buy-point">
-            <strong>Confirmacion real</strong>
-            <span>
-              La orden se valida por webhook y queda trazable de punta a punta.
-            </span>
-          </div>
-          <div className="buy-point">
-            <strong>Pago local</strong>
-            <span>
-              Tarjeta, PSE y Nequi en un flujo rapido pensado para Colombia.
-            </span>
-          </div>
-          <div className="buy-point">
-            <strong>Entrega digital</strong>
-            <span>
-              Recibes tus numeros por correo apenas el pago quede confirmado y
-              sigues jugando por las siguientes fechas publicadas.
-            </span>
-          </div>
+        <div className="buy-trust-row" aria-label="Ventajas de compra">
+          <span className="buy-trust-pill">PSE, tarjeta y Nequi</span>
+          <span className="buy-trust-pill">Correo al confirmar pago</span>
+          <span className="buy-trust-pill">
+            {eligiblePrizeCount} premio{eligiblePrizeCount === 1 ? "" : "s"}{" "}
+            activo
+            {eligiblePrizeCount === 1 ? "" : "s"}
+          </span>
         </div>
       </div>
 
@@ -265,8 +252,7 @@ export function PurchaseWidget({
 
         <p className="buy-footnote">
           Seras redirigido al checkout seguro para completar el pago de{" "}
-          {raffleTitle}. Tus datos quedan listos para seguimiento en la pantalla
-          de gracias.
+          {raffleTitle}.
         </p>
 
         <button className="cta-btn" type="submit" disabled={isSubmitting}>

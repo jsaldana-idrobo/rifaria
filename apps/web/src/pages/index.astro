@@ -28,70 +28,13 @@ const drawTime = new Intl.DateTimeFormat("es-CO", {
 }).format(new Date(primaryDrawAt));
 const prizeCalendar = raffle.upcomingPrizeDraws.slice(0, 4);
 const publicResults = raffle.completedPrizeDraws.slice(0, 6);
+const activeDrawCount = Math.max(raffle.upcomingPrizeDraws.length, 1);
 const calendarRows =
   prizeCalendar.length > 0
     ? prizeCalendar
     : featuredPrize
       ? [featuredPrize]
       : [];
-
-const categoryLabels = Array.from(
-  new Set(
-    raffle.upcomingPrizeDraws.map((draw) => {
-      switch (draw.prizeType) {
-        case "cash":
-          return "Dinero";
-        case "vehicle":
-          return "Vehiculos";
-        case "property":
-          return "Casas";
-        case "bundle":
-          return "Combos";
-        default:
-          return "Premios";
-      }
-    }),
-  ),
-).slice(0, 5);
-
-const winnerStories = [
-  {
-    label: "Pago confirmado",
-    name: "Julian Martinez",
-    city: "Bogota",
-    amount: "$18M",
-    copy: "Compro un pack medio, pago por PSE y recibio su confirmacion con boletas trazables el mismo dia.",
-  },
-  {
-    label: "Premio multiple",
-    name: "Laura Cardenas",
-    city: "Pereira",
-    amount: "$6M",
-    copy: "Entro por una rifa de premios cruzados y siguio todo el flujo desde compra hasta validacion sin friccion.",
-  },
-  {
-    label: "Entrega visible",
-    name: "Andres Rios",
-    city: "Medellin",
-    amount: "Moto",
-    copy: "La landing pone el premio arriba, los packs al centro y los numeros ganadores siempre visibles para todos.",
-  },
-];
-
-const processSteps = [
-  {
-    title: "Compra una sola vez",
-    copy: "El comprador entra una vez y sus boletas quedan activas para todas las fechas futuras de la campana.",
-  },
-  {
-    title: "Publica resultados sin esconder nada",
-    copy: "Cada premio sorteado muestra numero ganador, prueba y estado del ganador incluso cuando nadie lo tiene pagado.",
-  },
-  {
-    title: "Opera desde un mismo panel",
-    copy: "Premios, compradores, inventario y correo quedan en el mismo lenguaje visual para lanzar y administrar sin friccion.",
-  },
-];
 
 const schema = {
   "@context": "https://schema.org",
@@ -119,21 +62,16 @@ const schema = {
 
     <main>
       <section class="hero-shell container">
-        <article class="hero-copy glass-card">
-          <div class="hero-label-row">
-            <span class="pill pill-hot">Campana multi premio</span>
-            <span class="pill pill-outline">Resultados publicos visibles</span>
-          </div>
-
-          <p class="section-kicker">Rifas activas con calendario completo</p>
+        <article class="hero-copy">
+          <p class="section-kicker">Rifa activa</p>
           <h1 class="brand-title hero-headline">
-            Rifas grandes. Varias fechas. Todo visible.
+            Ve el premio. Compra tus boletas.
           </h1>
           <p class="hero-subtitle">
-            Compra una sola vez y deja tus boletas jugando por dinero, motos,
-            carros, casas o premios escalonados. El premio manda arriba, la
-            compra aparece de inmediato y los resultados se quedan visibles para
-            todos.
+            Una sola compra te deja participando por {activeDrawCount} premio
+            {activeDrawCount === 1 ? "" : "s"} programado
+            {activeDrawCount === 1 ? "" : "s"}. Pago local, boletas por correo y
+            resultados publicos visibles para todos.
           </p>
 
           <div class="hero-actions">
@@ -142,7 +80,7 @@ const schema = {
               class="pill pill-outline hero-secondary-action"
               href="#resultados"
             >
-              Ver numeros ganadores
+              Ver resultados
             </a>
           </div>
 
@@ -150,27 +88,24 @@ const schema = {
             <article class="metric-card">
               <span class="metric-label">Boletas disponibles</span>
               <strong>{remainingTickets.toLocaleString("es-CO")}</strong>
-              <p>
-                Inventario en tiempo real para empujar urgencia sin ocultar
-                datos.
-              </p>
+              <p>Inventario visible.</p>
             </article>
             <article class="metric-card">
               <span class="metric-label">Premios activos</span>
-              <strong>{raffle.upcomingPrizeDraws.length}</strong>
-              <p>Una compra queda participando en todo el calendario futuro.</p>
+              <strong>{activeDrawCount}</strong>
+              <p>Una compra participa en todos.</p>
             </article>
             <article class="metric-card">
               <span class="metric-label">Siguiente sorteo</span>
               <strong>{drawDate}</strong>
-              <p>{drawTime} con referencia en {primaryDrawSource}.</p>
+              <p>{drawTime}</p>
             </article>
           </div>
         </article>
 
         <aside class="hero-visual glass-card">
           <div class="hero-visual-frame">
-            <span class="hero-prize-chip">Premio destacado</span>
+            <span class="hero-prize-chip">Premio principal</span>
             <img
               src={primaryImage}
               alt={`Premio destacado: ${primaryPrize}`}
@@ -179,23 +114,23 @@ const schema = {
               fetchpriority="high"
               width="1200"
               height="900"
-              sizes="(max-width: 980px) 92vw, 46vw"
+              sizes="(max-width: 980px) 92vw, 58vw"
             />
 
-            <div class="hero-floating-card">
-              <span class="hero-floating-label">Siguiente salida publica</span>
-              <strong class="brand-title hero-floating-value"
-                >{primaryPrize}</strong
-              >
-              <p>{featuredPrize?.title ?? raffle.description}</p>
-            </div>
+            <div class="hero-image-panel">
+              <div>
+                <span class="hero-floating-label">Siguiente salida publica</span
+                >
+                <strong class="brand-title hero-floating-value"
+                  >{primaryPrize}</strong
+                >
+              </div>
 
-            <div class="hero-category-cloud" aria-label="Tipos de premios">
-              {
-                categoryLabels.map((label) => (
-                  <span class="hero-category-chip">{label}</span>
-                ))
-              }
+              <div class="hero-image-meta">
+                <span>{drawDate}</span>
+                <span>{drawTime}</span>
+                <span>{primaryDrawSource}</span>
+              </div>
             </div>
           </div>
         </aside>
@@ -203,142 +138,55 @@ const schema = {
 
       <PurchaseWidget
         raffleTitle={raffle.title}
-        eligiblePrizeCount={Math.max(raffle.upcomingPrizeDraws.length, 1)}
+        eligiblePrizeCount={activeDrawCount}
         client:load
       />
 
-      <section class="live-strip container" aria-label="Resumen de lanzamiento">
-        <article class="live-card">
-          <span class="live-label">Premio mayor</span>
-          <strong class="brand-title live-value">{primaryPrize}</strong>
-          <p class="live-copy">
-            El premio principal se mantiene arriba y la compra queda justo
-            debajo.
-          </p>
-        </article>
-        <article class="live-card">
-          <span class="live-label">Venta en curso</span>
-          <strong class="brand-title live-value">{soldProgress}%</strong>
-          <p class="live-copy">
-            Lectura inmediata del ritmo comercial de la campana.
-          </p>
-        </article>
-        <article class="live-card">
-          <span class="live-label">Resultados publicados</span>
-          <strong class="brand-title live-value">{publicResults.length}</strong>
-          <p class="live-copy">
-            Cada numero ganador queda visible con su prueba.
-          </p>
-        </article>
+      <section class="trust-strip container" aria-label="Ventajas principales">
+        <span>PSE, tarjeta y Nequi</span>
+        <span>Boletas por correo al confirmar pago</span>
+        <span>{soldProgress}% vendido y resultados visibles</span>
       </section>
 
       <section class="section-shell container" id="premios">
-        <div class="section-heading">
-          <p class="section-kicker">Calendario de premios</p>
+        <div class="section-heading section-heading-compact">
+          <p class="section-kicker">Fechas y premios</p>
           <h2 class="brand-title section-title">
-            Fechas claras sin quitarle foco a la compra
+            Todo el calendario en una vista rapida
           </h2>
           <p class="section-copy">
-            Primero premio y compra. Despues, un calendario compacto que deja
-            claras las siguientes salidas publicas sin romper la jerarquia
-            comercial de la landing.
+            Compras una vez y sigues activo en todas estas fechas.
           </p>
         </div>
 
-        <div class="calendar-shell">
-          <article class="calendar-feature glass-card">
-            <span class="calendar-feature-label">
-              Premio que manda la pagina
-            </span>
-            <h3 class="brand-title calendar-feature-title">{primaryPrize}</h3>
-            <p class="calendar-feature-copy">
-              La misma compra queda participando en los siguientes cortes. Este
-              bloque resume el premio fuerte y deja el resto de fechas en una
-              lista rapida, mas cercana al patron comercial que estabas
-              buscando.
-            </p>
-
-            <div class="calendar-feature-meta">
-              <span>{drawDate}</span>
-              <span>{drawTime}</span>
-              <span>{primaryDrawSource}</span>
-            </div>
-          </article>
-
-          <div class="calendar-list">
-            {
-              calendarRows.map((draw, index) => (
-                <article class="calendar-row glass-card">
-                  <div class="calendar-row-index">
-                    <span class="calendar-row-step">Corte 0{index + 1}</span>
-                    <strong>
-                      {new Intl.DateTimeFormat("es-CO", {
-                        day: "2-digit",
-                        month: "short",
-                      }).format(new Date(draw.drawAt))}
-                    </strong>
-                  </div>
-
-                  <div class="calendar-row-body">
-                    <div class="calendar-row-top">
-                      <span class="calendar-row-value">
-                        {draw.displayValue}
-                      </span>
-                      {draw.isMajorPrize ? (
-                        <span class="calendar-row-flag">Premio mayor</span>
-                      ) : null}
-                    </div>
-                    <h3 class="brand-title calendar-row-title">{draw.title}</h3>
-                    <p class="calendar-row-copy">{draw.description}</p>
-                  </div>
-
-                  <div class="calendar-row-meta">
-                    <span>
-                      {new Intl.DateTimeFormat("es-CO", {
-                        dateStyle: "medium",
-                        timeStyle: "short",
-                      }).format(new Date(draw.drawAt))}
-                    </span>
-                    <span>{draw.drawSource}</span>
-                  </div>
-                </article>
-              ))
-            }
-          </div>
-        </div>
-      </section>
-
-      <section class="section-shell container" id="resultados">
-        <div class="section-heading">
-          <p class="section-kicker">Numeros ganadores</p>
-          <h2 class="brand-title section-title">
-            Resultados publicos de cada premio
-          </h2>
-          <p class="section-copy">
-            Los cortes ya realizados siguen visibles para todos. Si hubo
-            ganador, se muestra su resumen. Si no lo hubo, el numero igual queda
-            publicado con la etiqueta correspondiente.
-          </p>
-        </div>
-
-        <div class="results-grid">
+        <div class="schedule-board glass-card">
           {
-            publicResults.map((draw) => (
-              <article class="result-card glass-card">
-                <div class="result-top">
-                  <span class="winner-badge">{draw.displayValue}</span>
-                  <span
-                    class={`result-status ${draw.winnerLabel ? "is-winner" : "is-empty"}`}
-                  >
-                    {draw.winnerLabel ? "Ganador confirmado" : "Sin ganador"}
-                  </span>
+            calendarRows.map((draw, index) => (
+              <article
+                class={`schedule-row${draw.isMajorPrize ? " is-major" : ""}`}
+              >
+                <div class="schedule-row-index">
+                  <span class="schedule-row-step">Corte 0{index + 1}</span>
+                  <strong>
+                    {new Intl.DateTimeFormat("es-CO", {
+                      day: "2-digit",
+                      month: "short",
+                    }).format(new Date(draw.drawAt))}
+                  </strong>
                 </div>
-                <h3 class="brand-title">{draw.title}</h3>
-                <strong class="brand-title result-number">
-                  {draw.winningNumber ?? "Pendiente"}
-                </strong>
-                <p class="winner-copy">{draw.description}</p>
-                <div class="result-meta">
+
+                <div class="schedule-row-body">
+                  <div class="schedule-row-top">
+                    <span class="schedule-row-value">{draw.displayValue}</span>
+                    {draw.isMajorPrize ? (
+                      <span class="schedule-row-flag">Premio mayor</span>
+                    ) : null}
+                  </div>
+                  <h3 class="brand-title schedule-row-title">{draw.title}</h3>
+                  <p class="schedule-row-copy">{draw.description}</p>
+                </div>
+
+                <div class="schedule-row-meta">
                   <span>
                     {new Intl.DateTimeFormat("es-CO", {
                       dateStyle: "medium",
@@ -347,131 +195,71 @@ const schema = {
                   </span>
                   <span>{draw.drawSource}</span>
                 </div>
-                <div class="result-meta">
-                  <span>
-                    {draw.winnerLabel ??
-                      "Resultado publico sin boleta pagada ganadora"}
-                  </span>
-                  {draw.proofUrl ? (
-                    <a href={draw.proofUrl}>Ver prueba</a>
-                  ) : null}
-                </div>
               </article>
             ))
           }
         </div>
       </section>
 
-      <section class="section-shell container" id="ganadores">
-        <div class="section-heading">
-          <p class="section-kicker">Prueba social con peso real</p>
-          <h2 class="brand-title section-title">
-            Ganadores y compradores visibles
-          </h2>
+      <section class="section-shell container" id="resultados">
+        <div class="section-heading section-heading-compact">
+          <p class="section-kicker">Resultados publicos</p>
+          <h2 class="brand-title section-title">Numeros ganadores visibles</h2>
           <p class="section-copy">
-            La confianza no depende de una sola frase. Se refuerza con ejemplos
-            concretos, seguimiento de orden y resultados publicados en paralelo.
+            Cada sorteo publicado queda abajo, sin esconder resultados.
           </p>
         </div>
 
-        <div class="winner-grid">
-          {
-            winnerStories.map((story) => (
-              <article class="winner-card glass-card">
-                <span class="winner-badge">{story.label}</span>
-                <strong class="brand-title winner-amount">
-                  {story.amount}
-                </strong>
-                <p class="winner-copy">{story.copy}</p>
-                <div class="winner-meta">
-                  <span>{story.name}</span>
-                  <span>{story.city}, Colombia</span>
-                </div>
-              </article>
-            ))
-          }
-        </div>
-      </section>
-
-      <section class="section-shell container">
-        <div class="trust-panel glass-card">
-          <div class="section-heading">
-            <p class="section-kicker">Checkout y soporte</p>
-            <h2 class="brand-title section-title">
-              Confianza visible antes de la ultima decision
-            </h2>
-            <p class="section-copy">
-              Metodos de pago, seguimiento de orden, resultados publicos y
-              marcos legales quedan dentro del mismo sistema visual.
-            </p>
-          </div>
-
-          <div class="trust-grid">
-            <article class="trust-block">
-              <span class="footer-label">Metodos de pago</span>
-              <div class="trust-logos">
-                <span class="trust-logo">Tarjeta</span>
-                <span class="trust-logo">PSE</span>
-                <span class="trust-logo">Nequi</span>
-              </div>
-            </article>
-
-            <article class="trust-block">
-              <span class="footer-label">Trazabilidad</span>
+        {
+          publicResults.length > 0 ? (
+            <div class="results-grid results-grid-compact" id="ganadores">
+              {publicResults.map((draw) => (
+                <article class="result-card glass-card">
+                  <div class="result-top">
+                    <span class="winner-badge">{draw.displayValue}</span>
+                    <span
+                      class={`result-status ${draw.winnerLabel ? "is-winner" : "is-empty"}`}
+                    >
+                      {draw.winnerLabel ? "Ganador" : "Publicado"}
+                    </span>
+                  </div>
+                  <h3 class="brand-title">{draw.title}</h3>
+                  <strong class="brand-title result-number">
+                    {draw.winningNumber ?? "Pendiente"}
+                  </strong>
+                  <div class="result-meta">
+                    <span>
+                      {new Intl.DateTimeFormat("es-CO", {
+                        dateStyle: "medium",
+                      }).format(new Date(draw.drawAt))}
+                    </span>
+                    <span>{draw.drawSource}</span>
+                  </div>
+                  <div class="result-meta">
+                    <span>
+                      {draw.winnerLabel ??
+                        "Resultado publicado sin boleta pagada ganadora"}
+                    </span>
+                    {draw.proofUrl ? (
+                      <a href={draw.proofUrl}>Ver prueba</a>
+                    ) : null}
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <article class="result-empty glass-card" id="ganadores">
+              <span class="section-kicker">Aun no hay sorteos cerrados</span>
+              <h3 class="brand-title">
+                Los resultados publicados apareceran aqui
+              </h3>
               <p>
-                El correo solo sale cuando el pago se confirma y desde ahi la
-                orden ya muestra sus boletas y proximos premios elegibles.
+                Apenas se cierre el primer premio, el numero ganador quedara
+                visible para todos en este bloque.
               </p>
             </article>
-
-            <article class="trust-block">
-              <span class="footer-label">Operacion completa</span>
-              <p>
-                La misma base visual se extiende a gracias, legales y admin para
-                que la campana se sienta cerrada de punta a punta.
-              </p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="section-shell container">
-        <div class="section-heading">
-          <p class="section-kicker">Distribucion pensada para lanzar</p>
-          <h2 class="brand-title section-title">
-            Una estructura comercial completa
-          </h2>
-          <p class="section-copy">
-            Premio arriba, compra en la mitad alta, calendario visible,
-            resultados publicos debajo y un cierre con informacion operativa.
-          </p>
-        </div>
-
-        <div class="process-grid">
-          {
-            processSteps.map((step, index) => (
-              <article class="process-card glass-card">
-                <span class="process-index">0{index + 1}</span>
-                <h3 class="brand-title">{step.title}</h3>
-                <p>{step.copy}</p>
-              </article>
-            ))
-          }
-        </div>
-
-        <aside class="community-callout glass-card">
-          <div>
-            <p class="section-kicker">Sistema extendido</p>
-            <h3 class="brand-title">
-              Gracias, legales y admin ya hablan el mismo idioma
-            </h3>
-          </div>
-          <p>
-            El rediseno no se queda en la landing. Las demas pantallas publicas
-            y operativas usan la misma base visual para que tu lanzamiento se
-            vea terminado.
-          </p>
-        </aside>
+          )
+        }
       </section>
     </main>
 

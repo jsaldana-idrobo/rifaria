@@ -1784,11 +1784,11 @@ button {
 }
 
 .landing-page .hero-copy {
-  background: linear-gradient(
-    180deg,
-    rgba(10, 24, 41, 0.96),
-    rgba(5, 15, 27, 0.94)
-  );
+  min-height: auto;
+  padding: 8px 0;
+  background: none;
+  border: 0;
+  box-shadow: none;
 }
 
 .landing-page .hero-headline,
@@ -1838,21 +1838,14 @@ button {
     rgba(3, 15, 26, 0.98),
     rgba(5, 17, 29, 0.94)
   );
+  padding: 12px;
 }
 
 .landing-page .hero-prize-chip,
-.landing-page .hero-floating-card,
 .landing-page .calendar-feature-label,
 .landing-page .calendar-feature-meta span {
   border-color: rgba(89, 240, 255, 0.2);
   background: rgba(4, 16, 27, 0.78);
-}
-
-.landing-page .hero-category-chip {
-  background: rgba(6, 19, 31, 0.88);
-  border: 1px solid rgba(89, 240, 255, 0.18);
-  color: #bff9ff;
-  box-shadow: 0 0 26px rgba(83, 241, 255, 0.08);
 }
 
 .landing-page .buy-card {
@@ -1987,6 +1980,230 @@ button {
   border-top: 1px solid rgba(83, 241, 255, 0.12);
 }
 
+.landing-page .hero-shell {
+  grid-template-columns: minmax(0, 0.74fr) minmax(380px, 1.26fr);
+  gap: 34px;
+  align-items: center;
+  padding: 20px 0 26px;
+}
+
+.landing-page .hero-visual-frame img {
+  min-height: 620px;
+  border-radius: 26px;
+}
+
+.landing-page .hero-headline {
+  max-width: 7ch;
+}
+
+.landing-page .hero-subtitle {
+  max-width: 40ch;
+}
+
+.landing-page .hero-metrics {
+  gap: 10px;
+}
+
+.landing-page .metric-card {
+  padding: 14px 16px;
+  background: rgba(8, 20, 35, 0.54);
+}
+
+.landing-page .metric-card p {
+  font-size: 0.84rem;
+}
+
+.hero-image-panel {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  left: 18px;
+  display: grid;
+  gap: 12px;
+  padding: 18px 20px;
+  border-radius: 24px;
+  border: 1px solid rgba(89, 240, 255, 0.18);
+  background: rgba(3, 13, 22, 0.8);
+  box-shadow: 0 18px 42px rgba(1, 8, 16, 0.44);
+  backdrop-filter: blur(14px);
+}
+
+.hero-image-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.hero-image-meta span {
+  display: inline-flex;
+  padding: 9px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(89, 240, 255, 0.14);
+  background: rgba(7, 22, 35, 0.88);
+  color: #bff9ff;
+  font-size: 0.88rem;
+}
+
+.trust-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0 auto 30px;
+}
+
+.trust-strip span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 58px;
+  padding: 14px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(89, 240, 255, 0.14);
+  background: rgba(6, 18, 31, 0.78);
+  color: #d9faff;
+  text-align: center;
+  font-size: 0.94rem;
+}
+
+.section-heading-compact {
+  max-width: 48rem;
+}
+
+.buy-trust-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.buy-trust-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(89, 240, 255, 0.14);
+  background: rgba(6, 18, 31, 0.74);
+  color: #d9faff;
+  text-align: center;
+  font-size: 0.84rem;
+}
+
+.schedule-board {
+  display: grid;
+  overflow: hidden;
+}
+
+.schedule-row {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr) minmax(190px, 0.44fr);
+  gap: 18px;
+  align-items: center;
+  padding: 22px 24px;
+  border-top: 1px solid rgba(89, 240, 255, 0.12);
+}
+
+.schedule-row:first-child {
+  border-top: 0;
+}
+
+.schedule-row.is-major {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 179, 71, 0.08),
+    rgba(7, 21, 36, 0)
+  );
+}
+
+.schedule-row-index {
+  display: grid;
+  gap: 8px;
+}
+
+.schedule-row-step {
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+
+.schedule-row-index strong {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 2.3rem;
+  letter-spacing: 0.08em;
+  color: #f3fbff;
+}
+
+.schedule-row-body {
+  display: grid;
+  gap: 8px;
+}
+
+.schedule-row-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.schedule-row-value,
+.schedule-row-flag {
+  display: inline-flex;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.schedule-row-value {
+  background: rgba(255, 179, 71, 0.14);
+  color: #ffd18a;
+}
+
+.schedule-row-flag {
+  background: rgba(83, 241, 255, 0.12);
+  color: #9af6ff;
+}
+
+.schedule-row-title {
+  margin: 0;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  color: #f3fbff;
+}
+
+.schedule-row-copy {
+  margin: 0;
+  color: var(--text-soft);
+}
+
+.schedule-row-meta {
+  display: grid;
+  gap: 8px;
+  justify-items: end;
+  text-align: right;
+  color: var(--text-soft);
+  font-size: 0.9rem;
+}
+
+.results-grid-compact {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.result-empty {
+  display: grid;
+  gap: 12px;
+  padding: 26px;
+}
+
+.result-empty h3,
+.result-empty p {
+  margin: 0;
+}
+
+.result-empty p {
+  color: var(--text-soft);
+}
+
 @keyframes float-card {
   0%,
   100% {
@@ -2023,6 +2240,14 @@ button {
   .landing-page .buy-card {
     grid-template-columns: 1fr;
   }
+
+  .landing-page .hero-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .results-grid-compact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 920px) {
@@ -2058,6 +2283,7 @@ button {
 
   .hero-metrics,
   .live-strip,
+  .trust-strip,
   .status-grid,
   .legal-grid,
   .legal-kpis,
@@ -2101,6 +2327,16 @@ button {
     align-items: start;
   }
 
+  .schedule-row {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .schedule-row-meta {
+    justify-items: start;
+    text-align: left;
+  }
+
   .calendar-row-meta {
     justify-items: start;
     text-align: left;
@@ -2108,6 +2344,10 @@ button {
 
   .legal-aside {
     position: static;
+  }
+
+  .buy-trust-row {
+    grid-template-columns: 1fr;
   }
 
   .admin-inline-form,
@@ -2158,13 +2398,19 @@ button {
   }
 
   .calendar-feature,
-  .calendar-row {
+  .calendar-row,
+  .schedule-row,
+  .result-empty {
     padding: 20px;
   }
 
   .buy-form-grid,
   .bundle-grid,
   .admin-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .results-grid-compact {
     grid-template-columns: 1fr;
   }
 
