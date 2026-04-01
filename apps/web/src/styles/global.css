@@ -681,6 +681,13 @@ button {
     box-shadow 0.22s ease;
 }
 
+.bundle-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .bundle-card:hover,
 .bundle-card.is-active {
   transform: translateY(-2px);
@@ -710,6 +717,22 @@ button {
 
 .bundle-name {
   font-size: 1.32rem;
+}
+
+.bundle-tag {
+  display: inline-flex;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: rgba(21, 37, 52, 0.08);
+  font-size: 0.74rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.bundle-price {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 1.12rem;
+  letter-spacing: 0.08em;
 }
 
 .bundle-note {
@@ -1617,6 +1640,353 @@ button {
   font-size: 0.9rem;
 }
 
+.landing-page {
+  --text-main: #eef8ff;
+  --text-soft: #8ea7ba;
+  --text-inverse: #eef8ff;
+  --surface-dark: #04101b;
+  --border-soft: rgba(89, 240, 255, 0.18);
+  --border-strong: rgba(89, 240, 255, 0.24);
+  --shadow-soft: 0 18px 42px rgba(1, 9, 16, 0.34);
+  --shadow-strong: 0 34px 90px rgba(1, 8, 16, 0.52);
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 14% 10%,
+      rgba(37, 236, 255, 0.18),
+      transparent 18%
+    ),
+    radial-gradient(
+      circle at 84% 16%,
+      rgba(255, 179, 71, 0.12),
+      transparent 16%
+    ),
+    radial-gradient(
+      circle at 50% 100%,
+      rgba(37, 236, 255, 0.08),
+      transparent 24%
+    ),
+    linear-gradient(180deg, #04101b 0%, #071525 42%, #050d17 100%);
+  color: var(--text-main);
+}
+
+.landing-page::before,
+.landing-page::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.landing-page::before {
+  background-image:
+    linear-gradient(rgba(90, 241, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(90, 241, 255, 0.08) 1px, transparent 1px);
+  background-size: 30px 30px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.28), transparent 88%);
+  opacity: 0.24;
+}
+
+.landing-page::after {
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(37, 236, 255, 0.12),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 80% 38%,
+      rgba(255, 179, 71, 0.08),
+      transparent 20%
+    );
+}
+
+.landing-page main,
+.landing-page .public-header,
+.landing-page .public-footer {
+  position: relative;
+  z-index: 1;
+}
+
+.landing-page .glass-card {
+  border: 1px solid rgba(89, 240, 255, 0.2);
+  background: linear-gradient(
+    180deg,
+    rgba(9, 22, 38, 0.92),
+    rgba(5, 15, 27, 0.88)
+  );
+  box-shadow:
+    0 0 0 1px rgba(89, 240, 255, 0.06),
+    0 26px 80px rgba(1, 8, 16, 0.44),
+    inset 0 1px 0 rgba(191, 249, 255, 0.08);
+}
+
+.landing-page .section-kicker,
+.landing-page .footer-label,
+.landing-page .metric-label,
+.landing-page .live-label,
+.landing-page .calendar-row-step,
+.landing-page .site-tag {
+  color: rgba(142, 167, 186, 0.9);
+}
+
+.landing-page .section-copy,
+.landing-page .hero-subtitle,
+.landing-page .buy-lead,
+.landing-page .live-copy,
+.landing-page .calendar-row-copy,
+.landing-page .calendar-row-meta,
+.landing-page .calendar-feature-copy,
+.landing-page .winner-copy,
+.landing-page .winner-meta,
+.landing-page .trust-block p,
+.landing-page .process-card p,
+.landing-page .community-callout p,
+.landing-page .metric-card p,
+.landing-page .buy-point span,
+.landing-page .summary-note,
+.landing-page .buy-footnote,
+.landing-page .ticket-preview p,
+.landing-page .result-meta,
+.landing-page .hero-floating-card p {
+  color: var(--text-soft);
+}
+
+.landing-page .cta-btn {
+  background: linear-gradient(135deg, #53f1ff 0%, #13a9ff 52%, #5cffbf 100%);
+  color: #03111d;
+  box-shadow:
+    0 0 0 1px rgba(83, 241, 255, 0.26),
+    0 18px 44px rgba(19, 169, 255, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.52);
+}
+
+.landing-page .pill {
+  border-color: rgba(89, 240, 255, 0.18);
+  background: rgba(8, 24, 38, 0.84);
+  color: var(--text-inverse);
+  box-shadow: inset 0 1px 0 rgba(191, 249, 255, 0.08);
+}
+
+.landing-page .pill-hot {
+  border-color: rgba(255, 179, 71, 0.24);
+  background: rgba(255, 179, 71, 0.12);
+  color: #ffd18a;
+}
+
+.landing-page .pill-outline,
+.landing-page .hero-secondary-action {
+  border-color: rgba(89, 240, 255, 0.18);
+  background: rgba(8, 24, 38, 0.62);
+  color: var(--text-inverse);
+}
+
+.landing-page .hero-copy {
+  background: linear-gradient(
+    180deg,
+    rgba(10, 24, 41, 0.96),
+    rgba(5, 15, 27, 0.94)
+  );
+}
+
+.landing-page .hero-headline,
+.landing-page .section-title,
+.landing-page .result-number,
+.landing-page .winner-amount,
+.landing-page .live-value,
+.landing-page .calendar-feature-title,
+.landing-page .calendar-row-title,
+.landing-page .buy-header h2,
+.landing-page .community-callout h3 {
+  color: #f3fbff;
+  text-shadow: 0 0 20px rgba(83, 241, 255, 0.08);
+}
+
+.landing-page .metric-card,
+.landing-page .live-card,
+.landing-page .calendar-row,
+.landing-page .result-card,
+.landing-page .winner-card,
+.landing-page .trust-block,
+.landing-page .process-card,
+.landing-page .community-callout,
+.landing-page .buy-point {
+  background: linear-gradient(
+    180deg,
+    rgba(8, 20, 35, 0.9),
+    rgba(4, 13, 24, 0.84)
+  );
+  border: 1px solid rgba(89, 240, 255, 0.16);
+  box-shadow: inset 0 1px 0 rgba(191, 249, 255, 0.06);
+}
+
+.landing-page .metric-card strong,
+.landing-page .calendar-row-index strong,
+.landing-page .summary strong,
+.landing-page .summary-total,
+.landing-page .result-card h3,
+.landing-page .winner-card strong {
+  color: #f3fbff;
+}
+
+.landing-page .hero-visual {
+  border-color: rgba(89, 240, 255, 0.22);
+  background: linear-gradient(
+    180deg,
+    rgba(3, 15, 26, 0.98),
+    rgba(5, 17, 29, 0.94)
+  );
+}
+
+.landing-page .hero-prize-chip,
+.landing-page .hero-floating-card,
+.landing-page .calendar-feature-label,
+.landing-page .calendar-feature-meta span {
+  border-color: rgba(89, 240, 255, 0.2);
+  background: rgba(4, 16, 27, 0.78);
+}
+
+.landing-page .hero-category-chip {
+  background: rgba(6, 19, 31, 0.88);
+  border: 1px solid rgba(89, 240, 255, 0.18);
+  color: #bff9ff;
+  box-shadow: 0 0 26px rgba(83, 241, 255, 0.08);
+}
+
+.landing-page .buy-card {
+  grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.92fr);
+  padding: 34px;
+}
+
+.landing-page .bundle-card {
+  gap: 10px;
+  min-height: 168px;
+  border-color: rgba(89, 240, 255, 0.14);
+  background: linear-gradient(
+    180deg,
+    rgba(5, 17, 30, 0.96),
+    rgba(7, 22, 38, 0.86)
+  );
+  box-shadow: inset 0 1px 0 rgba(191, 249, 255, 0.06);
+}
+
+.landing-page .bundle-card:hover,
+.landing-page .bundle-card.is-active {
+  border-color: rgba(83, 241, 255, 0.36);
+  box-shadow:
+    0 0 0 1px rgba(83, 241, 255, 0.14),
+    0 18px 38px rgba(5, 15, 27, 0.4),
+    0 0 24px rgba(83, 241, 255, 0.12);
+}
+
+.landing-page .bundle-card.is-active {
+  background: linear-gradient(
+    180deg,
+    rgba(7, 30, 45, 0.98),
+    rgba(4, 17, 29, 0.92)
+  );
+}
+
+.landing-page .bundle-name,
+.landing-page .bundle-qty,
+.landing-page .bundle-price {
+  color: #f3fbff;
+}
+
+.landing-page .bundle-tag {
+  background: rgba(83, 241, 255, 0.12);
+  color: #9af6ff;
+}
+
+.landing-page .buy-form {
+  border-color: rgba(83, 241, 255, 0.2);
+  background: linear-gradient(
+    180deg,
+    rgba(4, 17, 29, 0.96),
+    rgba(6, 20, 34, 0.92)
+  );
+  box-shadow:
+    0 0 0 1px rgba(83, 241, 255, 0.08),
+    0 22px 48px rgba(1, 9, 16, 0.4),
+    inset 0 1px 0 rgba(191, 249, 255, 0.08);
+}
+
+.landing-page .buy-form label {
+  color: var(--text-inverse);
+}
+
+.landing-page .buy-form input,
+.landing-page .buy-form select,
+.landing-page .qty-btn {
+  border-color: rgba(83, 241, 255, 0.14);
+  background: rgba(7, 23, 38, 0.9);
+  color: var(--text-inverse);
+}
+
+.landing-page .buy-form input::placeholder {
+  color: rgba(142, 167, 186, 0.7);
+}
+
+.landing-page .summary,
+.landing-page .ticket-preview,
+.landing-page .status-schedule {
+  border-color: rgba(83, 241, 255, 0.18);
+  background: linear-gradient(
+    180deg,
+    rgba(8, 24, 38, 0.92),
+    rgba(5, 17, 29, 0.84)
+  );
+}
+
+.landing-page .ticket-preview span,
+.landing-page .trust-logo {
+  border: 1px solid rgba(83, 241, 255, 0.16);
+  background: rgba(3, 12, 22, 0.88);
+  color: #bff9ff;
+}
+
+.landing-page .calendar-feature {
+  border-color: rgba(83, 241, 255, 0.2);
+  box-shadow:
+    0 0 0 1px rgba(83, 241, 255, 0.08),
+    0 24px 60px rgba(1, 8, 16, 0.44),
+    inset 0 1px 0 rgba(191, 249, 255, 0.08);
+}
+
+.landing-page .calendar-row-value,
+.landing-page .process-index {
+  background: rgba(255, 179, 71, 0.14);
+  color: #ffd18a;
+}
+
+.landing-page .calendar-row-flag,
+.landing-page .winner-badge,
+.landing-page .result-status.is-winner {
+  background: rgba(83, 241, 255, 0.12);
+  color: #9af6ff;
+}
+
+.landing-page .result-status.is-empty {
+  background: rgba(255, 179, 71, 0.12);
+  color: #ffd18a;
+}
+
+.landing-page .result-card a {
+  color: #9af6ff;
+}
+
+.landing-page .public-footer {
+  margin-top: 36px;
+  background: linear-gradient(
+    180deg,
+    rgba(3, 12, 22, 0.98),
+    rgba(4, 14, 24, 1)
+  );
+  border-top: 1px solid rgba(83, 241, 255, 0.12);
+}
+
 @keyframes float-card {
   0%,
   100% {
@@ -1648,6 +2018,10 @@ button {
   .results-grid,
   .admin-summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .landing-page .buy-card {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1719,7 +2093,7 @@ button {
 
   .buy-form {
     position: static;
-    order: -1;
+    order: 0;
   }
 
   .calendar-row {
@@ -1777,6 +2151,10 @@ button {
   .buy-form,
   .status-card {
     padding: 18px;
+  }
+
+  .landing-page .buy-card {
+    padding: 22px;
   }
 
   .calendar-feature,

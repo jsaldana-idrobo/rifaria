@@ -13,21 +13,25 @@ const TICKET_BUNDLES = [
   {
     qty: 10,
     name: "Arranque",
+    tag: "Minimo",
     note: "Entrada minima para activar la compra",
   },
   {
     qty: 25,
     name: "Impulso",
+    tag: "Flexible",
     note: "Balance entre cobertura y presupuesto",
   },
   {
     qty: 50,
     name: "Cobertura",
+    tag: "Popular",
     note: "Pack fuerte para campanas con mas traccion",
   },
   {
     qty: 100,
     name: "Dominio",
+    tag: "Maximo",
     note: "Pensado para compradores que van con todo",
   },
 ] as const;
@@ -93,16 +97,17 @@ export function PurchaseWidget({
         <p className="section-kicker">Compra inmediata y packs visibles</p>
         <h2 className="brand-title">Compra tus boletas</h2>
         <p className="buy-lead">
-          Elige un pack rapido o ajusta tu cantidad. Esta zona ahora va antes
-          del calendario para que la accion principal aparezca donde debe. Una
-          vez el pago queda aprobado, tus boletas siguen activas para{" "}
-          {eligiblePrizeCount} premio{eligiblePrizeCount === 1 ? "" : "s"}{" "}
-          programado{eligiblePrizeCount === 1 ? "" : "s"}.
+          Elige un pack visible, mira el valor al instante y entra al checkout
+          sin perderte entre bloques secundarios. Una vez el pago queda
+          aprobado, tus boletas siguen activas para {eligiblePrizeCount} premio
+          {eligiblePrizeCount === 1 ? "" : "s"} programado
+          {eligiblePrizeCount === 1 ? "" : "s"}.
         </p>
 
         <div className="bundle-grid" aria-label="Packs sugeridos">
           {TICKET_BUNDLES.map((bundle) => {
             const isActive = bundle.qty === ticketQty;
+            const bundleTotal = bundle.qty * TICKET_PRICE;
 
             return (
               <button
@@ -111,8 +116,14 @@ export function PurchaseWidget({
                 className={`bundle-card${isActive ? " is-active" : ""}`}
                 onClick={() => setTicketQty(bundle.qty)}
               >
-                <span className="bundle-qty">x{bundle.qty}</span>
+                <div className="bundle-topline">
+                  <span className="bundle-qty">x{bundle.qty}</span>
+                  <span className="bundle-tag">{bundle.tag}</span>
+                </div>
                 <strong className="bundle-name">{bundle.name}</strong>
+                <span className="bundle-price">
+                  ${bundleTotal.toLocaleString("es-CO")} COP
+                </span>
                 <span className="bundle-note">{bundle.note}</span>
               </button>
             );
