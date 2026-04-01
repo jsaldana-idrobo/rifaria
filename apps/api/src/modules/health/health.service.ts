@@ -34,9 +34,10 @@ export class HealthService implements OnModuleDestroy {
   async getReadiness(): Promise<ReadinessReport> {
     const mongodb = (await this.pingMongo()) ? 'up' : 'down';
     const redis = (await this.pingRedis()) ? 'up' : 'down';
+    const status = mongodb === 'up' && redis === 'up' ? 'ok' : 'degraded';
 
     return {
-      status: mongodb === 'up' && redis === 'up' ? 'ok' : 'degraded',
+      status,
       timestamp: new Date().toISOString(),
       checks: {
         mongodb,

@@ -16,6 +16,10 @@ import { RafflesService } from '../raffles/raffles.service';
 import { UpdateRaffleDto } from '../raffles/dto/update-raffle.dto';
 import { Ticket } from '../tickets/schemas/ticket.schema';
 
+function escapeRegExp(value: string): string {
+  return value.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+}
+
 @Injectable()
 export class AdminService {
   constructor(
@@ -223,7 +227,7 @@ export class AdminService {
 
     if (search && search.trim().length > 0) {
       const searchText = search.trim();
-      const regex = new RegExp(searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+      const regex = new RegExp(escapeRegExp(searchText), 'i');
       const orConditions: Array<Record<string, unknown>> = [
         { number4d: searchText },
         { 'order.email': regex },

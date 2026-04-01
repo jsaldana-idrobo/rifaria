@@ -3,12 +3,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Job } from 'bullmq';
 import { Model } from 'mongoose';
+import { postponeEmailTemplate, ticketEmailTemplate } from '@rifaria/shared';
 import { JOB_NAMES, QUEUE_NAMES } from '../jobs/queue-names';
 import { Order } from '../schemas/order.schema';
 import { PrizeDraw } from '../schemas/prize-draw.schema';
 import { Raffle } from '../schemas/raffle.schema';
 import { EmailService } from '../services/email.service';
-import { postponeEmailTemplate, ticketEmailTemplate } from '../services/email-templates';
 
 @Injectable()
 @Processor(QUEUE_NAMES.NOTIFICATIONS)

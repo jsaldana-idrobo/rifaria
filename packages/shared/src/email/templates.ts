@@ -1,4 +1,4 @@
-export function ticketEmailTemplate(payload: {
+export interface TicketEmailTemplatePayload {
   fullName: string;
   raffleTitle: string;
   rafflePrize: string;
@@ -10,7 +10,16 @@ export function ticketEmailTemplate(payload: {
     displayValue: string;
     drawAt: Date;
   }>;
-}): string {
+}
+
+export interface PostponeEmailTemplatePayload {
+  fullName: string;
+  raffleTitle: string;
+  newDrawAt: Date;
+  reason: string;
+}
+
+export function ticketEmailTemplate(payload: TicketEmailTemplatePayload): string {
   const ticketsHtml = payload.ticketNumbers
     .map(
       (ticket) =>
@@ -56,12 +65,7 @@ export function ticketEmailTemplate(payload: {
   `;
 }
 
-export function postponeEmailTemplate(payload: {
-  fullName: string;
-  raffleTitle: string;
-  newDrawAt: Date;
-  reason: string;
-}): string {
+export function postponeEmailTemplate(payload: PostponeEmailTemplatePayload): string {
   return `
   <div style="font-family: 'Trebuchet MS', 'Segoe UI', sans-serif; background:#f2f6fb; padding:40px 20px; color:#121212;">
     <div style="max-width:620px;margin:0 auto;background:#fff;border:1px solid #d9e1ee;border-radius:14px;padding:26px;">

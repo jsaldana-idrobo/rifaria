@@ -113,6 +113,17 @@ const EMPTY_SETTLE_FORM: SettleFormState = {
   drawResultSourceUrl: "",
 };
 
+function createJsonHeaders(headers?: HeadersInit): Headers {
+  const requestHeaders = new Headers(headers);
+  requestHeaders.set("Content-Type", "application/json");
+  return requestHeaders;
+}
+
+function buildInventoryPath(search: string): string {
+  const query = search ? `&search=${encodeURIComponent(search)}` : "";
+  return `/admin/tickets?limit=24${query}`;
+}
+
 async function fetchWithAuth<T>(
   path: string,
   token: string,
@@ -120,11 +131,11 @@ async function fetchWithAuth<T>(
 ): Promise<T> {
   const response = await fetch(`${getApiBaseUrl()}${path}`, {
     ...init,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-      ...(init?.headers ?? {}),
-    },
+    headers: (() => {
+      const headers = createJsonHeaders(init?.headers);
+      headers.set("Authorization", `Bearer ${token}`);
+      return headers;
+    })(),
   });
 
   if (!response.ok) {
@@ -156,7 +167,7 @@ export function AdminPanel() {
       fetchWithAuth<DashboardData>("/admin/dashboard", accessToken),
       fetchWithAuth<BuyerRow[]>("/admin/buyers?limit=12", accessToken),
       fetchWithAuth<TicketInventoryResponse>(
-        `/admin/tickets?limit=24${search ? `&search=${encodeURIComponent(search)}` : ""}`,
+        buildInventoryPath(search),
         accessToken,
       ),
     ]);
@@ -196,7 +207,7 @@ export function AdminPanel() {
 
   const createPrizeDraw = async (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!token) {
+    if (token === null) {
       return;
     }
 
@@ -228,7 +239,7 @@ export function AdminPanel() {
     prizeDrawId: string,
   ) => {
     event.preventDefault();
-    if (!token) {
+    if (token === null) {
       return;
     }
 
@@ -257,7 +268,7 @@ export function AdminPanel() {
   };
 
   const cancelPrizeDraw = async (prizeDrawId: string) => {
-    if (!token) {
+    if (token === null) {
       return;
     }
 
@@ -280,7 +291,7 @@ export function AdminPanel() {
 
   const searchInventory = async (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!token) {
+    if (token === null) {
       return;
     }
 
@@ -625,7 +636,7 @@ export function AdminPanel() {
             <button
               className="cta-btn"
               type="submit"
-              disabled={!token || loading}
+              disabled={token === null || loading}
             >
               Buscar
             </button>

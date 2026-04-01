@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { fetchOrderStatus, type PublicOrderStatus } from "@/lib/api";
 
-interface OrderStatusCardProps {
+type OrderStatusCardProps = Readonly<{
   readonly orderId: string | null;
-}
+}>;
 
 const FINAL_STATUSES = new Set<PublicOrderStatus["status"]>([
   "paid",

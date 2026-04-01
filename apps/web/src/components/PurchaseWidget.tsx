@@ -2,10 +2,10 @@ import { useMemo, useState } from "react";
 import type { SyntheticEvent } from "react";
 import { createCheckout, createOrder } from "@/lib/api";
 
-interface PurchaseWidgetProps {
+type PurchaseWidgetProps = Readonly<{
   readonly raffleTitle: string;
   readonly eligiblePrizeCount?: number;
-}
+}>;
 
 const TICKET_PRICE = 2000;
 const MIN_TICKETS = 10;
@@ -183,7 +183,7 @@ export function PurchaseWidget({
         </div>
 
         <label className="full-span">
-          Cantidad de boletas
+          <span>Cantidad de boletas</span>
           <div className="qty-row">
             <button
               type="button"

@@ -109,7 +109,7 @@ export class PaymentsWompiService {
       }
 
       payment.providerTransactionId = providerTransactionId;
-      payment.providerPayload = payload as unknown as Record<string, unknown>;
+      payment.providerPayload = this.toProviderPayload(payload);
 
       if (mappedStatus === 'approved') {
         payment.approvedAt = new Date();
@@ -214,6 +214,18 @@ export class PaymentsWompiService {
       }
     } catch (error) {
       await this.ordersService.markEmailFailed(paidOrder._id);
+      const message = error instanceof Error ? error.message : String(error);
+      await this.auditService.log({
+        action: 'notification.ticket_email_failed',
+        entityType: 'order',
+        entityId: String(paidOrder._id),
+        actorType: 'system',
+        actorId: null,
+        metadata: {
+          paymentId: String(payment._id),
+          message
+        }
+      });
     }
 
     await this.auditService.log({
@@ -278,5 +290,28 @@ export class PaymentsWompiService {
     if (!timingSafeEqual(payloadBuffer, localBuffer)) {
       throw new UnauthorizedException('Webhook signature validation failed');
     }
+  }
+
+  private toProviderPayload(payload: WompiWebhookDto): Record<string, unknown> {
+    return {
+      event: payload.event,
+      data: {
+        transaction: {
+          id: payload.data.transaction.id,
+          reference: payload.data.transaction.reference,
+          status: payload.data.transaction.status,
+          amount_in_cents: payload.data.transaction.amount_in_cents,
+          currency: payload.data.transaction.currency,
+          payment_method_type: payload.data.transaction.payment_method_type,
+          customer_email: payload.data.transaction.customer_email
+        }
+      },
+      signature: payload.signature
+        ? {
+            checksum: payload.signature.checksum
+          }
+        : undefined,
+      sent_at: payload.sent_at
+    };
   }
 }

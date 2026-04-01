@@ -13,7 +13,12 @@
     "baseUrl": "./",
     "incremental": true,
     "strictPropertyInitialization": false,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "paths": {
+      "@rifaria/shared": [
+        "../../packages/shared/src/index.ts"
+      ]
+    }
   },
   "include": [
     "src/**/*.ts"

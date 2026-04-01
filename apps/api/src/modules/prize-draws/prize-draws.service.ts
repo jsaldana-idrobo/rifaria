@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import type { PrizeDrawType, PrizeDrawStatus } from '@rifaria/shared';
+import type { PrizeDrawStatus } from '@rifaria/shared';
 import { CreatePrizeDrawDto } from './dto/create-prize-draw.dto';
 import { UpdatePrizeDrawDto } from './dto/update-prize-draw.dto';
 import { PrizeDraw } from './schemas/prize-draw.schema';
@@ -19,9 +19,9 @@ function slugify(input: string): string {
   return input
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '');
+    .replaceAll(/[\u0300-\u036f]/g, '')
+    .replaceAll(/[^a-z0-9]+/g, '-')
+    .replaceAll(/(^-|-$)/g, '');
 }
 
 @Injectable()

@@ -74,7 +74,7 @@ export class AuthService {
     user: { id: string; fullName: string; email: string; role: string };
   }> {
     const user = await this.userModel.findOne({ email: dto.email.toLowerCase() });
-    if (!user?.isActive) {
+    if (user?.isActive !== true) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
@@ -141,12 +141,12 @@ export class AuthService {
       throw new NotFoundException('User not found');
     }
 
-    return this.toPublicUser(user as unknown as PublicUserSource);
+    return this.toPublicUser(user);
   }
 
   async listUsers(limit = 100): Promise<PublicUser[]> {
     const users = await this.userModel.find().sort({ createdAt: -1 }).limit(limit).lean();
-    return users.map((user) => this.toPublicUser(user as PublicUserSource));
+    return users.map((user) => this.toPublicUser(user));
   }
 
   private toPublicUser(user: PublicUserSource): PublicUser {

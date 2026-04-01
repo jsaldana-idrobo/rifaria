@@ -6,6 +6,12 @@ import type { NextFunction, Request, Response } from 'express';
 import { AppModule } from './app.module';
 import { HttpLoggingInterceptor } from './common/interceptors/http-logging.interceptor';
 
+type RequestWithId = Request & { requestId?: string };
+
+function attachRequestId(request: RequestWithId, requestId: string): void {
+  request.requestId = requestId;
+}
+
 async function bootstrap(): Promise<void> {
   try {
     const app = await NestFactory.create(AppModule, {
@@ -18,14 +24,14 @@ async function bootstrap(): Promise<void> {
       credentials: true
     });
 
-    app.use((request: Request, response: Response, next: NextFunction) => {
+    app.use((request: RequestWithId, response: Response, next: NextFunction) => {
       const headerValue = request.header('x-request-id');
       const requestId =
         typeof headerValue === 'string' && headerValue.length > 0 && headerValue.length <= 128
           ? headerValue
           : randomUUID();
 
-      (request as Request & { requestId?: string }).requestId = requestId;
+      attachRequestId(request, requestId);
       response.setHeader('x-request-id', requestId);
       next();
     });

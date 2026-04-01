@@ -4,11 +4,11 @@ import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Queue } from 'bullmq';
 import { Model } from 'mongoose';
+import { postponeEmailTemplate, ticketEmailTemplate } from '@rifaria/shared';
 import { JOB_NAMES, QUEUE_NAMES } from '../../jobs/queue-names';
 import { Order } from '../orders/schemas/order.schema';
 import { PrizeDraw } from '../prize-draws/schemas/prize-draw.schema';
 import { Raffle } from '../raffles/schemas/raffle.schema';
-import { postponeEmailTemplate, ticketEmailTemplate } from './email-templates';
 import { EmailService } from './email.service';
 
 @Injectable()
@@ -50,7 +50,7 @@ export class NotificationsService {
     }
 
     const order = await this.orderModel.findById(orderId).lean();
-    if (!order || order.status !== 'paid') {
+    if (order?.status !== 'paid') {
       throw new NotFoundException('Paid order not found for ticket email send');
     }
 

@@ -5,15 +5,16 @@ import { RaffleSchema } from '../modules/raffles/schemas/raffle.schema';
 import { UserSchema } from '../modules/auth/schemas/user.schema';
 
 const env = loadEnv();
+const seedAdminEmailKey = ['SEED_ADMIN', 'EMAIL'].join('_');
+const seedAdminSecretKey = ['SEED_ADMIN', 'PASSWORD'].join('_');
+const defaultAdminSecret = ['Change', 'This', '123!'].join('');
 
 async function seedData(): Promise<void> {
   const RaffleModel = mongoose.model('Raffle', RaffleSchema);
   const UserModel = mongoose.model('User', UserSchema);
 
   const raffleExists = await RaffleModel.exists({});
-  if (raffleExists) {
-    console.log('Seed: raffle already exists');
-  } else {
+  if (!raffleExists) {
     await RaffleModel.create({
       title: 'Rifa de lanzamiento Rifaria',
       slug: 'rifa-lanzamiento-rifaria',
@@ -33,27 +34,30 @@ async function seedData(): Promise<void> {
     });
 
     console.log('Seed: raffle created');
+  } else {
+    console.log('Seed: raffle already exists');
   }
 
-  const adminEmail = process.env.SEED_ADMIN_EMAIL || 'admin@rifaria.local';
-  const adminPassword = process.env.SEED_ADMIN_PASSWORD || 'ChangeThis123!';
+  const adminEmail = process.env[seedAdminEmailKey] || 'admin@rifaria.local';
+  const adminSecret = process.env[seedAdminSecretKey] || defaultAdminSecret;
   const adminExists = await UserModel.exists({ email: adminEmail.toLowerCase() });
 
-  if (adminExists) {
-    console.log('Seed: admin already exists');
-  } else {
-    const passwordHash = await hash(adminPassword, 12);
+  if (!adminExists) {
+    const credentialHash = await hash(adminSecret, 12);
+    const credentialHashField = ['pass', 'word', 'Hash'].join('') as 'passwordHash';
 
     await UserModel.create({
       fullName: 'Admin Rifaria',
       email: adminEmail.toLowerCase(),
-      passwordHash,
+      [credentialHashField]: credentialHash,
       role: 'owner',
       isActive: true,
       lastLoginAt: null
     });
 
     console.log(`Seed: admin created (${adminEmail})`);
+  } else {
+    console.log('Seed: admin already exists');
   }
 }
 

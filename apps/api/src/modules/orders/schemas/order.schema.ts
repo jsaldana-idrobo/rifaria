@@ -7,6 +7,8 @@ export type OrderDocument = HydratedDocument<Order>;
 @Schema({ timestamps: true })
 export class Order {
   _id!: Types.ObjectId;
+  createdAt!: Date;
+  updatedAt!: Date;
 
   @Prop({ required: true, type: Types.ObjectId, ref: 'Raffle', index: true })
   raffleId!: Types.ObjectId;

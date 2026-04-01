@@ -29,7 +29,7 @@ describe('MaintenanceController', () => {
   });
 
   it('rejects requests without the maintenance token header', async () => {
-    await expect(controller.releaseExpiredReservations(undefined)).rejects.toBeInstanceOf(
+    await expect(controller.releaseExpiredReservations()).rejects.toBeInstanceOf(
       UnauthorizedException
     );
     expect(maintenanceService.releaseExpiredReservations).not.toHaveBeenCalled();

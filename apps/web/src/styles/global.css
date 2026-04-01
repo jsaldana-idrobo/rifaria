@@ -537,6 +537,7 @@ button {
 .results-grid {
   display: grid;
   gap: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .result-card {
@@ -546,20 +547,13 @@ button {
 }
 
 .result-meta {
-  margin: 0;
-  color: var(--text-soft);
-}
-
-.result-meta {
   display: flex;
   justify-content: space-between;
   gap: 12px;
+  margin: 0;
   flex-wrap: wrap;
+  color: var(--text-soft);
   font-size: 0.92rem;
-}
-
-.results-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .result-top {
@@ -580,13 +574,13 @@ button {
 }
 
 .result-status.is-winner {
-  background: rgba(136, 193, 161, 0.18);
-  color: #376247;
+  background: #dcefe4;
+  color: #234e38;
 }
 
 .result-status.is-empty {
-  background: rgba(216, 115, 45, 0.12);
-  color: #8a4c1f;
+  background: #f6debe;
+  color: #6f3915;
 }
 
 .result-number {
@@ -845,8 +839,8 @@ button {
   display: inline-flex;
   padding: 10px 14px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(237, 244, 239, 0.86);
+  background: rgba(8, 25, 37, 0.74);
+  color: #f3fbff;
   font-size: 0.9rem;
 }
 
@@ -906,13 +900,13 @@ button {
 }
 
 .calendar-row-value {
-  background: rgba(216, 115, 45, 0.12);
-  color: #8a4c1f;
+  background: #f6debe;
+  color: #6f3915;
 }
 
 .calendar-row-flag {
-  background: rgba(136, 193, 161, 0.16);
-  color: #376247;
+  background: #dcefe4;
+  color: #234e38;
 }
 
 .calendar-row-title {
@@ -1104,8 +1098,8 @@ button {
   width: fit-content;
   padding: 8px 12px;
   border-radius: 999px;
-  background: rgba(136, 193, 161, 0.18);
-  color: #376247;
+  background: #dcefe4;
+  color: #234e38;
   font-size: 0.82rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -1185,8 +1179,8 @@ button {
   width: fit-content;
   padding: 8px 12px;
   border-radius: 999px;
-  background: rgba(216, 115, 45, 0.12);
-  color: #8a4c1f;
+  background: #f6debe;
+  color: #6f3915;
   font-family: "Bebas Neue", sans-serif;
   letter-spacing: 0.12em;
 }
@@ -1495,9 +1489,9 @@ button {
 .legal-note {
   padding: 16px;
   border-radius: 18px;
-  background: rgba(216, 115, 45, 0.12);
-  border: 1px solid rgba(216, 115, 45, 0.14);
-  color: #7c4c20;
+  background: #f6debe;
+  border: 1px solid rgba(216, 115, 45, 0.22);
+  color: #6f3915;
 }
 
 .legal-content {
@@ -1774,8 +1768,8 @@ button {
 
 .landing-page .pill-hot {
   border-color: rgba(255, 179, 71, 0.24);
-  background: rgba(255, 179, 71, 0.12);
-  color: #ffd18a;
+  background: rgba(132, 81, 19, 0.62);
+  color: #fff3d6;
 }
 
 .landing-page .pill-outline,
@@ -1891,8 +1885,8 @@ button {
 }
 
 .landing-page .bundle-tag {
-  background: rgba(83, 241, 255, 0.12);
-  color: #9af6ff;
+  background: rgba(10, 88, 112, 0.66);
+  color: #f3fbff;
 }
 
 .landing-page .buy-form {
@@ -1952,20 +1946,20 @@ button {
 
 .landing-page .calendar-row-value,
 .landing-page .process-index {
-  background: rgba(255, 179, 71, 0.14);
-  color: #ffd18a;
+  background: rgba(132, 81, 19, 0.62);
+  color: #fff3d6;
 }
 
 .landing-page .calendar-row-flag,
 .landing-page .winner-badge,
 .landing-page .result-status.is-winner {
-  background: rgba(83, 241, 255, 0.12);
-  color: #9af6ff;
+  background: rgba(10, 88, 112, 0.66);
+  color: #f3fbff;
 }
 
 .landing-page .result-status.is-empty {
-  background: rgba(255, 179, 71, 0.12);
-  color: #ffd18a;
+  background: rgba(132, 81, 19, 0.62);
+  color: #fff3d6;
 }
 
 .landing-page .result-card a {
@@ -2043,8 +2037,8 @@ button {
 
 .public-page-shell .pill {
   border-color: rgba(255, 179, 71, 0.24);
-  background: rgba(255, 179, 71, 0.12);
-  color: #ffd18a;
+  background: rgba(132, 81, 19, 0.62);
+  color: #fff3d6;
   box-shadow: none;
 }
 
@@ -2267,13 +2261,13 @@ button {
 }
 
 .schedule-row-value {
-  background: rgba(255, 179, 71, 0.14);
-  color: #ffd18a;
+  background: rgba(132, 81, 19, 0.62);
+  color: #fff3d6;
 }
 
 .schedule-row-flag {
-  background: rgba(83, 241, 255, 0.12);
-  color: #9af6ff;
+  background: rgba(10, 88, 112, 0.66);
+  color: #f3fbff;
 }
 
 .schedule-row-title {

@@ -76,7 +76,7 @@ export class OrdersService {
 
       const reservedTickets = await this.ticketsService.reserveTicketsForOrder({
         raffleId,
-        orderId: createdOrder._id as Types.ObjectId,
+        orderId: createdOrder._id,
         ticketQty: dto.ticketQty,
         expiresAt,
         session
@@ -147,11 +147,8 @@ export class OrdersService {
       upcomingPrizeDraws,
       expiresAt: order.expiresAt,
       failureReason: order.failureReason,
-      createdAt:
-        ('createdAt' in order ? (order as unknown as { createdAt?: Date }).createdAt : null) ??
-        null,
-      updatedAt:
-        ('updatedAt' in order ? (order as unknown as { updatedAt?: Date }).updatedAt : null) ?? null
+      createdAt: order.createdAt ?? null,
+      updatedAt: order.updatedAt ?? null
     };
   }
 
@@ -274,9 +271,7 @@ export class OrdersService {
         }
       );
 
-      releasedTickets += await this.ticketsService.releaseTicketsForOrder(
-        order._id as Types.ObjectId
-      );
+      releasedTickets += await this.ticketsService.releaseTicketsForOrder(order._id);
     }
 
     return {

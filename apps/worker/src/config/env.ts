@@ -1,30 +1,80 @@
 import { z } from 'zod';
+import { hasInvalidEmailIdentity, isLoopbackHost, isTemplateValue } from '@rifaria/shared';
 
-const placeholderPattern = /^(<[^>]+>|.*placeholder.*|.*change-me.*)$/i;
-const emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/i;
-
-function isTemplateValue(value: string): boolean {
-  return placeholderPattern.test(value.trim());
+function addIssue(ctx: z.RefinementCtx, path: string, message: string): void {
+  ctx.addIssue({
+    path: [path],
+    code: z.ZodIssueCode.custom,
+    message
+  });
 }
 
-function extractEmailAddress(value: string): string {
-  const trimmed = value.trim();
-  const match = trimmed.match(/<([^>]+)>/);
-  return (match?.[1] ?? trimmed).trim();
+function validateProviderCredentials(env: WorkerEnv, ctx: z.RefinementCtx): void {
+  if (
+    env.EMAIL_PROVIDER === 'resend' &&
+    (!env.RESEND_API_KEY || isTemplateValue(env.RESEND_API_KEY))
+  ) {
+    addIssue(ctx, 'RESEND_API_KEY', 'RESEND_API_KEY is required when EMAIL_PROVIDER=resend');
+  }
+
+  if (
+    env.EMAIL_PROVIDER === 'postmark' &&
+    (!env.POSTMARK_SERVER_TOKEN || isTemplateValue(env.POSTMARK_SERVER_TOKEN))
+  ) {
+    addIssue(
+      ctx,
+      'POSTMARK_SERVER_TOKEN',
+      'POSTMARK_SERVER_TOKEN is required when EMAIL_PROVIDER=postmark'
+    );
+  }
 }
 
-function hasInvalidEmailIdentity(value: string): boolean {
-  if (isTemplateValue(value)) {
-    return true;
+function validateSenderConfiguration(env: WorkerEnv, ctx: z.RefinementCtx): void {
+  if (env.EMAIL_PROVIDER === 'console') {
+    return;
   }
 
-  const email = extractEmailAddress(value);
-  if (!emailPattern.test(email)) {
-    return true;
+  if (hasInvalidEmailIdentity(env.EMAIL_FROM)) {
+    addIssue(
+      ctx,
+      'EMAIL_FROM',
+      'EMAIL_FROM must use a valid non-local sender when EMAIL_PROVIDER is enabled'
+    );
   }
 
-  const domain = email.split('@')[1]?.toLowerCase() ?? '';
-  return domain.length === 0 || domain === 'localhost' || domain.endsWith('.local');
+  if (env.EMAIL_REPLY_TO && hasInvalidEmailIdentity(env.EMAIL_REPLY_TO)) {
+    addIssue(
+      ctx,
+      'EMAIL_REPLY_TO',
+      'EMAIL_REPLY_TO must use a valid non-local address when EMAIL_PROVIDER is enabled'
+    );
+  }
+}
+
+function validateProductionInfrastructure(env: WorkerEnv, ctx: z.RefinementCtx): void {
+  if (isTemplateValue(env.MONGODB_URI) || isLoopbackHost(env.MONGODB_URI)) {
+    addIssue(ctx, 'MONGODB_URI', 'MONGODB_URI cannot point to localhost in production');
+  }
+
+  if (isTemplateValue(env.REDIS_HOST) || isLoopbackHost(env.REDIS_HOST)) {
+    addIssue(ctx, 'REDIS_HOST', 'REDIS_HOST cannot point to localhost in production');
+  }
+
+  if (env.EMAIL_PROVIDER === 'console') {
+    addIssue(ctx, 'EMAIL_PROVIDER', 'EMAIL_PROVIDER cannot be console in production');
+  }
+
+  if (env.EMAIL_PROVIDER === 'resend' && env.RESEND_API_KEY === 'resend_placeholder') {
+    addIssue(ctx, 'RESEND_API_KEY', 'RESEND_API_KEY cannot be placeholder in production');
+  }
+
+  if (env.EMAIL_PROVIDER === 'postmark' && env.POSTMARK_SERVER_TOKEN === 'postmark_placeholder') {
+    addIssue(
+      ctx,
+      'POSTMARK_SERVER_TOKEN',
+      'POSTMARK_SERVER_TOKEN cannot be placeholder in production'
+    );
+  }
 }
 
 const workerEnvSchema = z
@@ -42,94 +92,17 @@ const workerEnvSchema = z
     POSTMARK_MESSAGE_STREAM: z.string().default('outbound')
   })
   .superRefine((env, ctx) => {
-    if (
-      env.EMAIL_PROVIDER === 'resend' &&
-      (!env.RESEND_API_KEY || isTemplateValue(env.RESEND_API_KEY))
-    ) {
-      ctx.addIssue({
-        path: ['RESEND_API_KEY'],
-        code: z.ZodIssueCode.custom,
-        message: 'RESEND_API_KEY is required when EMAIL_PROVIDER=resend'
-      });
-    }
-
-    if (
-      env.EMAIL_PROVIDER === 'postmark' &&
-      (!env.POSTMARK_SERVER_TOKEN || isTemplateValue(env.POSTMARK_SERVER_TOKEN))
-    ) {
-      ctx.addIssue({
-        path: ['POSTMARK_SERVER_TOKEN'],
-        code: z.ZodIssueCode.custom,
-        message: 'POSTMARK_SERVER_TOKEN is required when EMAIL_PROVIDER=postmark'
-      });
-    }
-
-    if (env.EMAIL_PROVIDER !== 'console' && hasInvalidEmailIdentity(env.EMAIL_FROM)) {
-      ctx.addIssue({
-        path: ['EMAIL_FROM'],
-        code: z.ZodIssueCode.custom,
-        message: 'EMAIL_FROM must use a valid non-local sender when EMAIL_PROVIDER is enabled'
-      });
-    }
-
-    if (env.EMAIL_PROVIDER !== 'console' && env.EMAIL_REPLY_TO) {
-      if (hasInvalidEmailIdentity(env.EMAIL_REPLY_TO)) {
-        ctx.addIssue({
-          path: ['EMAIL_REPLY_TO'],
-          code: z.ZodIssueCode.custom,
-          message:
-            'EMAIL_REPLY_TO must use a valid non-local address when EMAIL_PROVIDER is enabled'
-        });
-      }
-    }
+    validateProviderCredentials(env, ctx);
+    validateSenderConfiguration(env, ctx);
 
     if (env.NODE_ENV !== 'production') {
       return;
     }
 
-    if (isTemplateValue(env.MONGODB_URI) || /(localhost|127\.0\.0\.1)/i.test(env.MONGODB_URI)) {
-      ctx.addIssue({
-        path: ['MONGODB_URI'],
-        code: z.ZodIssueCode.custom,
-        message: 'MONGODB_URI cannot point to localhost in production'
-      });
-    }
-
-    if (
-      isTemplateValue(env.REDIS_HOST) ||
-      ['localhost', '127.0.0.1'].includes(env.REDIS_HOST.toLowerCase())
-    ) {
-      ctx.addIssue({
-        path: ['REDIS_HOST'],
-        code: z.ZodIssueCode.custom,
-        message: 'REDIS_HOST cannot point to localhost in production'
-      });
-    }
-
-    if (env.EMAIL_PROVIDER === 'console') {
-      ctx.addIssue({
-        path: ['EMAIL_PROVIDER'],
-        code: z.ZodIssueCode.custom,
-        message: 'EMAIL_PROVIDER cannot be console in production'
-      });
-    }
-
-    if (env.EMAIL_PROVIDER === 'resend' && env.RESEND_API_KEY === 'resend_placeholder') {
-      ctx.addIssue({
-        path: ['RESEND_API_KEY'],
-        code: z.ZodIssueCode.custom,
-        message: 'RESEND_API_KEY cannot be placeholder in production'
-      });
-    }
-
-    if (env.EMAIL_PROVIDER === 'postmark' && env.POSTMARK_SERVER_TOKEN === 'postmark_placeholder') {
-      ctx.addIssue({
-        path: ['POSTMARK_SERVER_TOKEN'],
-        code: z.ZodIssueCode.custom,
-        message: 'POSTMARK_SERVER_TOKEN cannot be placeholder in production'
-      });
-    }
+    validateProductionInfrastructure(env, ctx);
   });
+
+export type WorkerEnv = z.infer<typeof workerEnvSchema>;
 
 export function loadEnv(source: NodeJS.ProcessEnv = process.env) {
   const result = workerEnvSchema.safeParse(source);

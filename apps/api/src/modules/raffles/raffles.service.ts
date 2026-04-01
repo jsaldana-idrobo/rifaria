@@ -238,6 +238,13 @@ export class RafflesService {
 
   private serializePrizeDraw(draw: PrizeDraw): PublicPrizeDrawSummary {
     const firstName = draw.winnerFullNameSnapshot?.split(/\s+/)[0] ?? null;
+    let winnerLabel: string | null = null;
+
+    if (firstName !== null) {
+      winnerLabel = draw.winnerMaskedEmailSnapshot
+        ? `${firstName} | ${draw.winnerMaskedEmailSnapshot}`
+        : firstName;
+    }
 
     return {
       id: String(draw._id),
@@ -252,12 +259,7 @@ export class RafflesService {
       isMajorPrize: draw.isMajorPrize,
       winningNumber: draw.winningNumber,
       proofUrl: draw.drawResultSourceUrl,
-      winnerLabel:
-        firstName === null
-          ? null
-          : draw.winnerMaskedEmailSnapshot
-            ? `${firstName} | ${draw.winnerMaskedEmailSnapshot}`
-            : firstName
+      winnerLabel
     };
   }
 

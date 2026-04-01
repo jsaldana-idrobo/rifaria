@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { hasInvalidEmailIdentity, isLoopbackHost, isTemplateValue } from '@rifaria/shared';
 
 const placeholderValues = new Set([
   'dev-access-secret-change-me',
@@ -11,31 +12,162 @@ const placeholderValues = new Set([
   'postmark_placeholder'
 ]);
 
-const placeholderPattern = /^(<[^>]+>|.*placeholder.*|.*change-me.*)$/i;
-const emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/i;
-
-function isTemplateValue(value: string): boolean {
-  return placeholderPattern.test(value.trim());
+function addIssue(ctx: z.RefinementCtx, path: string, message: string): void {
+  ctx.addIssue({
+    path: [path],
+    code: z.ZodIssueCode.custom,
+    message
+  });
 }
 
-function extractEmailAddress(value: string): string {
-  const trimmed = value.trim();
-  const match = trimmed.match(/<([^>]+)>/);
-  return (match?.[1] ?? trimmed).trim();
+function hasPlaceholderCredential(value: string): boolean {
+  return placeholderValues.has(value) || isTemplateValue(value);
 }
 
-function hasInvalidEmailIdentity(value: string): boolean {
-  if (isTemplateValue(value)) {
-    return true;
+function validateEmailConfiguration(env: AppEnv, ctx: z.RefinementCtx): void {
+  if (env.EMAIL_PROVIDER === 'console') {
+    return;
   }
 
-  const email = extractEmailAddress(value);
-  if (!emailPattern.test(email)) {
-    return true;
+  if (hasInvalidEmailIdentity(env.EMAIL_FROM)) {
+    addIssue(
+      ctx,
+      'EMAIL_FROM',
+      'EMAIL_FROM must use a valid non-local sender when EMAIL_PROVIDER is enabled'
+    );
   }
 
-  const domain = email.split('@')[1]?.toLowerCase() ?? '';
-  return domain.length === 0 || domain === 'localhost' || domain.endsWith('.local');
+  if (env.EMAIL_REPLY_TO && hasInvalidEmailIdentity(env.EMAIL_REPLY_TO)) {
+    addIssue(
+      ctx,
+      'EMAIL_REPLY_TO',
+      'EMAIL_REPLY_TO must use a valid non-local address when EMAIL_PROVIDER is enabled'
+    );
+  }
+}
+
+function validateInlineNotifications(env: AppEnv, ctx: z.RefinementCtx): void {
+  if (env.NOTIFICATIONS_MODE !== 'inline') {
+    return;
+  }
+
+  if (env.EMAIL_PROVIDER === 'console') {
+    addIssue(
+      ctx,
+      'EMAIL_PROVIDER',
+      'EMAIL_PROVIDER must be resend or postmark when NOTIFICATIONS_MODE=inline'
+    );
+  }
+
+  if (
+    env.EMAIL_PROVIDER === 'resend' &&
+    (!env.RESEND_API_KEY || isTemplateValue(env.RESEND_API_KEY))
+  ) {
+    addIssue(
+      ctx,
+      'RESEND_API_KEY',
+      'RESEND_API_KEY is required when EMAIL_PROVIDER=resend and inline mode is enabled'
+    );
+  }
+
+  if (
+    env.EMAIL_PROVIDER === 'postmark' &&
+    (!env.POSTMARK_SERVER_TOKEN || isTemplateValue(env.POSTMARK_SERVER_TOKEN))
+  ) {
+    addIssue(
+      ctx,
+      'POSTMARK_SERVER_TOKEN',
+      'POSTMARK_SERVER_TOKEN is required when EMAIL_PROVIDER=postmark and inline mode is enabled'
+    );
+  }
+}
+
+function validateProductionCredentials(env: AppEnv, ctx: z.RefinementCtx): void {
+  const secretChecks = [
+    [
+      'JWT_ACCESS_SECRET',
+      env.JWT_ACCESS_SECRET,
+      'JWT_ACCESS_SECRET must be a strong non-placeholder value in production'
+    ],
+    [
+      'JWT_REFRESH_SECRET',
+      env.JWT_REFRESH_SECRET,
+      'JWT_REFRESH_SECRET must be a strong non-placeholder value in production'
+    ]
+  ] as const;
+
+  for (const [path, value, message] of secretChecks) {
+    if (hasPlaceholderCredential(value) || value.length < 24) {
+      addIssue(ctx, path, message);
+    }
+  }
+
+  const wompiChecks = [
+    [
+      'WOMPI_PUBLIC_KEY',
+      env.WOMPI_PUBLIC_KEY,
+      'WOMPI_PUBLIC_KEY cannot be placeholder in production'
+    ],
+    [
+      'WOMPI_PRIVATE_KEY',
+      env.WOMPI_PRIVATE_KEY,
+      'WOMPI_PRIVATE_KEY cannot be placeholder in production'
+    ],
+    [
+      'WOMPI_INTEGRITY_SECRET',
+      env.WOMPI_INTEGRITY_SECRET,
+      'WOMPI_INTEGRITY_SECRET cannot be placeholder in production'
+    ],
+    [
+      'WOMPI_EVENTS_SECRET',
+      env.WOMPI_EVENTS_SECRET,
+      'WOMPI_EVENTS_SECRET cannot be placeholder in production'
+    ]
+  ] as const;
+
+  for (const [path, value, message] of wompiChecks) {
+    if (hasPlaceholderCredential(value)) {
+      addIssue(ctx, path, message);
+    }
+  }
+}
+
+function validateProductionInfrastructure(env: AppEnv, ctx: z.RefinementCtx): void {
+  if (env.WOMPI_ENV === 'production' && env.WOMPI_PUBLIC_KEY.toLowerCase().includes('test')) {
+    addIssue(
+      ctx,
+      'WOMPI_PUBLIC_KEY',
+      'WOMPI_PUBLIC_KEY looks like a test credential while WOMPI_ENV=production'
+    );
+  }
+
+  if (isTemplateValue(env.WEB_BASE_URL) || !env.WEB_BASE_URL.startsWith('https://')) {
+    addIssue(ctx, 'WEB_BASE_URL', 'WEB_BASE_URL must use https in production');
+  }
+
+  if (isLoopbackHost(env.MONGODB_URI)) {
+    addIssue(ctx, 'MONGODB_URI', 'MONGODB_URI cannot point to localhost in production');
+  }
+
+  if (isLoopbackHost(env.REDIS_HOST)) {
+    addIssue(ctx, 'REDIS_HOST', 'REDIS_HOST cannot point to localhost in production');
+  }
+
+  if (!env.MAINTENANCE_TOKEN || isTemplateValue(env.MAINTENANCE_TOKEN)) {
+    addIssue(
+      ctx,
+      'MAINTENANCE_TOKEN',
+      'MAINTENANCE_TOKEN must be a strong non-placeholder value in production'
+    );
+  }
+
+  if (env.MAINTENANCE_TOKEN && env.MAINTENANCE_TOKEN.length < 24) {
+    addIssue(
+      ctx,
+      'MAINTENANCE_TOKEN',
+      'MAINTENANCE_TOKEN must be at least 24 characters in production'
+    );
+  }
 }
 
 const envSchema = z
@@ -64,172 +196,15 @@ const envSchema = z
     MAINTENANCE_TOKEN: z.string().optional()
   })
   .superRefine((env, ctx) => {
-    if (env.EMAIL_PROVIDER !== 'console' && hasInvalidEmailIdentity(env.EMAIL_FROM)) {
-      ctx.addIssue({
-        path: ['EMAIL_FROM'],
-        code: z.ZodIssueCode.custom,
-        message: 'EMAIL_FROM must use a valid non-local sender when EMAIL_PROVIDER is enabled'
-      });
-    }
-
-    if (env.EMAIL_PROVIDER !== 'console' && env.EMAIL_REPLY_TO) {
-      if (hasInvalidEmailIdentity(env.EMAIL_REPLY_TO)) {
-        ctx.addIssue({
-          path: ['EMAIL_REPLY_TO'],
-          code: z.ZodIssueCode.custom,
-          message:
-            'EMAIL_REPLY_TO must use a valid non-local address when EMAIL_PROVIDER is enabled'
-        });
-      }
-    }
-
-    if (env.NOTIFICATIONS_MODE === 'inline') {
-      if (env.EMAIL_PROVIDER === 'console') {
-        ctx.addIssue({
-          path: ['EMAIL_PROVIDER'],
-          code: z.ZodIssueCode.custom,
-          message: 'EMAIL_PROVIDER must be resend or postmark when NOTIFICATIONS_MODE=inline'
-        });
-      }
-
-      if (
-        env.EMAIL_PROVIDER === 'resend' &&
-        (!env.RESEND_API_KEY || isTemplateValue(env.RESEND_API_KEY))
-      ) {
-        ctx.addIssue({
-          path: ['RESEND_API_KEY'],
-          code: z.ZodIssueCode.custom,
-          message:
-            'RESEND_API_KEY is required when EMAIL_PROVIDER=resend and inline mode is enabled'
-        });
-      }
-
-      if (
-        env.EMAIL_PROVIDER === 'postmark' &&
-        (!env.POSTMARK_SERVER_TOKEN || isTemplateValue(env.POSTMARK_SERVER_TOKEN))
-      ) {
-        ctx.addIssue({
-          path: ['POSTMARK_SERVER_TOKEN'],
-          code: z.ZodIssueCode.custom,
-          message:
-            'POSTMARK_SERVER_TOKEN is required when EMAIL_PROVIDER=postmark and inline mode is enabled'
-        });
-      }
-    }
+    validateEmailConfiguration(env, ctx);
+    validateInlineNotifications(env, ctx);
 
     if (env.NODE_ENV !== 'production') {
       return;
     }
 
-    if (
-      placeholderValues.has(env.JWT_ACCESS_SECRET) ||
-      isTemplateValue(env.JWT_ACCESS_SECRET) ||
-      env.JWT_ACCESS_SECRET.length < 24
-    ) {
-      ctx.addIssue({
-        path: ['JWT_ACCESS_SECRET'],
-        code: z.ZodIssueCode.custom,
-        message: 'JWT_ACCESS_SECRET must be a strong non-placeholder value in production'
-      });
-    }
-
-    if (
-      placeholderValues.has(env.JWT_REFRESH_SECRET) ||
-      isTemplateValue(env.JWT_REFRESH_SECRET) ||
-      env.JWT_REFRESH_SECRET.length < 24
-    ) {
-      ctx.addIssue({
-        path: ['JWT_REFRESH_SECRET'],
-        code: z.ZodIssueCode.custom,
-        message: 'JWT_REFRESH_SECRET must be a strong non-placeholder value in production'
-      });
-    }
-
-    if (placeholderValues.has(env.WOMPI_PUBLIC_KEY) || isTemplateValue(env.WOMPI_PUBLIC_KEY)) {
-      ctx.addIssue({
-        path: ['WOMPI_PUBLIC_KEY'],
-        code: z.ZodIssueCode.custom,
-        message: 'WOMPI_PUBLIC_KEY cannot be placeholder in production'
-      });
-    }
-
-    if (placeholderValues.has(env.WOMPI_PRIVATE_KEY) || isTemplateValue(env.WOMPI_PRIVATE_KEY)) {
-      ctx.addIssue({
-        path: ['WOMPI_PRIVATE_KEY'],
-        code: z.ZodIssueCode.custom,
-        message: 'WOMPI_PRIVATE_KEY cannot be placeholder in production'
-      });
-    }
-
-    if (
-      placeholderValues.has(env.WOMPI_INTEGRITY_SECRET) ||
-      isTemplateValue(env.WOMPI_INTEGRITY_SECRET)
-    ) {
-      ctx.addIssue({
-        path: ['WOMPI_INTEGRITY_SECRET'],
-        code: z.ZodIssueCode.custom,
-        message: 'WOMPI_INTEGRITY_SECRET cannot be placeholder in production'
-      });
-    }
-
-    if (
-      placeholderValues.has(env.WOMPI_EVENTS_SECRET) ||
-      isTemplateValue(env.WOMPI_EVENTS_SECRET)
-    ) {
-      ctx.addIssue({
-        path: ['WOMPI_EVENTS_SECRET'],
-        code: z.ZodIssueCode.custom,
-        message: 'WOMPI_EVENTS_SECRET cannot be placeholder in production'
-      });
-    }
-
-    if (env.WOMPI_ENV === 'production' && /test/i.test(env.WOMPI_PUBLIC_KEY)) {
-      ctx.addIssue({
-        path: ['WOMPI_PUBLIC_KEY'],
-        code: z.ZodIssueCode.custom,
-        message: 'WOMPI_PUBLIC_KEY looks like a test credential while WOMPI_ENV=production'
-      });
-    }
-
-    if (isTemplateValue(env.WEB_BASE_URL) || !env.WEB_BASE_URL.startsWith('https://')) {
-      ctx.addIssue({
-        path: ['WEB_BASE_URL'],
-        code: z.ZodIssueCode.custom,
-        message: 'WEB_BASE_URL must use https in production'
-      });
-    }
-
-    if (/(localhost|127\.0\.0\.1)/i.test(env.MONGODB_URI)) {
-      ctx.addIssue({
-        path: ['MONGODB_URI'],
-        code: z.ZodIssueCode.custom,
-        message: 'MONGODB_URI cannot point to localhost in production'
-      });
-    }
-
-    if (['localhost', '127.0.0.1'].includes(env.REDIS_HOST.toLowerCase())) {
-      ctx.addIssue({
-        path: ['REDIS_HOST'],
-        code: z.ZodIssueCode.custom,
-        message: 'REDIS_HOST cannot point to localhost in production'
-      });
-    }
-
-    if (!env.MAINTENANCE_TOKEN || isTemplateValue(env.MAINTENANCE_TOKEN)) {
-      ctx.addIssue({
-        path: ['MAINTENANCE_TOKEN'],
-        code: z.ZodIssueCode.custom,
-        message: 'MAINTENANCE_TOKEN must be a strong non-placeholder value in production'
-      });
-    }
-
-    if (env.MAINTENANCE_TOKEN && env.MAINTENANCE_TOKEN.length < 24) {
-      ctx.addIssue({
-        path: ['MAINTENANCE_TOKEN'],
-        code: z.ZodIssueCode.custom,
-        message: 'MAINTENANCE_TOKEN must be at least 24 characters in production'
-      });
-    }
+    validateProductionCredentials(env, ctx);
+    validateProductionInfrastructure(env, ctx);
   });
 
 export type AppEnv = z.infer<typeof envSchema>;
