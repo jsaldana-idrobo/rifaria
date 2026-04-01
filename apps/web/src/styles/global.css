@@ -273,7 +273,7 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  padding: 26px 0 18px;
+  padding: 20px 0 16px;
   color: var(--text-inverse);
 }
 
@@ -412,6 +412,8 @@ button {
   position: relative;
   display: grid;
   height: 100%;
+  overflow: hidden;
+  border-radius: 26px;
 }
 
 .hero-visual-frame img {
@@ -1838,7 +1840,7 @@ button {
     rgba(3, 15, 26, 0.98),
     rgba(5, 17, 29, 0.94)
   );
-  padding: 12px;
+  padding: 10px;
 }
 
 .landing-page .hero-prize-chip,
@@ -2095,7 +2097,10 @@ button {
 
 .landing-page .hero-visual-frame img {
   min-height: 620px;
-  border-radius: 26px;
+  border-radius: 22px;
+  box-shadow:
+    inset 0 0 0 1px rgba(191, 249, 255, 0.06),
+    0 0 0 1px rgba(83, 241, 255, 0.1);
 }
 
 .landing-page .hero-headline {
@@ -2368,6 +2373,8 @@ button {
 
   .public-header {
     display: grid;
+    gap: 12px;
+    padding: 16px 0 10px;
   }
 
   .hero-copy,
@@ -2376,18 +2383,17 @@ button {
   }
 
   .hero-copy {
-    order: 2;
+    order: 1;
   }
 
   .hero-visual {
-    order: 1;
+    order: 2;
   }
 
   .hero-headline {
     max-width: none;
   }
 
-  .hero-metrics,
   .live-strip,
   .trust-strip,
   .status-grid,
@@ -2416,7 +2422,66 @@ button {
   }
 
   .hero-visual-frame img {
-    min-height: 420px;
+    min-height: 360px;
+  }
+
+  .hero-metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .metric-card {
+    gap: 6px;
+    padding: 12px;
+  }
+
+  .metric-card strong {
+    font-size: 1.5rem;
+  }
+
+  .metric-card p {
+    display: none;
+  }
+
+  .hero-image-panel {
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    gap: 10px;
+    padding: 14px 16px;
+  }
+
+  .hero-floating-value {
+    font-size: clamp(1.7rem, 8vw, 2.4rem);
+  }
+
+  .public-brand {
+    gap: 2px;
+  }
+
+  .site-brand {
+    font-size: clamp(2.2rem, 10vw, 3rem);
+  }
+
+  .site-tag {
+    max-width: 30ch;
+    font-size: 0.72rem;
+    line-height: 1.35;
+    letter-spacing: 0.12em;
+  }
+
+  .public-nav {
+    justify-content: flex-start;
+    gap: 8px 10px;
+  }
+
+  .public-nav-link {
+    padding: 7px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(89, 240, 255, 0.12);
+    background: rgba(6, 18, 31, 0.5);
+    font-size: 0.86rem;
   }
 
   .buy-panel {
@@ -2453,7 +2518,7 @@ button {
   }
 
   .buy-trust-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .admin-inline-form,
@@ -2480,6 +2545,11 @@ button {
     width: auto;
   }
 
+  .public-nav-link {
+    padding: 6px 10px;
+    font-size: 0.82rem;
+  }
+
   .hero-copy,
   .hero-visual,
   .trust-panel,
@@ -2503,6 +2573,14 @@ button {
     padding: 22px;
   }
 
+  .landing-page .hero-copy {
+    padding: 0;
+  }
+
+  .landing-page .hero-visual {
+    padding: 10px;
+  }
+
   .calendar-feature,
   .calendar-row,
   .schedule-row,
@@ -2511,9 +2589,12 @@ button {
   }
 
   .buy-form-grid,
-  .bundle-grid,
   .admin-form-grid {
     grid-template-columns: 1fr;
+  }
+
+  .bundle-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .results-grid-compact {
@@ -2529,6 +2610,89 @@ button {
     align-items: stretch;
   }
 
+  .hero-headline {
+    font-size: clamp(3.4rem, 18vw, 5.2rem);
+  }
+
+  .hero-subtitle,
+  .section-copy,
+  .buy-lead {
+    font-size: 0.96rem;
+  }
+
+  .hero-metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .metric-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+  }
+
+  .hero-visual-frame img {
+    min-height: 330px;
+  }
+
+  .hero-prize-chip {
+    top: 14px;
+    left: 14px;
+    padding: 8px 14px;
+  }
+
+  .hero-image-panel {
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+    padding: 12px 14px;
+  }
+
+  .hero-image-meta {
+    gap: 8px;
+  }
+
+  .hero-image-meta span {
+    padding: 8px 10px;
+    font-size: 0.78rem;
+  }
+
+  .buy-header {
+    gap: 12px;
+  }
+
+  .bundle-card {
+    min-height: auto;
+    gap: 5px;
+    padding: 14px;
+  }
+
+  .buy-trust-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .buy-trust-pill {
+    min-height: 46px;
+    padding: 10px 8px;
+    font-size: 0.74rem;
+  }
+
+  .bundle-qty {
+    font-size: 1.5rem;
+  }
+
+  .bundle-name {
+    font-size: 1.12rem;
+  }
+
+  .bundle-price {
+    font-size: 0.98rem;
+  }
+
+  .bundle-note {
+    display: none;
+  }
+
   .hero-secondary-action {
     justify-content: center;
   }
@@ -2539,6 +2703,14 @@ button {
 
   .calendar-feature-title {
     font-size: 3.2rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .bundle-grid,
+  .hero-metrics,
+  .buy-trust-row {
+    grid-template-columns: 1fr;
   }
 }
 

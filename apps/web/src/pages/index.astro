@@ -16,10 +16,6 @@ const primaryImage = featuredPrize?.imageUrl ?? raffle.prizeImageUrl;
 const primaryDrawAt = featuredPrize?.drawAt ?? raffle.drawAt;
 const primaryDrawSource = featuredPrize?.drawSource ?? raffle.drawSource;
 const remainingTickets = Math.max(raffle.totalTickets - raffle.soldTickets, 0);
-const soldProgress =
-  raffle.totalTickets > 0
-    ? Math.round((raffle.soldTickets / raffle.totalTickets) * 100)
-    : 0;
 const drawDate = new Intl.DateTimeFormat("es-CO", {
   dateStyle: "medium",
 }).format(new Date(primaryDrawAt));
@@ -68,10 +64,9 @@ const schema = {
             Ve el premio. Compra tus boletas.
           </h1>
           <p class="hero-subtitle">
-            Una sola compra te deja participando por {activeDrawCount} premio
-            {activeDrawCount === 1 ? "" : "s"} programado
+            Compra una vez y quedas activo en {activeDrawCount} sorteo
             {activeDrawCount === 1 ? "" : "s"}. Pago local, boletas por correo y
-            resultados publicos visibles para todos.
+            resultados publicos sin vueltas.
           </p>
 
           <div class="hero-actions">
@@ -142,12 +137,6 @@ const schema = {
         client:load
       />
 
-      <section class="trust-strip container" aria-label="Ventajas principales">
-        <span>PSE, tarjeta y Nequi</span>
-        <span>Boletas por correo al confirmar pago</span>
-        <span>{soldProgress}% vendido y resultados visibles</span>
-      </section>
-
       <section class="section-shell container" id="premios">
         <div class="section-heading section-heading-compact">
           <p class="section-kicker">Fechas y premios</p>
@@ -155,7 +144,7 @@ const schema = {
             Todo el calendario en una vista rapida
           </h2>
           <p class="section-copy">
-            Compras una vez y sigues activo en todas estas fechas.
+            Tus mismas boletas siguen vivas en cada corte.
           </p>
         </div>
 
@@ -206,7 +195,7 @@ const schema = {
           <p class="section-kicker">Resultados publicos</p>
           <h2 class="brand-title section-title">Numeros ganadores visibles</h2>
           <p class="section-copy">
-            Cada sorteo publicado queda abajo, sin esconder resultados.
+            Los ganadores se publican aqui apenas salen.
           </p>
         </div>
 

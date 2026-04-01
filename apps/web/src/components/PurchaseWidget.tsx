@@ -97,10 +97,8 @@ export function PurchaseWidget({
         <p className="section-kicker">Compra inmediata</p>
         <h2 className="brand-title">Elige tu pack</h2>
         <p className="buy-lead">
-          Selecciona una opcion, mira el valor al instante y entra al checkout.
-          Tus boletas quedan activas para {eligiblePrizeCount} premio
-          {eligiblePrizeCount === 1 ? "" : "s"} programado
-          {eligiblePrizeCount === 1 ? "" : "s"}.
+          Elige una opcion y entra al checkout. Tus boletas quedan activas para{" "}
+          {eligiblePrizeCount} premio{eligiblePrizeCount === 1 ? "" : "s"}.
         </p>
 
         <div className="bundle-grid" aria-label="Packs sugeridos">
@@ -131,11 +129,9 @@ export function PurchaseWidget({
 
         <div className="buy-trust-row" aria-label="Ventajas de compra">
           <span className="buy-trust-pill">PSE, tarjeta y Nequi</span>
-          <span className="buy-trust-pill">Correo al confirmar pago</span>
+          <span className="buy-trust-pill">Correo al pagar</span>
           <span className="buy-trust-pill">
-            {eligiblePrizeCount} premio{eligiblePrizeCount === 1 ? "" : "s"}{" "}
-            activo
-            {eligiblePrizeCount === 1 ? "" : "s"}
+            {eligiblePrizeCount} premio{eligiblePrizeCount === 1 ? "" : "s"}
           </span>
         </div>
       </div>
@@ -251,8 +247,7 @@ export function PurchaseWidget({
         ) : null}
 
         <p className="buy-footnote">
-          Seras redirigido al checkout seguro para completar el pago de{" "}
-          {raffleTitle}.
+          Checkout seguro para pagar {raffleTitle}.
         </p>
 
         <button className="cta-btn" type="submit" disabled={isSubmitting}>
